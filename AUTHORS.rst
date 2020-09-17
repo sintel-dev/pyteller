@@ -5,7 +5,7 @@ Credits
 Development Lead
 ----------------
 
-* {{ cookiecutter.full_name }} <{{ cookiecutter.email }}>
+* Skylar Eiskowitz <eiskowit@mit.edu>
 
 Contributors
 ------------
