@@ -1,0 +1,8 @@
+{
+    "primitives": [
+        "orion.primitives.estimators.MeanEstimator"
+    ],
+    "init_params": {
+
+    }
+}

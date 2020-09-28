@@ -34,7 +34,7 @@ pyteller is a time series forecasting library built the end user.
 
 ## Input
 
-The expected input to pyteller pipelines are .csv files of time series that are provided in the following formats:
+The expected input to pyteller pipelines are .csv files of a **target table** which contains the history of what you want to predict for, and an optional **exogenous inputs** table of features that may help the prediction. They should be provided in the following formats:
 
 ### Targets Table
 #### Option 1: Single Entity
@@ -58,11 +58,11 @@ This is an example of such table, where the values are the number of NYC taxi pa
 |7/1/14 5:00|	2515|
 
 #### Option 2: Single Entity, Multiple Entity-Instances
-* `entity_id`: the **string** denoting which entity instance the observation is for
 * `timestamp`: the **pandas timestamp** object or **python datetime** object corresponding to the time at which the observation is made
+* `entity_id`: the **string** denoting which entity instance the observation is for
 * `value`: an **integer** or **float** column with the observed target values at the indicated timestamps
 
-This is an example of such table, where  the values are for energy demand and the entity_id's are for 4 seperate locations we want to forecast for:
+This is an example of such table, where  the values are for energy demand and the entity_id's are for 4 seperate locations we are forecasting for:
 
 
 
@@ -78,7 +78,7 @@ This is an example of such table, where  the values are for energy demand and th
 |9/27/20 21:25|DPL| 2086.6|
 
 ### Exogenous Inputs Table
-Optionally, a second .csv file of exogenous inputs can be included. Exogenous inputs are time series that are not influenced by variables in the system, but they affect the output. In the first example, weather data is an example of exogenous input that has a strong correlation to taxi demand.
+Optionally, a second .csv file of exogenous inputs can be included. Exogenous inputs are time series that are not influenced by the targets, but they affect the output out the targets. In the first example, weather data is an example of exogenous input that has a strong correlation to taxi demand.
 
 |  timestamp |     Temp |   Rain |
 |------------|-----------|-----------|

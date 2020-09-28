@@ -12,3 +12,10 @@ detected = [0, 1, 1, 1, 0, 0]
 
 from pyteller.evaluation import METRICS
 mape=METRICS['MAPE'](truth,detected)
+
+from pyteller.pyteller import Pyteller
+
+pyteller = Pyteller (
+    pipeline = 'dummy.json'
+
+)
