@@ -20,8 +20,13 @@ Time series forecasting using MLPrimitives
 
 # Overview
 
-TODO: Provide a short overview of the project here.
+pyteller is a time series forecasting library built the end user.
 
+# Data Format
+
+##Input
+
+pyteller pipelines work on time series that are provided in the following formats:
 # Install
 
 ## Requirements
