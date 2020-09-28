@@ -1,6 +1,7 @@
 import os
 import logging
 import pandas as pd
+import numpy as np
 
 LOGGER = logging.getLogger(__name__)
 
@@ -91,13 +92,20 @@ def load_csv(path, timestamp_column=None, value_column=None):
 
 
 def load_signal(signal, test_size=None, timestamp_column=None, value_column=None):
-    if os.path.isfile(signal):
-        data = load_csv(signal, timestamp_column, value_column)
+    signal_path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        'data',
+        signal,
+
+    )
+    if os.path.isfile(signal_path):
+        data = load_csv(signal_path, timestamp_column, value_column)
     else:
         data = download(signal) #If you need to download the data
 
-    data['timestamp'] = data['timestamp'].astype(int)
-    data['value'] = data['value'].astype(float)
+    #If the datatype of the column is object, it's the entity ID column. There can only be one.
+    types = data.dtypes
+    data = data.rename(columns={data.columns[0]: "timestamp", data.columns[np.where(types == 'object')[0][1]]: "entity_id"})
 
     if test_size is None:
         return data

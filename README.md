@@ -34,14 +34,14 @@ pyteller is a time series forecasting library built the end user.
 
 ## Input
 
-pyteller pipelines work on time series that are provided in the following formats of .csv files:
+The expected input to pyteller pipelines are .csv files of time series that are provided in the following formats:
 
 ### Targets Table
-1. Single Entity
-* `timestamp`: the **pandas timestamp** object or **python datetime** object corresponding to the time at which the observation is made
-* `value`: an **integer** or **float** column with the observed target values at the indicated timesstamps
+#### Option 1: Single Entity
+* `timestamp`: the **pandas timestamp** object or **python datetime** object represents the time at which the observation is made
+* `value`: an **integer** or **float** column with the observed target values at the indicated timestamps
 
-This is an example of such table, where the values are the number of passengers at the corresponding timestamp
+This is an example of such table, where the values are the number of NYC taxi passengers at the corresponding timestamp.
 
 |  timestamp |     value |
 |------------|-----------|
@@ -57,26 +57,27 @@ This is an example of such table, where the values are the number of passengers 
 |7/1/14 4:30|	2158|
 |7/1/14 5:00|	2515|
 
-2. Single Entity, Multiple Entity-Instances
+#### Option 2: Single Entity, Multiple Entity-Instances
 * `entity_id`: the **string** denoting which entity instance the observation is for
 * `timestamp`: the **pandas timestamp** object or **python datetime** object corresponding to the time at which the observation is made
-* `value`: an **integer** or **float** column with the observed target values at the indicated timesstamps
+* `value`: an **integer** or **float** column with the observed target values at the indicated timestamps
 
-This is an example of such table, where  the values are for energy demand at the corresponding timestamp at the corresponding location:
+This is an example of such table, where  the values are for energy demand and the entity_id's are for 4 seperate locations we want to forecast for:
 
-|  entity_id  |  timestamp |     value |
+
+
+ |  timestamp | entity_id  |     value |
 |------------|------------|-----------|
-| DAYTON| 9/27/20 21:20 | 1841.6 |
-| DEOK| 9/27/20 21:20 | 2892.5 |
-| DOM| 9/27/20 21:20|  11276 |
-| DPL|9/27/20 21:20| 2113.7|
-| DAYTON| 9/27/20 21:25 | 1834.1 |
-| DEOK| 9/27/20 21:25 | 2880.2 |
-| DOM| 9/27/20 21:25|  11211.7 |
-| DPL|9/27/20 21:25| 2086.6|
+ 9/27/20 21:20 |  DAYTON|1841.6 |
+|  9/27/20 21:20 | DEOK|2892.5 |
+| 9/27/20 21:20|  DOM|11276 |
+|9/27/20 21:20| DPL|2113.7|
+| 9/27/20 21:25 | DAYTON|1834.1 |
+| 9/27/20 21:25 |DEOK| 2880.2 |
+| 9/27/20 21:25| DOM| 11211.7 |
+|9/27/20 21:25|DPL| 2086.6|
 
-
-### Exogenous Input
+### Exogenous Inputs Table
 Optionally, a second .csv file of exogenous inputs can be included. Exogenous inputs are time series that are not influenced by variables in the system, but they affect the output. In the first example, weather data is an example of exogenous input that has a strong correlation to taxi demand.
 
 |  timestamp |     Temp |   Rain |
@@ -87,17 +88,18 @@ Optionally, a second .csv file of exogenous inputs can be included. Exogenous in
 |7/1/14 3:51|	75.92|	0|
 |7/1/14 4:51|	75.02|	0.02|
 |7/1/14 5:51|	75.02|	0.06|
-The timestamp bust begin at or before the target value table's first time stamp and end at or after the target value table's last timestamp, but the level of granularity between the target table and the exogenous input table does not have to match.
+
+The timestamp must begin at or before the target value table's first timestamp and end at or after the target value table's last timestamp, but the level of granularity between the target table and the exogenous input table does not have to match.
 
 
 
 ## Output
 
-The output of the **pyteller Pipelines** is another table that contains the timestamp and the forecasting value(s), matching the format of the input targets table.
+The output of the pyteller Pipelines is another table that contains the timestamp and the forecasting value(s), matching the format of the input targets table.
 
 ## Datasets in the library
 
-For development and evaluation of pipelines, we include the NYC taxi data that can be found on the [TLC](https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page), or the processed version maintained by Numenta [here](https://github.com/numenta/NAB/tree/master/data). We also use PJM electricity demand data found [here](https://dataminer2.pjm.com/feed/inst_load).
+For development and evaluation of pipelines, we include the NYC taxi data that can be found [here](https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page), or the processed version maintained by Numenta [here](https://github.com/numenta/NAB/tree/master/data). We also use PJM electricity demand data found [here](https://dataminer2.pjm.com/feed/inst_load).
 
 ### Data Loading
 
