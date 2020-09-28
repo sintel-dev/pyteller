@@ -22,11 +22,90 @@ Time series forecasting using MLPrimitives
 
 pyteller is a time series forecasting library built the end user.
 
+## Table of Contents
+
+* [I. Data Format](#data-format)
+   * [I.1 Input](#input)
+   * [I.2 Output](#output)
+   * [I.3 Dataset we use in this library](#dataset-we-use-in-this-library)
+
+
 # Data Format
 
-##Input
+## Input
 
-pyteller pipelines work on time series that are provided in the following formats:
+pyteller pipelines work on time series that are provided in the following formats of .csv files:
+
+### Targets Table
+1. Single Entity
+* `timestamp`: the **pandas timestamp** object or **python datetime** object corresponding to the time at which the observation is made
+* `value`: an **integer** or **float** column with the observed target values at the indicated timesstamps
+
+This is an example of such table, where the values are the number of passengers at the corresponding timestamp
+
+|  timestamp |     value |
+|------------|-----------|
+| 7/1/14 1:00 |  6210 |
+| 7/1/14 1:30 | 4656|
+| 7/1/14 2:00 | 3820 |
+|7/1/14 1:30|	4656|
+|7/1/14 2:00|	3820|
+|7/1/14 2:30|	2873|
+|7/1/14 3:00|	2369|
+|7/1/14 3:30|	2064|
+|7/1/14 4:00|	2221|
+|7/1/14 4:30|	2158|
+|7/1/14 5:00|	2515|
+
+2. Single Entity, Multiple Entity-Instances
+* `entity_id`: the **string** denoting which entity instance the observation is for
+* `timestamp`: the **pandas timestamp** object or **python datetime** object corresponding to the time at which the observation is made
+* `value`: an **integer** or **float** column with the observed target values at the indicated timesstamps
+
+This is an example of such table, where  the values are for energy demand at the corresponding timestamp at the corresponding location:
+
+|  entity_id  |  timestamp |     value |
+|------------|------------|-----------|
+| DAYTON| 9/27/20 21:20 | 1841.6 |
+| DEOK| 9/27/20 21:20 | 2892.5 |
+| DOM| 9/27/20 21:20|  11276 |
+| DPL|9/27/20 21:20| 2113.7|
+| DAYTON| 9/27/20 21:25 | 1834.1 |
+| DEOK| 9/27/20 21:25 | 2880.2 |
+| DOM| 9/27/20 21:25|  11211.7 |
+| DPL|9/27/20 21:25| 2086.6|
+
+
+### Exogenous Input
+Optionally, a second .csv file of exogenous inputs can be included. Exogenous inputs are time series that are not influenced by variables in the system, but they affect the output. In the first example, weather data is an example of exogenous input that has a strong correlation to taxi demand.
+
+|  timestamp |     Temp |   Rain |
+|------------|-----------|-----------|
+| 7/1/14 0:51|	75.92|	0|
+|7/1/14 1:51|	75.92|	0|
+|7/1/14 2:51|	75.02|	0|
+|7/1/14 3:51|	75.92|	0|
+|7/1/14 4:51|	75.02|	0.02|
+|7/1/14 5:51|	75.02|	0.06|
+The timestamp bust begin at or before the target value table's first time stamp and end at or after the target value table's last timestamp, but the level of granularity between the target table and the exogenous input table does not have to match.
+
+
+
+## Output
+
+The output of the **pyteller Pipelines** is another table that contains the timestamp and the forecasting value(s), matching the format of the input targets table.
+
+## Datasets in the library
+
+For development and evaluation of pipelines, we include the NYC taxi data that can be found on the [TLC](https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page), or the processed version maintained by Numenta [here](https://github.com/numenta/NAB/tree/master/data). We also use PJM electricity demand data found [here](https://dataminer2.pjm.com/feed/inst_load).
+
+### Data Loading
+
+This formatted dataset can be browsed and downloaded directly from the
+[d3-ai-orion AWS S3 Bucket](https://d3-ai-orion.s3.amazonaws.com/index.html).
+
+
+
 # Install
 
 ## Requirements
