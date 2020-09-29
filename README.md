@@ -66,16 +66,16 @@ This is an example of such table, where  the values are for energy demand and th
 
 
 
- |  timestamp | entity_id  |     value |
-|------------|------------|-----------|
- 9/27/20 21:20 |  DAYTON|1841.6 |
-|  9/27/20 21:20 | DEOK|2892.5 |
-| 9/27/20 21:20|  DOM|11276 |
-|9/27/20 21:20| DPL|2113.7|
-| 9/27/20 21:25 | DAYTON|1834.1 |
-| 9/27/20 21:25 |DEOK| 2880.2 |
-| 9/27/20 21:25| DOM| 11211.7 |
-|9/27/20 21:25|DPL| 2086.6|
+ |  timestamp | entity_id  |   demand |   Temp |   Rain |
+|------------|------------|-----------| -----------|-----------|
+ 9/27/20 21:20 |  DAYTON|1841.6 | 65.78|	0|
+|  9/27/20 21:20 | DEOK|2892.5 |75.92|	0|
+| 9/27/20 21:20|  DOM|11276 | 55.29|	0|
+|9/27/20 21:20| DPL|2113.7| 75.02|	0.06|
+| 9/27/20 21:25 | DAYTON|1834.1 | 65.72|	0|
+| 9/27/20 21:25 |DEOK| 2880.2 | 75.92|	0|
+| 9/27/20 21:25| DOM| 11211.7 | 55.54|	0|
+|9/27/20 21:25|DPL| 2086.6| 75.02|	0.06|
 
 ### Exogenous Inputs Table
 Optionally, a second .csv file of exogenous inputs can be included. Exogenous inputs are time series that are not influenced by the targets, but they affect the output out the targets. In the first example, weather data is an example of exogenous input that has a strong correlation to taxi demand.
