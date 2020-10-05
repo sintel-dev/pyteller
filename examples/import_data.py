@@ -32,4 +32,4 @@ hyperparameters = hyperparameters,
 )
 
 pyteller._mlpipeline.fit(df)
-anomalies = pyteller._mlpipeline.predict(df)
+forecast = pyteller._mlpipeline.predict(df)
