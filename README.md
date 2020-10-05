@@ -37,9 +37,10 @@ pyteller is a time series forecasting library built the end user.
 The expected input to pyteller pipelines are .csv files of a **target table** which contains the history of what you want to predict for, and an optional **exogenous inputs** table of features that may help the prediction. They should be provided in the following formats:
 
 ### Targets Table
-#### Option 1: Single Entity
-* `timestamp`: the **pandas timestamp** object or **python datetime** object represents the time at which the observation is made
-* `value`: an **integer** or **float** column with the observed target values at the indicated timestamps
+#### Option 1: Single Entity: Academic Form
+The user must specify the following:
+* `timestamp_column`: the **pandas timestamp** object or **python datetime** object represents the time at which the observation is made
+* `target_column`: an **integer** or **float** column with the observed target values at the indicated timestamps
 
 This is an example of such table, where the values are the number of NYC taxi passengers at the corresponding timestamp.
 
@@ -57,16 +58,19 @@ This is an example of such table, where the values are the number of NYC taxi pa
 |7/1/14 4:30|	2158|
 |7/1/14 5:00|	2515|
 
-#### Option 2: Single Entity, Multiple Entity-Instances
-* `timestamp`: the **pandas timestamp** object or **python datetime** object corresponding to the time at which the observation is made
-* `entity_id`: the **string** denoting which entity instance the observation is for
-* `value`: an **integer** or **float** column with the observed target values at the indicated timestamps
+#### Option 2: Multiple Entity-Instances: Flatform
+The user must specify the following:
+* `timestamp_col`: the **pandas timestamp** object or **python datetime** object corresponding to the time at which the observation is made
+* `entity_col`: the **string** denoting which column is the entity you will seperately make forecasts for
+* `target`: the **string** denoting which column is the observed target values that you want to forecast for
+* `dynamic_variable`: the **string** denoting which column are other input time series that will help the forecast
+* `static_variable`: the **string** denoting which columns are a static varible
 
-This is an example of such table, where  the values are for energy demand and the entity_id's are for 4 seperate locations we are forecasting for:
+This is an example of such table, where the `timestamp_col` is 'timestamp', the `entity_col` is 'region',  the `target` is 'demand,' the  and `dynamic_variable` are 'Temp' and 'Rain':
 
 
 
- |  timestamp | entity_id  |   demand |   Temp |   Rain |
+ |  timestamp | region  |   demand |   Temp |   Rain |
 |------------|------------|-----------| -----------|-----------|
  9/27/20 21:20 |  DAYTON|1841.6 | 65.78|	0|
 |  9/27/20 21:20 | DEOK|2892.5 |75.92|	0|
@@ -77,19 +81,49 @@ This is an example of such table, where  the values are for energy demand and th
 | 9/27/20 21:25| DOM| 11211.7 | 55.54|	0|
 |9/27/20 21:25|DPL| 2086.6| 75.02|	0.06|
 
-### Exogenous Inputs Table
-Optionally, a second .csv file of exogenous inputs can be included. Exogenous inputs are time series that are not influenced by the targets, but they affect the output out the targets. In the first example, weather data is an example of exogenous input that has a strong correlation to taxi demand.
 
-|  timestamp |     Temp |   Rain |
-|------------|-----------|-----------|
-| 7/1/14 0:51|	75.92|	0|
-|7/1/14 1:51|	75.92|	0|
-|7/1/14 2:51|	75.02|	0|
-|7/1/14 3:51|	75.92|	0|
-|7/1/14 4:51|	75.02|	0.02|
-|7/1/14 5:51|	75.02|	0.06|
+#### Option 3: Multiple Entity-Instances: Longform
+The user must specify the following:
+* `timestamp_col`: the **pandas timestamp** object or **python datetime** object corresponding to the time at which the observation is made
+* `entity_col`: the **string** denoting which column is the entity you will seperately make forecasts for
+* `variable_col`: the **string** denoting which column is the observed variables
+* `target`: the **string** denoting which variable name is the observed target values in the `variable_col` that you want to forecast for
+* `dynamic_variable`: the **string** denoting which variable names are other input time series in the `variable_col` that will help the forecast
+* `static_variable`: the **string** denoting which variable names are a static varible in the `variable_col`
+* `value_col`: the **string** denoting which column contains the values of the observations of the `variable_col`
 
-The timestamp must begin at or before the target value table's first timestamp and end at or after the target value table's last timestamp, but the level of granularity between the target table and the exogenous input table does not have to match.
+This is an example of such table, where the `timestamp_col` is 'timestamp', the `entity_col` is 'region', the `variable_col` is 'var_name', the `target` is 'demand,' the  `dynamic_variable` are 'Temp' and 'Rain', and the `value_col` is 'value':
+
+
+
+ |  timestamp | region  |   var_name |   value |
+|------------|------------|-----------| -----------|
+ |9/27/20 21:20 |  DAYTON|demand | 1841.6|
+ |9/27/20 21:20 | DAYTON|Temp | 65.78|
+ |9/27/20 21:20 | DAYTON|Temp | 0|
+ |9/27/20 21:20 |DEOK| demand | 2892.5|
+ |9/27/20 21:20  | DEOK|Temp |75.92|
+ |9/27/20 21:20  |DEOK| Rain |0|
+ |9/27/20 21:20 | DOM|demand| 11276|
+ |9/27/20 21:20 | DOM| Temp | 55.29|
+ |9/27/20 21:20 |DOM| Rain| 0|
+|9/27/20 21:20| DPL|demand| 2113.7|
+ |9/27/20 21:20 | DPL| Temp | 75.02|
+ |9/27/20 21:20 |DPL| Rain| 0.06|
+ |9/27/20 21:25 |  DAYTON|demand | 1834.1|
+ |9/27/20 21:25 | DAYTON|Temp | 65.72|
+ |9/27/20 21:25 | DAYTON|Temp | 0|
+ |9/27/20 21:25 |DEOK| demand | 2880.2|
+ |9/27/20 21:25  | DEOK|Temp |75.92|
+ |9/27/20 21:25  |DEOK| Rain |0|
+ |9/27/20 21:25 | DOM|demand| 11211.7|
+ |9/27/20 21:25 | DOM| Temp | 55.54|
+ |9/27/20 21:25 |DOM| Rain| 0|
+|9/27/20 21:25| DPL|demand| 2086.6|
+ |9/27/20 21:25 | DPL| Temp | 75.02|
+ |9/27/20 21:25 |DPL| Rain| 0.06|
+
+
 
 
 
@@ -171,7 +205,28 @@ for more details about this process.
 In this short tutorial we will guide you through a series of steps that will help you
 getting started with **pyteller**.
 
-TODO: Create a step by step guide here.
+## 1. Load the data
+
+In the first step we will load the **electricity_demand** data from the **Demo Dataset**.
+
+
+
+Import the `pyteller.data.load_signal` function and call it
+
+```python3
+from pyteller.data import load_signal
+
+df = load_signal(
+    data='electricity_demand.csv',
+    timestamp_col = 'timestamp',
+    entity_col='region',
+    target = 'demand'
+    dynamic_variables = ['Rain', 'Temp']
+)
+```
+
+
+
 
 # What's next?
 

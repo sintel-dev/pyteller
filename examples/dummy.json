@@ -1,6 +1,7 @@
 {
     "primitives": [
-        "orion.primitives.estimators.MeanEstimator"
+        "pyteller.primitives.estimators.Persistence"
+
     ],
     "init_params": {
 
