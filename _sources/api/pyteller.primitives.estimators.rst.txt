@@ -1,0 +1,7 @@
+pyteller.primitives.estimators module
+=====================================
+
+.. automodule:: pyteller.primitives.estimators
+   :members:
+   :undoc-members:
+   :show-inheritance:

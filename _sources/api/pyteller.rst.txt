@@ -1,0 +1,27 @@
+pyteller package
+================
+
+Subpackages
+-----------
+
+.. toctree::
+
+   pyteller.evaluation
+   pyteller.primitives
+
+Submodules
+----------
+
+.. toctree::
+
+   pyteller.benchmark
+   pyteller.data
+   pyteller.pyteller
+
+Module contents
+---------------
+
+.. automodule:: pyteller
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,17 @@
+pyteller.primitives package
+===========================
+
+Submodules
+----------
+
+.. toctree::
+
+   pyteller.primitives.estimators
+
+Module contents
+---------------
+
+.. automodule:: pyteller.primitives
+   :members:
+   :undoc-members:
+   :show-inheritance:

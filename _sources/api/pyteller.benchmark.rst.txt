@@ -1,0 +1,7 @@
+pyteller.benchmark module
+=========================
+
+.. automodule:: pyteller.benchmark
+   :members:
+   :undoc-members:
+   :show-inheritance:

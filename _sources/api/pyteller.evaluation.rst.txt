@@ -1,0 +1,17 @@
+pyteller.evaluation package
+===========================
+
+Submodules
+----------
+
+.. toctree::
+
+   pyteller.evaluation.metrics
+
+Module contents
+---------------
+
+.. automodule:: pyteller.evaluation
+   :members:
+   :undoc-members:
+   :show-inheritance:
