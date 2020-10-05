@@ -84,10 +84,11 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="readme.html">Install from source</a></li>
 <li class="toctree-l1"><a class="reference internal" href="readme.html#install-for-development">Install for Development</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="readme.html#quickstart">Quickstart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="readme.html#quick-start">Quick Start</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="readme.html#load-the-data">1. Load the data</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="readme.html#load-the-data">1. Load the data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="readme.html#forecast">1. Forecast</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="readme.html#what-s-next">What’s next?</a></li>
 </ul>
 </li>
@@ -235,19 +236,19 @@ pyteller is a time series forecasting library built the end user.
 * [I. Data Format](#data-format)
    * [I.1 Input](#input)
    * [I.2 Output](#output)
-   * [I.3 Dataset we use in this library](#dataset-we-use-in-this-library)
+* [II. Quick Start](#quick-start)
 
 
 # Data Format
 
 ## Input
 
-The expected input to pyteller pipelines are .csv files of a **target table** which contains the history of what you want to predict for, and an optional **exogenous inputs** table of features that may help the prediction. They should be provided in the following formats:
+The expected input to pyteller pipelines is a .csv file with data in one of the following formats:
 
 ### Targets Table
-#### Option 1: Single Entity: Academic Form
+#### Option 1: Single Entity (Academic Form)
 The user must specify the following:
-* `timestamp_column`: the **pandas timestamp** object or **python datetime** object represents the time at which the observation is made
+* `timestamp_col`: the **string** denoting which column contains the **pandas timestamp** objects or **python datetime** objects corresponding to the time at which the observation is made
 * `target_column`: an **integer** or **float** column with the observed target values at the indicated timestamps
 
 This is an example of such table, where the values are the number of NYC taxi passengers at the corresponding timestamp.
@@ -266,15 +267,15 @@ This is an example of such table, where the values are the number of NYC taxi pa
 |7/1/14 4:30|   2158|
 |7/1/14 5:00|   2515|
 
-#### Option 2: Multiple Entity-Instances: Flatform
+#### Option 2: Multiple Entity-Instances (Flatform)
 The user must specify the following:
-* `timestamp_col`: the **pandas timestamp** object or **python datetime** object corresponding to the time at which the observation is made
-* `entity_col`: the **string** denoting which column is the entity you will seperately make forecasts for
-* `target`: the **string** denoting which column is the observed target values that you want to forecast for
-* `dynamic_variable`: the **string** denoting which column are other input time series that will help the forecast
-* `static_variable`: the **string** denoting which columns are a static varible
+* `timestamp_col`: the **string** denoting which column contains the **pandas timestamp** objects or **python datetime** objects corresponding to the time at which the observation is made
+* `entity_col`: the **string** denoting which column contains the entities you will seperately make forecasts for
+* `target`: the **string** denoting which columns contain the observed target values that you want to forecast for
+* `dynamic_variable`: the **string** denoting which columns contain other input time series that will help the forecast
+* `static_variable`: the **string** denoting which columns are a static varibles
 
-This is an example of such table, where the `timestamp_col` is 'timestamp', the `entity_col` is 'region',  the `target` is 'demand,' the  and `dynamic_variable` are 'Temp' and 'Rain':
+This is an example of such table, where the `timestamp_col` is 'timestamp', the `entity_col` is 'region',  the `target` is 'demand,' and the  `dynamic_variable` are 'Temp' and 'Rain':
 
 
 
@@ -292,12 +293,12 @@ This is an example of such table, where the `timestamp_col` is 'timestamp', the 
 
 #### Option 3: Multiple Entity-Instances: Longform
 The user must specify the following:
-* `timestamp_col`: the **pandas timestamp** object or **python datetime** object corresponding to the time at which the observation is made
-* `entity_col`: the **string** denoting which column is the entity you will seperately make forecasts for
-* `variable_col`: the **string** denoting which column is the observed variables
-* `target`: the **string** denoting which variable name is the observed target values in the `variable_col` that you want to forecast for
+* `timestamp_col`: the **string** denoting which column contains the **pandas timestamp** objects or **python datetime** objects corresponding to the time at which the observation is made
+* `entity_col`: the **string** denoting which column contains the entities you will seperately make forecasts for
+* `variable_col`: the **string** denoting which column contains the names of the observed variables
+* `target`: the **string** denoting which variable names are the observed target values in the `variable_col` that you want to forecast for
 * `dynamic_variable`: the **string** denoting which variable names are other input time series in the `variable_col` that will help the forecast
-* `static_variable`: the **string** denoting which variable names are a static varible in the `variable_col`
+* `static_variable`: the **string** denoting which variable names are static varibles in the `variable_col`
 * `value_col`: the **string** denoting which column contains the values of the observations of the `variable_col`
 
 This is an example of such table, where the `timestamp_col` is 'timestamp', the `entity_col` is 'region', the `variable_col` is 'var_name', the `target` is 'demand,' the  `dynamic_variable` are 'Temp' and 'Rain', and the `value_col` is 'value':
@@ -403,8 +404,8 @@ make install
 for development.</p>
 <p>Please head to the <a class="reference external" href="https://signals-dev.github.io/pyteller/contributing.html#get-started">Contributing Guide</a>
 for more details about this process.</p>
-<div class="section" id="quickstart">
-<h2>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="quick-start">
+<h2>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h2>
 <p>In this short tutorial we will guide you through a series of steps that will help you
 getting started with <strong>pyteller</strong>.</p>
 </div>
@@ -422,6 +423,35 @@ getting started with <strong>pyteller</strong>.</p>
     <span class="n">target</span> <span class="o">=</span> <span class="s1">&#39;demand&#39;</span>
     <span class="n">dynamic_variables</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Rain&#39;</span><span class="p">,</span> <span class="s1">&#39;Temp&#39;</span><span class="p">]</span>
 <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="forecast">
+<h1>1. Forecast<a class="headerlink" href="#forecast" title="Permalink to this headline">¶</a></h1>
+<p>Once we have the data, let us try to use a pyteller pipeline to make a forecast.</p>
+<p>First, alter the hyperparamters based on the forecasting problem at hand. In this case we want to predict for 11 time steps ahead</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">hyperparameters</span> <span class="o">=</span>  <span class="p">{</span>
+    <span class="s2">&quot;pyteller.primitives.estimators.Persistence#1&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;lead&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Next, create an instance of the <code class="docutils literal notranslate"><span class="pre">pyteller.Pyteller</span></code> class and pass in the chosen pipeline and hyperparameter dictionary.</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyteller</span> <span class="kn">import</span> <span class="n">Pyteller</span>
+
+<span class="n">pyteller</span> <span class="o">=</span> <span class="n">Pyteller</span> <span class="p">(</span>
+    <span class="n">hyperparameters</span> <span class="o">=</span> <span class="n">hyperparameters</span><span class="p">,</span>
+    <span class="n">pipeline</span> <span class="o">=</span> <span class="s1">&#39;dummy.json&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Once the pipeline is ready, we can fit it to our data:</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">pyteller</span><span class="o">.</span><span class="n">_mlpipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Once it is fitted, we are ready to make the forecast:</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">forecast</span> <span class="o">=</span> <span class="n">pyteller</span><span class="o">.</span><span class="n">_mlpipeline</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="section" id="what-s-next">
