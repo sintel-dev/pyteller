@@ -1,0 +1,44 @@
+{
+    "name": "pyteller.primitives.split_sequence",
+    "contributors": "Skylar Eiskowitz <eiskowit@mit.edu>",
+    "description": "Split sequences of time series data.",
+    "classifiers": {
+        "type": "preprocessor",
+        "subtype": "feature_extractor"
+    },
+    "modalities": [
+        "timeseries"
+    ],
+    "primitive": "pyteller.primitives.estimators.split_sequence",
+    "produce": {
+        "args": [
+            {
+                "name": "X",
+                "type": "ndarray"
+            }
+
+        ],
+        "output": [
+            {
+                "name": "y",
+                "type": "ndarray"
+            }   
+ 	]
+    },
+    "hyperparameters": {
+        "fixed": {
+            "target_column": {
+                "type": "str",
+                "default": 0
+            },
+            "sequence_size": {
+                "type": "int",
+                "default": 6000
+            },
+            "overlap_size": {
+                "type": "int",
+                "default": 12
+            }
+        }
+    }
+}

@@ -1,0 +1,5 @@
+,MAPE,MSE,pipeline,prediction length,signal,status
+0,1776.5,4729184.7,persistence,10,taxi,OK
+1,1.9800000000000018,8.748000000000015,persistence,10,AL_Weather,OK
+2,0.0,0.0,persistence,10,AL_Wind,OK
+3,1389.7,2670018.9,persistence,10,pjm_hourly_est,OK

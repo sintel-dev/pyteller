@@ -1,0 +1,41 @@
+{
+    "name": "pyteller.primitives.estimators.Persistence",
+    "contributors": ["Skylar Eiskowitz <eiskowit@mit.edu>"],
+    "documentation": "",
+    "description": "Simple Estimator that always returns the last value as the forecasted value.",
+    "classifiers": {
+        "type": "estimator",
+        "subtype": "classifier"
+    },
+    "modalities": [],
+    "primitive": "pyteller.primitives.estimators.Persistence",
+    "fit": {
+    },
+    "produce": {
+        "method": "predict",
+        "args": [
+{
+                "name": "X",
+                "type": "ndarray"
+            }
+        ],
+        "output": [
+            {
+                "name": "y",
+                "type": "ndarray"
+            }
+        ]
+    },
+    "hyperparameters": {
+        "fixed": {
+            "value_column": {
+                "type": "str",
+                "default": "target"
+            },
+            "lead": {
+                "type": "int",
+                "default":  10
+            }
+        }
+    }
+}

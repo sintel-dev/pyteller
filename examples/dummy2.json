@@ -1,0 +1,22 @@
+{
+    "primitives": [
+	"pyteller.primitives.estimators.split_sequence",
+        "pyteller.primitives.estimators.Persistence"
+
+    ],
+    "init_params": {
+
+	"pyteller.primitives.estimators.split_sequence#1": {
+            "target_column": 0,
+            "sequence_size": 6000,
+            "overlap_size": 2640
+        }
+
+    },
+    "output_names": {
+        "pyteller.primitives.estimators.split_sequence#1": {
+            "y": "X",
+            "y_index": "index"
+        }
+    }
+}

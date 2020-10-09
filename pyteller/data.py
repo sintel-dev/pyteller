@@ -11,7 +11,7 @@ DATA_PATH = os.path.join(
     'data'
 )
 
-BUCKET = 'd3-ai-orion'
+BUCKET = 'pyteller'
 S3_URL = 'https://{}.s3.amazonaws.com/{}'
 
 
@@ -19,13 +19,13 @@ def download(name, test_size=None, data_path=DATA_PATH):
     """Load the CSV with the given name from S3.
 
     If the CSV has never been loaded before, it will be downloaded
-    from the [d3-ai-orion bucket](https://d3-ai-orion.s3.amazonaws.com) or
+    from the [pyteller bucket](https://pyteller.s3.amazonaws.com) or
     the S3 bucket specified following the `s3://{bucket}/path/to/the.csv` format,
-    and then cached inside the `data` folder, within the `orion` package
+    and then cached inside the `data` folder, within the `pyteller` package
     directory, and then returned.
 
     Otherwise, if it has been downloaded and cached before, it will be directly
-    loaded from the `orion/data` folder without contacting S3.
+    loaded from the `pyteller/data` folder without contacting S3.
 
     If a `test_size` value is given, the data will be split in two parts
     without altering its order, making the second one proportionally as
@@ -66,45 +66,48 @@ def download(name, test_size=None, data_path=DATA_PATH):
     return data
 
 
-def load_csv(path, timestamp_column=None, value_column=None):
-    header = None if timestamp_column is not None else 'infer'
-    data = pd.read_csv(path, header=header)
+def load_csv(path):
+    data = pd.read_csv(path)
 
-    if timestamp_column is None:
-        if value_column is not None:
-            raise ValueError("If value_column is provided, timestamp_column must be as well")
+    return pd.DataFrame(data)
 
-        return data
+def engest_data(data,test_size=None, timestamp_col=None, entity_col=None, target=None,dynamic_variable=None, static_variable=None):
 
-    elif value_column is None:
-        raise ValueError("If timestamp_column is provided, value_column must be as well")
-    elif timestamp_column == value_column:
-        raise ValueError("timestamp_column cannot be the same as value_column")
 
-    timestamp_column_name = data.columns[timestamp_column]
-    value_column_name = data.columns[value_column]
-    columns = {
-        'timestamp': data[timestamp_column_name].values,
-        'value': data[value_column_name].values,
+
+    data = {
+        'timestamp': data[timestamp_col].values,
+        'entity': data[entity_col].values,
+        'target': data[target].values,
+        'dynamic_variable': data[dynamic_variable].values
+
     }
+    return pd.DataFrame(columns)[['timestamp', 'entity', 'target']]
 
-    return pd.DataFrame(columns)[['timestamp', 'value']]
 
-
-def load_signal(data, test_size=None, timestamp_column=None, target_column=None, entity_column=None):
+def load_signal(data, train_size=.75, timestamp_col=None, entity_col=None, target=None, dynamic_variable=None, static_variable=None,column_dict=None):
     if os.path.isfile(data):
-        data = load_csv(data, timestamp_column, target_column)
+        data = load_csv(data)
     else:
         data = download(data)
-
-    #data['timestamp'] = data['timestamp'].astype(int)
-    #data['value'] = data['value'].astype(float)
-
-    if test_size is None:
-        return data
-
-    test_length = round(len(data) * test_size)
-    train = data.iloc[:-test_length]
-    test = data.iloc[-test_length:]
+    if column_dict != None:
+        columns = column_dict
+    else:
+        columns = {
+            'timestamp': timestamp_col,
+            'entity': entity_col,
+            'target': target,
+            'dynamic_variable': dynamic_variable,
+            'static_variable': static_variable
+        }
+# TODO: More than one entity or target col etc, need to umpack
+        columns = {k: v for k, v in columns.items() if v != None}
+    df = pd.DataFrame()
+    for key in columns:
+        df[key] = data[columns[key]]
+    # df = df.set_index('timestamp')
+    train_length = round(len(df) * train_size)
+    train = df.iloc[:train_length]
+    test = df.iloc[train_length:]
 
     return train, test
