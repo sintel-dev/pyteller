@@ -1,0 +1,7 @@
+pyteller.core module
+====================
+
+.. automodule:: pyteller.core
+   :members:
+   :undoc-members:
+   :show-inheritance:

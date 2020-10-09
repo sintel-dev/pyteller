@@ -14,9 +14,10 @@ Submodules
 
 .. toctree::
 
+   pyteller.analysis
    pyteller.benchmark
+   pyteller.core
    pyteller.data
-   pyteller.pyteller
 
 Module contents
 ---------------
