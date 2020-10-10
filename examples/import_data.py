@@ -2,7 +2,7 @@ from pyteller.data import load_signal
 
 
 # signal = 'electricity_demand.csv'
-signal = 'pjm_hourly_est'
+signal = 'AL_Weather'
 # load signal
 # signal = 'nyc_taxi'
 # df = load_signal(signal)
@@ -13,8 +13,8 @@ signal = 'pjm_hourly_est'
 
 train,test = load_signal(
     data=signal,
-    timestamp_col = 'Datetime',
-    target = 'AEP'
+    timestamp_col = 'valid',
+    target = 'tmpf'
 )
 
 

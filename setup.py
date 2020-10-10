@@ -67,6 +67,15 @@ setup(
         'Programming Language :: Python :: 3.8',
     ],
     description='Time series forecasting using MLPrimitives',
+    entry_points={
+        'console_scripts': [
+            'pyteller=pyteller.cli:main'
+        ],
+        'mlblocks': [
+            'primitives=pyteller:MLBLOCKS_PRIMITIVES',
+            'pipelines=pyteller:MLBLOCKS_PIPELINES'
+        ],
+    },
     extras_require={
         'test': tests_require,
         'dev': development_requires + tests_require,
@@ -85,6 +94,6 @@ setup(
     test_suite='tests',
     tests_require=tests_require,
     url='https://github.com/signals-dev/pyteller',
-    version='0.1.0.dev0',
+    version='0.0.1.dev0',
     zip_safe=False,
 )

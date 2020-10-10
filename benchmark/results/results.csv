@@ -1,5 +1,5 @@
-,MAPE,MSE,pipeline,prediction length,signal,status
-0,1776.5,4729184.7,persistence,10,taxi,OK
-1,1.9800000000000018,8.748000000000015,persistence,10,AL_Weather,OK
-2,0.0,0.0,persistence,10,AL_Wind,OK
-3,1389.7,2670018.9,persistence,10,pjm_hourly_est,OK
+,MAPE,MASE,MSE,dataset,length of testing data,length of training data,pipeline,prediction length,sMAPE,signal
+0,1776.5,1.3819744264538147,4729184.7,taxi,2580,7740,persistence,10,6.813525163914626,value
+1,1.9800000000000018,3.8812500000000036,8.748000000000015,AL_Weather,828,2485,persistence,10,4.399875462912275,tmpf
+2,0.0,0.0,0.0,AL_Wind,26280,78840,persistence,10,0.0,Power(MW)
+3,1389.7,0.0,2670018.9,pjm_hourly_est,31962,95887,persistence,10,7.056691449751868,AEP

@@ -1,5 +1,6 @@
 import os
 import json
+import ast
 from pyteller.evaluation import METRICS_NORM as METRICS
 from functools import partial
 import pandas as pd
@@ -14,8 +15,8 @@ PIPELINE_DIR = os.path.join(os.path.dirname(__file__), 'mlpipelines', 'verified'
 BUCKET = 'pyteller'
 S3_URL = 'https://{}.s3.amazonaws.com/{}'
 
-# BENCHMARK_DATA = pd.read_csv(S3_URL.format(
-#     BUCKET, 'datasets.csv'), index_col=0, header=None).applymap(ast.literal_eval).to_dict()[1]
+BENCHMARK_DATA = pd.read_csv(S3_URL.format(
+    BUCKET, 'datasets.csv'), index_col=0, header=None).applymap(ast.literal_eval).to_dict()[1]
 # BENCHMARK_PARAMS = pd.read_csv(S3_URL.format(
 #     BUCKET, 'parameters.csv'), index_col=0, header=None).applymap(ast.literal_eval).to_dict()[1]
 BENCHMARK_PARAMS=[]
@@ -44,13 +45,13 @@ def _sort_leaderboard(df, rank, metrics):
     return df.set_index('pipeline').reset_index()
 
 
-def _load_signal(signal, holdout):
-    meta_path = os.path.join(os.path.dirname(__file__), 'data', signal + '.json')
+def _load_signal(dataset,signal, holdout):
+    meta_path = os.path.join(os.path.dirname(__file__), 'data', dataset + '.json')
     with open(meta_path) as f:
         columns = json.load(f)
 
 
-    train,test =  load_signal(signal,column_dict=columns)
+    train,test =  load_signal(dataset,column_dict=columns)
 
     return train, test
 
@@ -58,30 +59,34 @@ def _load_signal(signal, holdout):
 
 def _evaluate_signal(pipeline, name, dataset, signal, hyperparameter, metrics,
                      holdout=True, detrend=False):
-    train, test = _load_signal(signal, holdout)
+    train, test = _load_signal(dataset,signal, holdout)
     pipeline = _load_pipeline(pipeline, hyperparameter)
     pyteller = Pyteller(
         pipeline=pipeline
     )
+    # TODO do not hardcode the actual, use datetime matching instead
     forecast = pyteller._mlpipeline.predict(test.loc[:, ['timestamp', 'target']])
     actual = test[-10:]
+    scores = {}
+    if 'MASE' in metrics:
 
 
 
-    scores = {
+        scores['MASE'] = metrics['MASE'](train['target'],forecast['target'],actual['target'])
+        # del metrics['MASE']
+
+    scores.update( {
         name: scorer(forecast['target'],actual['target'])
-        for name, scorer in metrics.items()
-    }
-    scores['status'] = 'OK'
-
-
-
+        for name, scorer in metrics.items() if name != 'MASE'
+    })
 
     scores['pipeline'] = name
     #scores['holdout'] = holdout
-    #scores['dataset'] = dataset
+    scores['dataset'] = dataset
     scores['signal'] = signal
     scores['prediction length'] = actual.shape[0]
+    scores['length of training data'] = len(train)
+    scores['length of testing data'] = len(test)
 
     return scores
 
@@ -111,10 +116,17 @@ def _evaluate_pipeline(pipeline, pipeline_name, dataset, signals, hyperparameter
 
     scores = list()
 
-    for signal in signals:
+    if isinstance(signals, str):
         for holdout_ in holdout:
-            score = function(pipeline, pipeline_name, dataset, signal, hyperparameter,
+            score = function(pipeline, pipeline_name, dataset, signals, hyperparameter,
                              metrics, holdout_, detrend)
+            scores.append(score)
+    else:
+        for signal in signals:
+
+            for holdout_ in holdout:
+                score = function(pipeline, pipeline_name, dataset, signal, hyperparameter,
+                                 metrics, holdout_, detrend)
 
             scores.append(score)
 
@@ -144,6 +156,8 @@ def _get_parameter(parameters, name):
 def _evaluate_datasets(pipelines, datasets, hyperparameters, metrics, distributed, holdout,
                        detrend):
     delayed = []
+
+
     for dataset, signals in datasets.items():
         LOGGER.info("Starting dataset {} with {} signals..".format(
             dataset, len(signals)))
@@ -251,17 +265,23 @@ def main():
     output_path = os.path.join(BENCHMARK_PATH, 'results', version)
 
     # metrics
-
     metrics = {k: partial(fun) for k, fun in METRICS.items()}
 
     # mlpipelines
     pipelines = VERIFIED_PIPELINES
-
+    datasets = {
+        'taxi':'value',
+        'AL_Weather':'tmpf',
+        'AL_Wind': 'Power(MW)',
+        'pjm_hourly_est' : 'AEP'
+    }
 
     results = benchmark(
-        pipelines=pipelines, metrics=metrics, datasets=['taxi','AL_Weather','AL_Wind','pjm_hourly_est'],output_path=output_path)
+        pipelines=pipelines, metrics=metrics, datasets=datasets,output_path=output_path)
+    # results = benchmark(
+    #     pipelines=pipelines, metrics=metrics, output_path=output_path)
 
-    # TODO: summarize results
+    # TODO: summarize results for who wins compared to latest baseline
     # leaderboard = _summarize_results(results, metrics)
     output_path = os.path.join(BENCHMARK_PATH, 'leaderboard.csv')
     results.to_csv(output_path)
