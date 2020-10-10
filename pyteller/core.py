@@ -33,13 +33,16 @@ class Pyteller:
         self._fitted = False
 
 
-    def evaluate(self, data: pd.DataFrame, ground_truth: pd.DataFrame, fit: bool = False,
+    def evaluate(self, forecast: pd.DataFrame, ground_truth: pd.DataFrame, fit: bool = False,
                  train_data: pd.DataFrame = None, metrics: List[str] = METRICS) -> pd.Series:
+        scores={}
+        if 'MASE' in metrics:
+            scores['MASE'] = metrics['MASE'](train_data['target'], forecast['target'], ground_truth['target'])
 
 
-        scores = {
-            metric: METRICS[metric](ground_truth['target'], data['target'])
-            for metric in metrics
-        }
+        scores.update ({
+            metric: METRICS[metric](ground_truth['target'], forecast['target'])
+            for metric in metrics if metric != 'MASE'
+        })
 
         return pd.Series(scores)

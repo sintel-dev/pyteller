@@ -66,14 +66,12 @@ def _evaluate_signal(pipeline, name, dataset, signal, hyperparameter, metrics,
     )
     # TODO do not hardcode the actual, use datetime matching instead
     forecast = pyteller._mlpipeline.predict(test.loc[:, ['timestamp', 'target']])
-    actual = test[-10:]
+    pred_window = (test['timestamp'] >= forecast['timestamp'].iloc[0]) & (
+            test['timestamp'] <= forecast['timestamp'].iloc[-1])
+    actual=test.loc[pred_window]
     scores = {}
     if 'MASE' in metrics:
-
-
-
         scores['MASE'] = metrics['MASE'](train['target'],forecast['target'],actual['target'])
-        # del metrics['MASE']
 
     scores.update( {
         name: scorer(forecast['target'],actual['target'])

@@ -71,18 +71,7 @@ def load_csv(path):
 
     return pd.DataFrame(data)
 
-def engest_data(data,test_size=None, timestamp_col=None, entity_col=None, target=None,dynamic_variable=None, static_variable=None):
 
-
-
-    data = {
-        'timestamp': data[timestamp_col].values,
-        'entity': data[entity_col].values,
-        'target': data[target].values,
-        'dynamic_variable': data[dynamic_variable].values
-
-    }
-    return pd.DataFrame(columns)[['timestamp', 'entity', 'target']]
 
 
 def load_signal(data, train_size=.75, timestamp_col=None, entity_col=None, target=None, dynamic_variable=None, static_variable=None,column_dict=None):
@@ -90,6 +79,7 @@ def load_signal(data, train_size=.75, timestamp_col=None, entity_col=None, targe
         data = load_csv(data)
     else:
         data = download(data)
+
     if column_dict != None:
         columns = column_dict
     else:
@@ -105,7 +95,8 @@ def load_signal(data, train_size=.75, timestamp_col=None, entity_col=None, targe
     df = pd.DataFrame()
     for key in columns:
         df[key] = data[columns[key]]
-    # df = df.set_index('timestamp')
+
+    df['timestamp'] = pd.to_datetime(df['timestamp'], infer_datetime_format=True)
     train_length = round(len(df) * train_size)
     train = df.iloc[:train_length]
     test = df.iloc[train_length:]
