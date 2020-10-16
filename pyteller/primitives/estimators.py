@@ -35,18 +35,19 @@ class Persistence:
     used in real scenarios.
     """
 
-    def __init__(self, value_column='target',lead = 'lead'):
-        self._value_column = value_column
-        self.lead = lead
+    def __init__(self):
+        self.values_col = 'target'
+
+
 
     # def fit(self, X):
     #     self.values = X[self._value_column]
-    def predict(self,X):
+    def predict(self,X,lead):
         import numpy as np
         import pandas as pd
-        self.values = X[self._value_column]
-        preds = pd.DataFrame(data=X['timestamp'][-self.lead:].values, columns=['timestamp'])
-        preds['target'] = np.full((self.lead, 1), self.values.iloc[-self.lead-1])
+        self.values = X['target']
+        preds = pd.DataFrame(data=X['timestamp'][-lead:].values, columns=['timestamp'])
+        preds['target'] = np.full((lead, 1), self.values.iloc[-lead-1])
         return preds
         # return np.full(self.lead,self.values.iloc[-1])
 

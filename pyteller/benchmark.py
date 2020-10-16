@@ -5,12 +5,12 @@ from pyteller.evaluation import METRICS_NORM as METRICS
 from functools import partial
 import pandas as pd
 import logging
-from pyteller.analysis import _load_pipeline, analyze
+from pyteller.analysis import _load_pipeline
 from pyteller.data import load_signal
 from pyteller.core import Pyteller
 LOGGER = logging.getLogger(__name__)
 
-PIPELINE_DIR = os.path.join(os.path.dirname(__file__), 'mlpipelines', 'verified')
+PIPELINE_DIR = os.path.join(os.path.dirname(__file__), 'pipelines', 'verified')
 
 BUCKET = 'pyteller'
 S3_URL = 'https://{}.s3.amazonaws.com/{}'
@@ -62,27 +62,29 @@ def _evaluate_signal(pipeline, name, dataset, signal, hyperparameter, metrics,
     train, test = _load_signal(dataset,signal, holdout)
     pipeline = _load_pipeline(pipeline, hyperparameter)
     pyteller = Pyteller(
-        pipeline=pipeline
+        pipeline=pipeline,
+        lead=3
     )
-    # TODO do not hardcode the actual, use datetime matching instead
-    forecast = pyteller._mlpipeline.predict(test.loc[:, ['timestamp', 'target']])
-    pred_window = (test['timestamp'] >= forecast['timestamp'].iloc[0]) & (
-            test['timestamp'] <= forecast['timestamp'].iloc[-1])
-    actual=test.loc[pred_window]
-    scores = {}
-    if 'MASE' in metrics:
-        scores['MASE'] = metrics['MASE'](train['target'],forecast['target'],actual['target'])
 
-    scores.update( {
-        name: scorer(forecast['target'],actual['target'])
-        for name, scorer in metrics.items() if name != 'MASE'
-    })
+    forecast = pyteller.predict(test)
+    # pred_window = (test['timestamp'] >= forecast['timestamp'].iloc[0]) & (
+    #         test['timestamp'] <= forecast['timestamp'].iloc[-1])
+    # actual=test.loc[pred_window]
+    # scores = {}
+    # if 'MASE' in metrics:
+    #     scores['MASE'] = metrics['MASE'](train['target'],forecast['target'],actual['target'])
+    #
+    # scores.update( {
+    #     name: scorer(forecast['target'],actual['target'])
+    #     for name, scorer in metrics.items() if name != 'MASE'
+    # })
 
+    scores = pyteller.evaluate(train_data=train, test_data=test, forecast=forecast)
     scores['pipeline'] = name
     #scores['holdout'] = holdout
     scores['dataset'] = dataset
     scores['signal'] = signal
-    scores['prediction length'] = actual.shape[0]
+    scores['prediction length'] = forecast.shape[0]
     scores['length of training data'] = len(train)
     scores['length of testing data'] = len(test)
 
@@ -184,9 +186,9 @@ def _evaluate_datasets(pipelines, datasets, hyperparameters, metrics, distribute
 
 def benchmark(pipelines=None, datasets=None, hyperparameters=None, metrics=METRICS, rank='MAPE',
               distributed=False, holdout=False, detrend=False, output_path=None):
-    """Evaluate mlpipelines on the given datasets and evaluate the performance.
+    """Evaluate pipelines on the given datasets and evaluate the performance.
 
-    The mlpipelines are used to analyze the given signals and later on the
+    The pipelines are used to analyze the given signals and later on the
     detected anomalies are scored against the known anomalies using the
     indicated metrics.
 
@@ -197,18 +199,18 @@ def benchmark(pipelines=None, datasets=None, hyperparameters=None, metrics=METRI
         pipelines (dict or list): dictionary with pipeline names as keys and their
             JSON paths as values. If a list is given, it should be of JSON paths,
             and the paths themselves will be used as names. If not give, all verified
-            mlpipelines will be used for evaluation.
+            pipelines will be used for evaluation.
         datasets (dict or list): dictionary of dataset name as keys and list of signals as
             values. If a list is given then it will be under a generic name ``dataset``.
             If not given, all benchmark datasets will be used used.
         hyperparameters (dict or list): dictionary with pipeline names as keys
             and their hyperparameter JSON paths or dictionaries as values. If a list is
-            given, it should be of corresponding order to mlpipelines.
+            given, it should be of corresponding order to pipelines.
         metrics (dict or list): dictionary with metric names as keys and
             scoring functions as values. If a list is given, it should be of scoring
             functions, and they ``__name__`` value will be used as the metric name.
             If not given, all the available metrics will be used.
-        rank (str): Sort and rank the mlpipelines based on the given metric.
+        rank (str): Sort and rank the pipelines based on the given metric.
             If not given, rank using the first metric.
         distributed (bool): Whether to use dask for distributed computing. If not given,
             use ``False``.
@@ -265,13 +267,14 @@ def main():
     # metrics
     metrics = {k: partial(fun) for k, fun in METRICS.items()}
 
-    # mlpipelines
+    # pipelines
     pipelines = VERIFIED_PIPELINES
     datasets = {
-        'taxi':'value',
-        'AL_Weather':'tmpf',
-        'AL_Wind': 'Power(MW)',
-        'pjm_hourly_est' : 'AEP'
+        # 'taxi':'value',
+        # 'AL_Weather':'tmpf',
+        # 'AL_Wind': 'Power(MW)',
+        # 'pjm_hourly_est' : 'AEP',
+        'FasTrak' : 'Total Flow'
     }
 
     results = benchmark(

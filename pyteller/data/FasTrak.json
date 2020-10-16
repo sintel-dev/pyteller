@@ -1,6 +1,7 @@
 
 {
     "timestamp": "timestamp",
-    "target": "Power(MW)"
+    "target": "Total Flow",
+    "entity": "Location Identifier"
 
     }

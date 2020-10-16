@@ -107,3 +107,6 @@ ENV/
 
 #idea files
 *.idea
+
+# intellij configs
+.idea/

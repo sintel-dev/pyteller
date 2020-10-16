@@ -74,7 +74,15 @@ def load_csv(path):
 
 
 
-def load_signal(data, train_size=.75, timestamp_col=None, entity_col=None, target=None, dynamic_variable=None, static_variable=None,column_dict=None):
+def load_signal(data,
+                train_size=.75,
+                timestamp_col=None,
+                entity_cols=None,
+                targets=None,
+                dynamic_variables=None,
+                static_variables=None,
+                column_dict=None):
+
     if os.path.isfile(data):
         data = load_csv(data)
     else:
@@ -85,20 +93,30 @@ def load_signal(data, train_size=.75, timestamp_col=None, entity_col=None, targe
     else:
         columns = {
             'timestamp': timestamp_col,
-            'entity': entity_col,
-            'target': target,
-            'dynamic_variable': dynamic_variable,
-            'static_variable': static_variable
+            'entity': entity_cols,
+            'target': targets,
+            'dynamic_variable': dynamic_variables,
+            'static_variable': static_variables
         }
 # TODO: More than one entity or target col etc, need to umpack
         columns = {k: v for k, v in columns.items() if v != None}
     df = pd.DataFrame()
     for key in columns:
         df[key] = data[columns[key]]
+    df=df.iloc[0:10000]
 
-    df['timestamp'] = pd.to_datetime(df['timestamp'], infer_datetime_format=True)
+
+    # df['timestamp'] = pd.to_datetime(df['timestamp'], infer_datetime_format=True)
     train_length = round(len(df) * train_size)
     train = df.iloc[:train_length]
     test = df.iloc[train_length:]
-
+    if entity_cols == None and column_dict['entity']==None:
+        train=train.assign(entity=1)
+        test = test.assign(entity=1)
+    train = train.groupby('entity')
+    test = test.groupby('entity')
+    for entity, train_entity in train:
+        if train_entity["timestamp"].is_unique==False:
+            raise ValueError('There are multiple values for a single timestamp, please choose an entity column that will group the data to have only one value for a timestep for each entity.')
     return train, test
+

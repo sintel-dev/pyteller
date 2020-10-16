@@ -17,7 +17,14 @@
 {
                 "name": "X",
                 "type": "ndarray"
+
+            },
+ {
+                "name": "lead",
+                "type": "int"
+
             }
+
         ],
         "output": [
             {
@@ -28,14 +35,7 @@
     },
     "hyperparameters": {
         "fixed": {
-            "value_column": {
-                "type": "str",
-                "default": "target"
-            },
-            "lead": {
-                "type": "int",
-                "default": "10"
-            }
+
         }
     }
 }

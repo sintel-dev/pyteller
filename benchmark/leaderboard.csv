@@ -1,5 +1,2 @@
-,pipeline,rank,MAPE,MASE,MSE,dataset,length of testing data,length of training data,prediction length,sMAPE,signal
-0,persistence,1,0.0,0.0,0.0,AL_Wind,26280,78840,10,0.0,Power(MW)
-1,persistence,2,1.9800000000000018,3.8812500000000036,8.748000000000015,AL_Weather,828,2485,10,4.399875462912275,tmpf
-2,persistence,3,1389.7,0.0,2670018.9,pjm_hourly_est,31962,95887,10,7.056691449751868,AEP
-3,persistence,4,1776.5,1.3819744264538147,4729184.7,taxi,2580,7740,10,6.813525163914626,value
+,pipeline,rank,MASE,MAPE,MSE,sMAPE,dataset,signal,prediction length,length of training data,length of testing data
+0,persistence,1,1.1199999999999999,4.666666666666667,28.0,59.788359788359784,FasTrak,Total Flow,459,153,153

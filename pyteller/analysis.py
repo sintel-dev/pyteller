@@ -1,9 +1,6 @@
 import logging
 import os
-
-import pandas as pd
 from mlblocks import MLPipeline
-
 LOGGER = logging.getLogger(__name__)
 
 
@@ -29,21 +26,3 @@ def _run_pipeline(pipeline, train, test):
     return events
 
 
-def _build_events_df(events):
-    events = pd.DataFrame(list(events), columns=['start', 'end', 'score'])
-    events['start'] = events['start'].astype(int)
-    events['end'] = events['end'].astype(int)
-
-    return events
-
-
-def analyze(pipeline, train, test=None, hyperparams=None):
-    if test is None:
-        test = train
-
-    if not isinstance(pipeline, MLPipeline):
-        pipeline = _load_pipeline(pipeline, hyperparams)
-
-    events = _run_pipeline(pipeline, train, test)
-
-    return _build_events_df(events)
