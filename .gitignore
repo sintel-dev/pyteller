@@ -110,3 +110,5 @@ ENV/
 
 # intellij configs
 .idea/
+
+.idea

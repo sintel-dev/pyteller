@@ -29,6 +29,7 @@ hyperparameters = hyperparameters,
     lead = 3,
     goal = None,
     goal_window = None
+
 )
 
 # TODO: split for supervised learning, should this be a primitive?
