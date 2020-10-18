@@ -47,28 +47,34 @@ class Pyteller:
             preds=preds.append(preds_entity)
         return preds
 
-
-
     def evaluate(self, forecast: pd.DataFrame,
                  fit: bool = False,
                  train_data: pd.DataFrame = None,
                  test_data: pd.DataFrame = None,
                  metrics: List[str] = METRICS) -> pd.Series:
         forecast = forecast.groupby('entity')
-        scores = {}
+
+        scores = list()
         for entity, forecast_entity in forecast:
-            pred_window = (test_data.get_group(entity)['timestamp'] >= forecast_entity['timestamp'].iloc[0]) & (
-                test_data.get_group(entity)['timestamp'] <= forecast_entity['timestamp'].iloc[-1])
+            score = {}
+            pred_window = (test_data.get_group(entity)['timestamp'] >=
+                           forecast_entity['timestamp'].iloc[0]) & (
+                              test_data.get_group(entity)['timestamp'] <=
+                              forecast_entity['timestamp'].iloc[-1])
             actual_entity = test_data.get_group(entity).loc[pred_window]
 
             if 'MASE' in metrics:
-                scores['MASE'] = metrics['MASE'](train_data.get_group(entity)['target'], forecast_entity['target'], actual_entity['target'])
+                score['MASE'] = metrics['MASE'](train_data.get_group(entity)['target'],
+                                                forecast_entity['target'], actual_entity['target'])
 
-
-            scores.update ({
+            score.update({
                 metric: METRICS[metric](actual_entity['target'], forecast_entity['target'])
                 for metric in metrics if metric != 'MASE'
             })
+            score['entity'] = entity
+            scores.append(score)
+        scores = pd.DataFrame.from_records(scores)
 
-        return pd.Series(scores)
+        return scores
+
 

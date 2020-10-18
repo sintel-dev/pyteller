@@ -103,6 +103,7 @@ def load_signal(data,
     df = pd.DataFrame()
     for key in columns:
         df[key] = data[columns[key]]
+    # TODO: get rid of this
     df=df.iloc[0:10000]
 
 
@@ -110,7 +111,9 @@ def load_signal(data,
     train_length = round(len(df) * train_size)
     train = df.iloc[:train_length]
     test = df.iloc[train_length:]
-    if entity_cols == None and column_dict['entity']==None:
+    if column_dict != None:
+        is_entity= 'entity' in column_dict
+    if entity_cols == None and is_entity==False:
         train=train.assign(entity=1)
         test = test.assign(entity=1)
     train = train.groupby('entity')

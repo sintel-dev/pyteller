@@ -180,21 +180,19 @@ def _evaluate_datasets(pipelines, datasets, hyperparameters, metrics, distribute
     else:
         results = delayed
 
-    df = pd.DataFrame.from_records(results)
+    df = pd.concat(results)
+    # return results[0]
     return df
 
 
 def benchmark(pipelines=None, datasets=None, hyperparameters=None, metrics=METRICS, rank='MAPE',
               distributed=False, holdout=False, detrend=False, output_path=None):
     """Evaluate pipelines on the given datasets and evaluate the performance.
-
     The pipelines are used to analyze the given signals and later on the
     detected anomalies are scored against the known anomalies using the
     indicated metrics.
-
     Finally, the scores obtained with each metric are averaged accross all the signals,
     ranked by the indicated metric and returned on a ``pandas.DataFrame``.
-
     Args:
         pipelines (dict or list): dictionary with pipeline names as keys and their
             JSON paths as values. If a list is given, it should be of JSON paths,
@@ -219,7 +217,6 @@ def benchmark(pipelines=None, datasets=None, hyperparameters=None, metrics=METRI
         detrend (bool): Whether to use ``scipy.detrend``. If not given, use ``False``.
         output_path (str): Location to save the intermediatry results. If not given,
             intermediatry results will not be saved.
-
     Returns:
         pandas.DataFrame: Table containing the average of the scores obtained with
             each scoring function accross all the signals for each pipeline, ranked
