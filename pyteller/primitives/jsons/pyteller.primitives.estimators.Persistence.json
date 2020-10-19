@@ -20,7 +20,7 @@
 
             },
  {
-                "name": "lead",
+                "name": "pred_length",
                 "type": "int"
 
             }

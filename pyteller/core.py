@@ -25,12 +25,12 @@ class Pyteller:
 
     def __init__(self, pipeline= None,
                  hyperparameters: dict = None,
-                 lead = None,
+                 pred_length = None,
                  goal = None,
                  goal_window = None):
         self._pipeline = pipeline
         self._hyperparameters = hyperparameters
-        self.lead = lead
+        self.pred_length = pred_length
         self.goal = goal
         self._mlpipeline = self._get_mlpipeline()
         self._fitted = False
@@ -40,7 +40,7 @@ class Pyteller:
         preds=pd.DataFrame()
         for entity, test_entity in test_data:
             preds_entity= self._mlpipeline.predict(X=test_entity,
-                                     lead=self.lead,
+                                     pred_length=self.pred_length,
                                      goal=self.goal,
                                      goal_window=None)
             preds_entity['entity']=entity
@@ -71,7 +71,15 @@ class Pyteller:
                 metric: METRICS[metric](actual_entity['target'], forecast_entity['target'])
                 for metric in metrics if metric != 'MASE'
             })
+            granularity = pd.to_datetime(
+                train_data.get_group(entity)['timestamp'].iloc[1]) - pd.to_datetime(
+                train_data.get_group(entity)['timestamp'].iloc[0])
+
+            score['granularity']=granularity
             score['entity'] = entity
+            score['prediction length'] = forecast_entity.shape[0]
+            score['length of training data'] = len(train_data.get_group(entity))
+            score['length of testing data'] = len(test_data.get_group(entity))
             scores.append(score)
         scores = pd.DataFrame.from_records(scores)
 

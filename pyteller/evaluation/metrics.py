@@ -20,7 +20,7 @@ def MASE( training_series, prediction_series,testing_series):
     d = np.abs(np.diff(training_series)).sum() / (n - 1)
 
     errors = np.abs(np.array(testing_series)-np.array(prediction_series)).mean()
-    if np.isnan(d) or errors==0:
+    if np.isnan(d) or errors==0 or d==0:
         return 0
     else:
         return errors.mean() / d

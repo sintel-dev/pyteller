@@ -63,7 +63,7 @@ def _evaluate_signal(pipeline, name, dataset, signal, hyperparameter, metrics,
     pipeline = _load_pipeline(pipeline, hyperparameter)
     pyteller = Pyteller(
         pipeline=pipeline,
-        lead=3
+        pred_length=3
     )
 
     forecast = pyteller.predict(test)
@@ -84,9 +84,9 @@ def _evaluate_signal(pipeline, name, dataset, signal, hyperparameter, metrics,
     #scores['holdout'] = holdout
     scores['dataset'] = dataset
     scores['signal'] = signal
-    scores['prediction length'] = forecast.shape[0]
-    scores['length of training data'] = len(train)
-    scores['length of testing data'] = len(test)
+    # scores['prediction length'] = forecast.shape[0]
+    # scores['length of training data'] = len(train)
+    # scores['length of testing data'] = len(test)
 
     return scores
 
@@ -267,8 +267,8 @@ def main():
     # pipelines
     pipelines = VERIFIED_PIPELINES
     datasets = {
-        # 'taxi':'value',
-        # 'AL_Weather':'tmpf',
+        'taxi':'value',
+        'AL_Weather':'tmpf',
         # 'AL_Wind': 'Power(MW)',
         # 'pjm_hourly_est' : 'AEP',
         'FasTrak' : 'Total Flow'

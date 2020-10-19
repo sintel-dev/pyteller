@@ -104,7 +104,7 @@ def load_signal(data,
     for key in columns:
         df[key] = data[columns[key]]
     # TODO: get rid of this
-    df=df.iloc[0:10000]
+    # df=df.iloc[0:10000]
 
 
     # df['timestamp'] = pd.to_datetime(df['timestamp'], infer_datetime_format=True)

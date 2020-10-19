@@ -26,25 +26,17 @@ from pyteller.core import Pyteller
 pyteller = Pyteller (
 hyperparameters = hyperparameters,
     pipeline = 'persistence',
-    lead = 3,
+    pred_length = 3,
     goal = None,
     goal_window = None
 
 )
 
-# TODO: split for supervised learning, should this be a primitive?
+# TODO: split for supervised learning
 
 
 forecast = pyteller.predict(test_data=test)
-# pred_window=(test_entity['timestamp']>= forecast['timestamp'].iloc[0] )&(test_entity['timestamp']<= forecast['timestamp'].iloc[-1])
-# actual=test_entity.loc[pred_window]
-
-# TODO: group by entity i think i need a for loop idk how else to not mess with mlpipelines
-# grouped=test.groupby('entity')
-# for x in grouped.groups:
-#     xtest=grouped.get_group(x)
-#     forecast = pyteller._mlpipeline.predict(xtest.loc[:, ['timestamp', 'target']])
 
 scores = pyteller.evaluate(train_data= train,test_data=test,forecast=forecast)
-# mape = METRICS['MAPE'](ytest, forecast)
+
 

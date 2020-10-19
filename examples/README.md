@@ -11,4 +11,4 @@ This is an examples folder including files of examples as new pipelines are adde
 
 
 ## Persistence
- The persistence pipeline is the first baseline that produces a forecast that is just the last value the model was givena s an input.
+ The persistence pipeline is the first baseline that produces a forecast that is just the last value the model was given as an input.

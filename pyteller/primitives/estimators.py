@@ -38,18 +38,15 @@ class Persistence:
     def __init__(self):
         self.values_col = 'target'
 
-
-
     # def fit(self, X):
     #     self.values = X[self._value_column]
-    def predict(self,X,lead):
+    def predict(self,X,pred_length):
         import numpy as np
         import pandas as pd
         self.values = X['target']
-        preds = pd.DataFrame(data=X['timestamp'][-lead:].values, columns=['timestamp'])
-        preds['target'] = np.full((lead, 1), self.values.iloc[-lead-1])
+        preds = pd.DataFrame(data=X['timestamp'][-pred_length:].values, columns=['timestamp'])
+        preds['target'] = np.full((pred_length, 1), self.values.iloc[-pred_length-1])
         return preds
-        # return np.full(self.lead,self.values.iloc[-1])
 
 
 def split_sequence(X, target_column, sequence_size, overlap_size):
