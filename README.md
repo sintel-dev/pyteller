@@ -295,7 +295,7 @@ hyperparameters = hyperparameters,
 ```
 
 
-Now, since the poersistence pipeline does not require a fit method, we are ready to forecast:
+Now, since the persistence pipeline does not require a fit method, we are ready to forecast:
 
 ```python3
 forecast = pyteller.predict(test_data=test)
