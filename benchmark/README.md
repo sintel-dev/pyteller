@@ -8,7 +8,7 @@ a pipeline forecasts.
 
 In every release, we run the pyteller benchmark and maintain an up to-date [leaderboard](../README.md#leaderboard).
 Results obtained during the benchmarking process and in previous benchmarks can be found
-within [benchmark/results](/results) folder as CSV files and in the following Google [sheet](https://docs.google.com/spreadsheets/d/1Fqqs2T84AgAjM0OOABMMXm_CX8nkcoQxwnsMAh8YspA/edit?usp=sharing).
+within [benchmark/results](results) folder as CSV files and in the following Google [sheet](https://docs.google.com/spreadsheets/d/1Fqqs2T84AgAjM0OOABMMXm_CX8nkcoQxwnsMAh8YspA/edit?usp=sharing).
 
 ## Evaluating the Pipelines
 
