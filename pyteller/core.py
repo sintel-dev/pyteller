@@ -54,9 +54,12 @@ class Pyteller:
                  fit: bool = False,
                  train_data: pd.DataFrame = None,
                  test_data: pd.DataFrame = None,
+                 detailed = False,
                  metrics: List[str] = METRICS) -> pd.Series:
         forecast = forecast.groupby('entity')
-
+        metrics_ = {}
+        for metric in metrics:
+            metrics_[metric] = METRICS[metric]
         scores = list()
         for entity, forecast_entity in forecast:
             score = {}
@@ -66,24 +69,25 @@ class Pyteller:
                               forecast_entity['timestamp'].iloc[-1])
             actual_entity = test_data.get_group(entity).loc[pred_window]
 
-            if 'MASE' in metrics:
-                score['MASE'] = metrics['MASE'](train_data.get_group(entity)['target'],
+            if 'MASE' in metrics_:
+                score['MASE'] = metrics_['MASE'](train_data.get_group(entity)['target'],
                                                 forecast_entity['target'], actual_entity['target'])
 
             score.update({
                 metric: METRICS[metric](actual_entity['target'], forecast_entity['target'])
-                for metric in metrics if metric != 'MASE'
+                for metric in metrics_ if metric != 'MASE'
             })
             granularity = pd.to_datetime(
                 train_data.get_group(entity)['timestamp'].iloc[1]) - pd.to_datetime(
                 train_data.get_group(entity)['timestamp'].iloc[0])
-
-            score['granularity']=granularity
             score['entity'] = entity
-            score['prediction length'] = forecast_entity.shape[0]
-            score['length of training data'] = len(train_data.get_group(entity))
-            score['length of testing data'] = len(test_data.get_group(entity))
             scores.append(score)
+            if detailed == True:
+                score['granularity']=granularity
+                score['prediction length'] = forecast_entity.shape[0]
+                score['length of training data'] = len(train_data.get_group(entity))
+                score['length of testing data'] = len(test_data.get_group(entity))
+
         scores = pd.DataFrame.from_records(scores)
 
         return scores

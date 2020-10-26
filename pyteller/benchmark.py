@@ -80,7 +80,7 @@ def _evaluate_signal(pipeline, name, dataset, signal, hyperparameter, metrics,
     #     for name, scorer in metrics.items() if name != 'MASE'
     # })
 
-    scores = pyteller.evaluate(train_data=train, test_data=test, forecast=forecast)
+    scores = pyteller.evaluate(train_data=train, test_data=test, forecast=forecast,detailed=True)
     scores['pipeline'] = name
     #scores['holdout'] = holdout
     scores['dataset'] = dataset

@@ -37,6 +37,6 @@ hyperparameters = hyperparameters,
 
 forecast = pyteller.predict(test_data=test)
 
-scores = pyteller.evaluate(train_data= train,test_data=test,forecast=forecast)
+scores = pyteller.evaluate(train_data= train,test_data=test,forecast=forecast,metrics=['MAPE','MSE'])
 
 

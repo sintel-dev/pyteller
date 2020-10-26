@@ -6,13 +6,13 @@ a pipeline forecasts.
 
 ## Releases
 
-In every release, we run the pyteller benchmark and maintain an up to-date [leaderboard](README.md#leaderboard).
-Results obtained during the benchmarking process as well as previous benchmarks can be found
-within [benchmark/results](benchmark/results) folder as CSV files and in the following Google [sheet](https://docs.google.com/spreadsheets/d/1Fqqs2T84AgAjM0OOABMMXm_CX8nkcoQxwnsMAh8YspA/edit?usp=sharing).
+In every release, we run the pyteller benchmark and maintain an up to-date [leaderboard](../README.md#leaderboard).
+Results obtained during the benchmarking process and in previous benchmarks can be found
+within [benchmark/results](/results) folder as CSV files and in the following Google [sheet](https://docs.google.com/spreadsheets/d/1Fqqs2T84AgAjM0OOABMMXm_CX8nkcoQxwnsMAh8YspA/edit?usp=sharing).
 
 ## Evaluating the Pipelines
 
-Using the [Evaluation sub-package](pyteller/evaluation), we compute various metrics of the forecast.
+Using the [Evaluation sub-package](../evaluation), we compute various metrics of the forecast.
 The metrics are broken up between the unnormalized metrics (e.g. MAE, RMSE) and normalized metrics (e.g. MAPE, MASE)
 
 In order to benchmark the pipelines across many datasets, only normalized metrics are used. In our terminology, one dataset may have many *signals* that are forecasted for.
@@ -36,7 +36,7 @@ This function expects the following inputs:
 * rank (str): Sort and rank the pipelines based on the given metric. If not given, rank using the first metric.
 * output_path (str): Location to save the results. If not given, results will not be saved.
 
-This returns a pandas.DataFrame which contains the metrics obtained across all the signals for each dataset for a given pipeline.
+This returns a `pandas.DataFrame` which contains the metrics obtained across all the signals for each dataset for a given pipeline.
 
 This is an example call of the benchmarking function:
 ```

@@ -36,7 +36,7 @@ be browsed in the following Google [sheet](https://docs.google.com/spreadsheets/
 
 | Pipeline                  |  Percent Outperforms Persistence |
 |---------------------------|--------------------|
-| LSTM                      |          100         |
+|                       |                   |
 
 
 ## Table of Contents
@@ -199,18 +199,14 @@ As ``MLPipeline`` instances, **Orion Pipelines**:
 
 ## Current Available Pipelines
 
-In the **Orion Project**, the pipelines are included as **JSON** files, which can be found
-in the subdirectories inside the [orion/pipelines](orion/pipelines) folder.
+The pipelines are included as **JSON** files, which can be found
+in the subdirectories inside the [pyteller/pipelines](orion/pipelines) folder.
 
 This is the list of pipelines available so far, which will grow over time:
 
 | name | location | description |
 |------|----------|-------------|
-| ARIMA | [orion/pipelines/arima](orion/pipelines/verified/arima) | ARIMA based pipeline |
-| LSTM Dynamic Threshold | [orion/pipelines/lstm_dynamic_threshold](orion/pipelines/verified/lstm_dynamic_threshold) | LSTM based pipeline inspired by the [Detecting Spacecraft Anomalies Using LSTMs and Nonparametric Dynamic Thresholding paper](https://arxiv.org/abs/1802.04431) |
-| Dummy | [orion/pipelines/dummy](orion/pipelines/sandox/dummy) | Dummy pipeline to showcase the input and output format and the usage of sample primitives |
-| TadGAN | [orion/pipelines/tadgan](orion/pipelines/sandbox/tadgan) | GAN based pipeline with reconstruction based errors |
-| Azure | [orion/pipelines/azure](orion/pipelines/sandbox/azure) | Azure API for [Anomaly Detector](https://azure.microsoft.com/en-us/services/cognitive-services/anomaly-detector/)
+| Persistence | [pyteller/pipelines/sandbox/persistence](../pipelines/sandbox/persistence) | uses the latest input to the model as the next output
 
 
 # Install
@@ -288,46 +284,48 @@ Import the `pyteller.data.load_signal` function and call it
 from pyteller.data import load_signal
 
 df = load_signal(
-    data='electricity_demand.csv',
+    data=dataset,
     timestamp_col = 'timestamp',
-    entity_col='region',
-    target = 'demand'
-    dynamic_variables = ['Rain', 'Temp']
+    targets='Total Flow',
+    static_variables=None,
+    entity_cols='Location Identifier',
+    train_size=.75
 )
 ```
 ## 1. Forecast
 Once we have the data, let us try to use a pyteller pipeline to make a forecast.
 
-First, alter the hyperparamters based on the forecasting problem at hand. In this case we want to predict for 11 time steps ahead
 
-```python3
-hyperparameters =  {
-    "pyteller.primitives.estimators.Persistence#1": {
-        "lead": 11,
-    },
-}
-```
-Next, create an instance of the `pyteller.Pyteller` class and pass in the chosen pipeline and hyperparameter dictionary.
+Create an instance of the `pyteller.Pyteller` class and pass in arguments that help describe your prediction problem
 
 
 ```python3
 from pyteller import Pyteller
 
 pyteller = Pyteller (
-    hyperparameters = hyperparameters,
-    pipeline = 'dummy.json'
+hyperparameters = hyperparameters,
+    pipeline = 'persistence',
+    pred_length = 3,
+    goal = None,
+    goal_window = None
 )
 
 ```
 
-Once the pipeline is ready, we can fit it to our data:
+
+Now, since the poersistence pipeline does not require a fit method, we are ready t0 forecast:
+
 ```python3
-pyteller._mlpipeline.fit(df)
+forecast = pyteller.predict(test_data=test)
 ```
-Once it is fitted, we are ready to make the forecast:
+
+Now, we can evaluate the forecasts
+
 ```python3
-forecast = pyteller._mlpipeline.predict(df)
+scores = pyteller.evaluate(train_data= train,test_data=test,forecast=forecast,metrics=['MAPE','MSE'])
 ```
+
+
 # What's next?
 
 For more details about **pyteller** and all its possibilities
