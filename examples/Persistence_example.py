@@ -14,7 +14,7 @@ train,test = load_signal(
     entity_cols='Location Identifier',
     train_size=.75
 )
-
+# TODO: variable column for longform
 #Set up the pipeline
 hyperparameters =  {
     "pyteller.primitives.estimators.Persistence#1": {

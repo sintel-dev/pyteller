@@ -1,6 +1,6 @@
 
 {
-    "timestamp": "LocalTime",
-    "target": "Power(MW)"
+    "timestamp": "time",
+    "target": "AT"
 
     }

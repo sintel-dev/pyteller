@@ -35,6 +35,9 @@ class Pyteller:
         self._mlpipeline = self._get_mlpipeline()
         self._fitted = False
 
+# TODO: fit user facing abstraction
+# TODO: save/load
+# TODO: commnet in blocks
     def predict(self,test_data):
         #Allow for multiple entities
         preds=pd.DataFrame()

@@ -1,7 +1,7 @@
 from sklearn.metrics import (
     accuracy_score,mean_absolute_error, mean_squared_error)
 import numpy as np
-
+# TODO break up metrics between normalized and not normalized
 def MASE( training_series, prediction_series,testing_series):
     """
     # Source: https://github.com/CamDavidsonPilon/Python-Numerics/blob/master/TimeSeries/MASE.py

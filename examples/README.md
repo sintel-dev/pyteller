@@ -1,7 +1,7 @@
 
 # Examples
 
-This is an examples folder including files of examples as new pipelines are added.
+This is an example folder including files of examples as new pipelines and use cases are added.
 
 
 ## Table of Contents

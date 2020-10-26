@@ -46,6 +46,7 @@ def _sort_leaderboard(df, rank, metrics):
 
 
 def _load_signal(dataset,signal, holdout):
+    #TODO: make this a spread sheet in s3 bucket and make it so the user can input signal
     meta_path = os.path.join(os.path.dirname(__file__), 'data', dataset + '.json')
     with open(meta_path) as f:
         columns = json.load(f)
@@ -265,26 +266,23 @@ def main():
     metrics = {k: partial(fun) for k, fun in METRICS.items()}
 
     # pipelines
-    pipelines = VERIFIED_PIPELINES
+    pipelines = VERIFIED_PIPELINES #TODO : check if pipeline user inputs work
     datasets = {
-        'taxi':'value',
-        'AL_Weather':'tmpf',
-        # 'AL_Wind': 'Power(MW)',
+        # 'taxi':'value',
+        # 'AL_Weather':'tmpf',
+        'Wind': 'AT'
         # 'pjm_hourly_est' : 'AEP',
-        'FasTrak' : 'Total Flow'
+        # 'FasTrak' : 'Total Flow'
     }
 
     results = benchmark(
         pipelines=pipelines, metrics=metrics, datasets=datasets,output_path=output_path)
-    # results = benchmark(
-    #     pipelines=pipelines, metrics=metrics, output_path=output_path)
-
     # TODO: summarize results for who wins compared to latest baseline
-    # leaderboard = _summarize_results(results, metrics)
     output_path = os.path.join(BENCHMARK_PATH, 'leaderboard.csv')
     results.to_csv(output_path)
-    # leaderboard.to_csv(output_path)
 
+    # leaderboard = _summarize_results(results, metrics)
+    # leaderboard.to_csv(output_path)
 
 if __name__ == "__main__":
     main()

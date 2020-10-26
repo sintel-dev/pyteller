@@ -98,16 +98,12 @@ def load_signal(data,
             'dynamic_variable': dynamic_variables,
             'static_variable': static_variables
         }
-# TODO: More than one entity or target col etc, need to umpack
+# TODO more than one target
         columns = {k: v for k, v in columns.items() if v != None}
     df = pd.DataFrame()
     for key in columns:
         df[key] = data[columns[key]]
-    # TODO: get rid of this
-    # df=df.iloc[0:10000]
 
-
-    # df['timestamp'] = pd.to_datetime(df['timestamp'], infer_datetime_format=True)
     train_length = round(len(df) * train_size)
     train = df.iloc[:train_length]
     test = df.iloc[train_length:]

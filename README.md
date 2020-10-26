@@ -20,14 +20,35 @@ Time series forecasting using MLPrimitives
 
 # Overview
 
-pyteller is a time series forecasting library built the end user.
+pyteller is a time series forecasting library built with the end user in mind.
+
+## Leaderboard
+
+In this repository we maintain an up-to-date leaderboard with the current scoring of the
+pipelines according to the benchmarking procedure explained in the [benchmark documentation](
+benchmark/).
+
+The benchmark is run on many datasets and we record the number of wins each pipeline has over the
+baseline pipeline. Results obtained during benchmarking as well as previous releases can be
+found within [benchmark/results](benchmark/results) folder as CSV files. Results can also
+be browsed in the following Google [sheet](https://docs.google.com/spreadsheets/d/1Fqqs2T84AgAjM0OOABMMXm_CX8nkcoQxwnsMAh8YspA/edit?usp=sharing).
+
+
+| Pipeline                  |  Percent Outperforms Persistence |
+|---------------------------|--------------------|
+| LSTM                      |          100         |
+
 
 ## Table of Contents
 
 * [I. Data Format](#data-format)
    * [I.1 Input](#input)
    * [I.2 Output](#output)
-* [II. Quick Start](#quick-start)
+   * [I.3 Datasets in the library](#datasets-in-the-library)
+* [II. pyteller Pipelines](#orion-pipelines)
+   * [II.1 Current Available Pipelines](#current-available-pipelines)
+* [III. Install](#install)
+* [IV. Quick Start](#quick-start)
 
 
 # Data Format
@@ -133,13 +154,63 @@ The output of the pyteller Pipelines is another table that contains the timestam
 
 ## Datasets in the library
 
-For development and evaluation of pipelines, we include the NYC taxi data that can be found [here](https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page), or the processed version maintained by Numenta [here](https://github.com/numenta/NAB/tree/master/data). We also use PJM electricity demand data found [here](https://dataminer2.pjm.com/feed/inst_load).
+For development and evaluation of pipelines, we include the following datasets:
+#### NYC taxi data
+* Found on the [nyc website](https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page), or the processed version maintained by Numenta [here](https://github.com/numenta/NAB/tree/master/data).
+* No modifications were made from the Numenta version
+
+#### Wind data
+* Found here on [kaggle](https://www.kaggle.com/sohier/30-years-of-european-wind-generation/metadata)
+* After downloading the FasTrak 5-Minute .txt files the .txt files for each day from 1/1/13-1/8/18 were compiled into one .csv file
+
+
+#### Weather data
+* Maintained by Iowa State University's [IEM](https://mesonet.agron.iastate.edu/request/download.phtml?network=ILASOS)
+* The downloaded data was from the selected network of 8A0 Albertville and the selected date range was 1/1/16 0:15 - 2/16/16 0:55
+
+#### Traffic data
+* Found on [Caltrans PeMS](http://pems.dot.ca.gov/?dnode=Clearinghouse)
+* No modifications were made from the Numenta version
+
+#### Energy data
+* Found on [kaggle](https://www.kaggle.com/robikscube/hourly-energy-consumption/metadata)
+* No modifications were made after downloading pjm_hourly_est.csv
+We also use PJM electricity demand data found [here](https://dataminer2.pjm.com/feed/inst_load).
 
 ### Data Loading
 
-This formatted dataset can be browsed and downloaded directly from the
-[d3-ai-orion AWS S3 Bucket](https://d3-ai-orion.s3.amazonaws.com/index.html).
+This formatted datasets can be browsed and downloaded directly from the
+[d3-ai-orion AWS S3 Bucket](https://pyteller.amazonaws.com/index.html).
 
+# Orion Pipelines
+
+The main component in the Orion project are the **Orion Pipelines**, which consist of
+[MLBlocks Pipelines](https://hdi-project.github.io/MLBlocks/advanced_usage/pipelines.html)
+specialized in detecting anomalies in time series.
+
+As ``MLPipeline`` instances, **Orion Pipelines**:
+
+* consist of a list of one or more [MLPrimitives](https://hdi-project.github.io/MLPrimitives/)
+* can be *fitted* on some data and later on used to *predict* anomalies on more data
+* can be *scored* by comparing their predictions with some known anomalies
+* have *hyperparameters* that can be *tuned* to improve their anomaly detection performance
+* can be stored as a JSON file that includes all the primitives that compose them, as well as
+  other required configuration options.
+
+## Current Available Pipelines
+
+In the **Orion Project**, the pipelines are included as **JSON** files, which can be found
+in the subdirectories inside the [orion/pipelines](orion/pipelines) folder.
+
+This is the list of pipelines available so far, which will grow over time:
+
+| name | location | description |
+|------|----------|-------------|
+| ARIMA | [orion/pipelines/arima](orion/pipelines/verified/arima) | ARIMA based pipeline |
+| LSTM Dynamic Threshold | [orion/pipelines/lstm_dynamic_threshold](orion/pipelines/verified/lstm_dynamic_threshold) | LSTM based pipeline inspired by the [Detecting Spacecraft Anomalies Using LSTMs and Nonparametric Dynamic Thresholding paper](https://arxiv.org/abs/1802.04431) |
+| Dummy | [orion/pipelines/dummy](orion/pipelines/sandox/dummy) | Dummy pipeline to showcase the input and output format and the usage of sample primitives |
+| TadGAN | [orion/pipelines/tadgan](orion/pipelines/sandbox/tadgan) | GAN based pipeline with reconstruction based errors |
+| Azure | [orion/pipelines/azure](orion/pipelines/sandbox/azure) | Azure API for [Anomaly Detector](https://azure.microsoft.com/en-us/services/cognitive-services/anomaly-detector/)
 
 
 # Install
