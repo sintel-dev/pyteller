@@ -12,7 +12,7 @@ within [benchmark/results](/results) folder as CSV files and in the following Go
 
 ## Evaluating the Pipelines
 
-Using the [Evaluation sub-package](../evaluation), we compute various metrics of the forecast.
+Using the [Evaluation sub-package](../pyteller/evaluation), we compute various metrics of the forecast.
 The metrics are broken up between the unnormalized metrics (e.g. MAE, RMSE) and normalized metrics (e.g. MAPE, MASE)
 
 In order to benchmark the pipelines across many datasets, only normalized metrics are used. In our terminology, one dataset may have many *signals* that are forecasted for.

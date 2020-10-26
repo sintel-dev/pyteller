@@ -30,7 +30,7 @@ benchmark/).
 
 The benchmark is run on many datasets and we record the number of wins each pipeline has over the
 baseline pipeline. Results obtained during benchmarking as well as previous releases can be
-found within [benchmark/results](benchmark/results) folder as CSV files. Results can also
+found within [benchmark/results](/results) folder as CSV files. Results can also
 be browsed in the following Google [sheet](https://docs.google.com/spreadsheets/d/1Fqqs2T84AgAjM0OOABMMXm_CX8nkcoQxwnsMAh8YspA/edit?usp=sharing).
 
 
@@ -283,7 +283,7 @@ Import the `pyteller.data.load_signal` function and call it
 ```python3
 from pyteller.data import load_signal
 
-df = load_signal(
+train,test  = load_signal(
     data=dataset,
     timestamp_col = 'timestamp',
     targets='Total Flow',
