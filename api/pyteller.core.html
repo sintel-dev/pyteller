@@ -89,7 +89,8 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../readme.html#load-the-data">1. Load the data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../readme.html#forecast">1. Forecast</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#forecast">2. Forecast</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#evaluate">3. Evaluate</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../readme.html#what-s-next">What’s next?</a></li>
 </ul>
 </li>
@@ -100,7 +101,7 @@
 <li class="toctree-l2"><a class="reference internal" href="pyteller.html#subpackages">Subpackages</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="pyteller.evaluation.html">pyteller.evaluation package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="pyteller.evaluation.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pyteller.evaluation.html#module-contents">Module contents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyteller.evaluation.html#module-pyteller.evaluation">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="pyteller.primitives.html">pyteller.primitives package</a><ul>
@@ -213,8 +214,55 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="pyteller-core-module">
-<h1>pyteller.core module<a class="headerlink" href="#pyteller-core-module" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-pyteller.core">
+<span id="pyteller-core-module"></span><h1>pyteller.core module<a class="headerlink" href="#module-pyteller.core" title="Permalink to this headline">¶</a></h1>
+<p>Main module.</p>
+<p><strong>Classes:</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">MLPipeline</span></code>([pipeline, primitives, …])</p></td>
+<td><p>MLPipeline Class.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyteller.core.Pyteller" title="pyteller.core.Pyteller"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pyteller</span></code></a>([pipeline, hyperparameters, …])</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="pyteller.core.Pyteller">
+<em class="property">class </em><code class="sig-prename descclassname">pyteller.core.</code><code class="sig-name descname">Pyteller</code><span class="sig-paren">(</span><em class="sig-param">pipeline=None</em>, <em class="sig-param">hyperparameters: dict = None</em>, <em class="sig-param">pred_length=None</em>, <em class="sig-param">goal=None</em>, <em class="sig-param">goal_window=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyteller/core.html#Pyteller"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyteller.core.Pyteller" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p><strong>Methods:</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyteller.core.Pyteller.evaluate" title="pyteller.core.Pyteller.evaluate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">evaluate</span></code></a>(forecast[, fit, train_data, …])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyteller.core.Pyteller.predict" title="pyteller.core.Pyteller.predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict</span></code></a>(test_data)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="pyteller.core.Pyteller.evaluate">
+<code class="sig-name descname">evaluate</code><span class="sig-paren">(</span><em class="sig-param">forecast: pandas.core.frame.DataFrame</em>, <em class="sig-param">fit: bool = False</em>, <em class="sig-param">train_data: pandas.core.frame.DataFrame = None</em>, <em class="sig-param">test_data: pandas.core.frame.DataFrame = None</em>, <em class="sig-param">detailed=False</em>, <em class="sig-param">metrics: List[str] = {'MAPE': &lt;function mean_absolute_error&gt;</em>, <em class="sig-param">'MASE': &lt;function MASE&gt;</em>, <em class="sig-param">'MSE': &lt;function mean_squared_error&gt;</em>, <em class="sig-param">'sMAPE': &lt;function sMAPE&gt;}</em><span class="sig-paren">)</span> &#x2192; pandas.core.series.Series<a class="reference internal" href="../_modules/pyteller/core.html#Pyteller.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyteller.core.Pyteller.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyteller.core.Pyteller.predict">
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">test_data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyteller/core.html#Pyteller.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyteller.core.Pyteller.predict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </div>
 
 

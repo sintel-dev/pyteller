@@ -89,7 +89,8 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="#load-the-data">1. Load the data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#forecast">1. Forecast</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="#forecast">2. Forecast</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#evaluate">3. Evaluate</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#what-s-next">What’s next?</a></li>
 </ul>
 </li>
@@ -100,7 +101,7 @@
 <li class="toctree-l2"><a class="reference internal" href="api/pyteller.html#subpackages">Subpackages</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api/pyteller.evaluation.html">pyteller.evaluation package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="api/pyteller.evaluation.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/pyteller.evaluation.html#module-contents">Module contents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/pyteller.evaluation.html#module-pyteller.evaluation">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="api/pyteller.primitives.html">pyteller.primitives package</a><ul>
@@ -231,14 +232,35 @@ Time series forecasting using MLPrimitives
 
 # Overview
 
-pyteller is a time series forecasting library built the end user.
+pyteller is a time series forecasting library built with the end user in mind.
+
+## Leaderboard
+
+In this repository we maintain an up-to-date leaderboard with the current scoring of the
+pipelines according to the benchmarking procedure explained in the [benchmark documentation](
+benchmark/).
+
+The benchmark is run on many datasets and we record the number of wins each pipeline has over the
+baseline pipeline. Results obtained during benchmarking as well as previous releases can be
+found within [benchmark/results](/results) folder as CSV files. Results can also
+be browsed in the following Google [sheet](https://docs.google.com/spreadsheets/d/1Fqqs2T84AgAjM0OOABMMXm_CX8nkcoQxwnsMAh8YspA/edit?usp=sharing).
+
+
+| Pipeline                  |  Percent Outperforms Persistence |
+|---------------------------|--------------------|
+|                       |                   |
+
 
 ## Table of Contents
 
 * [I. Data Format](#data-format)
    * [I.1 Input](#input)
    * [I.2 Output](#output)
-* [II. Quick Start](#quick-start)
+   * [I.3 Datasets in the library](#datasets-in-the-library)
+* [II. pyteller Pipelines](#pyteller-pipelines)
+   * [II.1 Current Available Pipelines](#current-available-pipelines)
+* [III. Install](#install)
+* [IV. Quick Start](#quick-start)
 
 
 # Data Format
@@ -344,13 +366,41 @@ The output of the pyteller Pipelines is another table that contains the timestam
 
 ## Datasets in the library
 
-For development and evaluation of pipelines, we include the NYC taxi data that can be found [here](https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page), or the processed version maintained by Numenta [here](https://github.com/numenta/NAB/tree/master/data). We also use PJM electricity demand data found [here](https://dataminer2.pjm.com/feed/inst_load).
+For development and evaluation of pipelines, we include the following datasets:
+#### NYC taxi data
+* Found on the [nyc website](https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page), or the processed version maintained by Numenta [here](https://github.com/numenta/NAB/tree/master/data).
+* No modifications were made from the Numenta version
 
-### Data Loading
+#### Wind data
+* Found here on [kaggle](https://www.kaggle.com/sohier/30-years-of-european-wind-generation/metadata)
+* After downloading the FasTrak 5-Minute .txt files the .txt files for each day from 1/1/13-1/8/18 were compiled into one .csv file
 
-This formatted dataset can be browsed and downloaded directly from the
-[d3-ai-orion AWS S3 Bucket](https://d3-ai-orion.s3.amazonaws.com/index.html).
 
+#### Weather data
+* Maintained by Iowa State University's [IEM](https://mesonet.agron.iastate.edu/request/download.phtml?network=ILASOS)
+* The downloaded data was from the selected network of 8A0 Albertville and the selected date range was 1/1/16 0:15 - 2/16/16 0:55
+
+#### Traffic data
+* Found on [Caltrans PeMS](http://pems.dot.ca.gov/?dnode=Clearinghouse)
+* No modifications were made from the Numenta version
+
+#### Energy data
+* Found on [kaggle](https://www.kaggle.com/robikscube/hourly-energy-consumption/metadata)
+* No modifications were made after downloading pjm_hourly_est.csv
+We also use PJM electricity demand data found [here](https://dataminer2.pjm.com/feed/inst_load).
+
+
+
+## Current Available Pipelines
+
+The pipelines are included as **JSON** files, which can be found
+in the subdirectories inside the [pyteller/pipelines](orion/pipelines) folder.
+
+This is the list of pipelines available so far, which will grow over time:
+
+| name | location | description |
+|------|----------|-------------|
+| Persistence | [pyteller/pipelines/sandbox/persistence](../pipelines/sandbox/persistence) | uses the latest input to the model as the next output
 
 
 # Install
@@ -418,42 +468,41 @@ getting started with <strong>pyteller</strong>.</p>
 <p>Import the <code class="docutils literal notranslate"><span class="pre">pyteller.data.load_signal</span></code> function and call it</p>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyteller.data</span> <span class="kn">import</span> <span class="n">load_signal</span>
 
-<span class="n">df</span> <span class="o">=</span> <span class="n">load_signal</span><span class="p">(</span>
-    <span class="n">data</span><span class="o">=</span><span class="s1">&#39;electricity_demand.csv&#39;</span><span class="p">,</span>
+<span class="n">train</span><span class="p">,</span><span class="n">test</span>  <span class="o">=</span> <span class="n">load_signal</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
     <span class="n">timestamp_col</span> <span class="o">=</span> <span class="s1">&#39;timestamp&#39;</span><span class="p">,</span>
-    <span class="n">entity_col</span><span class="o">=</span><span class="s1">&#39;region&#39;</span><span class="p">,</span>
-    <span class="n">target</span> <span class="o">=</span> <span class="s1">&#39;demand&#39;</span>
-    <span class="n">dynamic_variables</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Rain&#39;</span><span class="p">,</span> <span class="s1">&#39;Temp&#39;</span><span class="p">]</span>
+    <span class="n">targets</span><span class="o">=</span><span class="s1">&#39;Total Flow&#39;</span><span class="p">,</span>
+    <span class="n">static_variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">entity_cols</span><span class="o">=</span><span class="s1">&#39;Location Identifier&#39;</span><span class="p">,</span>
+    <span class="n">train_size</span><span class="o">=.</span><span class="mi">75</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="forecast">
-<h1>1. Forecast<a class="headerlink" href="#forecast" title="Permalink to this headline">¶</a></h1>
+<h1>2. Forecast<a class="headerlink" href="#forecast" title="Permalink to this headline">¶</a></h1>
 <p>Once we have the data, let us try to use a pyteller pipeline to make a forecast.</p>
-<p>First, alter the hyperparamters based on the forecasting problem at hand. In this case we want to predict for 11 time steps ahead</p>
-<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">hyperparameters</span> <span class="o">=</span>  <span class="p">{</span>
-    <span class="s2">&quot;pyteller.primitives.estimators.Persistence#1&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;lead&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
-    <span class="p">},</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p>Next, create an instance of the <code class="docutils literal notranslate"><span class="pre">pyteller.Pyteller</span></code> class and pass in the chosen pipeline and hyperparameter dictionary.</p>
+<p>Create an instance of the <code class="docutils literal notranslate"><span class="pre">pyteller.Pyteller</span></code> class and pass in arguments that help describe your prediction problem</p>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyteller</span> <span class="kn">import</span> <span class="n">Pyteller</span>
 
 <span class="n">pyteller</span> <span class="o">=</span> <span class="n">Pyteller</span> <span class="p">(</span>
-    <span class="n">hyperparameters</span> <span class="o">=</span> <span class="n">hyperparameters</span><span class="p">,</span>
-    <span class="n">pipeline</span> <span class="o">=</span> <span class="s1">&#39;dummy.json&#39;</span>
+<span class="n">hyperparameters</span> <span class="o">=</span> <span class="n">hyperparameters</span><span class="p">,</span>
+    <span class="n">pipeline</span> <span class="o">=</span> <span class="s1">&#39;persistence&#39;</span><span class="p">,</span>
+    <span class="n">pred_length</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="n">goal</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">goal_window</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>Once the pipeline is ready, we can fit it to our data:</p>
-<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">pyteller</span><span class="o">.</span><span class="n">_mlpipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<p>Now, since the persistence pipeline does not require a fit method, we are ready to forecast:</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">forecast</span> <span class="o">=</span> <span class="n">pyteller</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test_data</span><span class="o">=</span><span class="n">test</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Once it is fitted, we are ready to make the forecast:</p>
-<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">forecast</span> <span class="o">=</span> <span class="n">pyteller</span><span class="o">.</span><span class="n">_mlpipeline</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</div>
+<div class="section" id="evaluate">
+<h1>3. Evaluate<a class="headerlink" href="#evaluate" title="Permalink to this headline">¶</a></h1>
+<p>Now, we can evaluate the forecasts</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">scores</span> <span class="o">=</span> <span class="n">pyteller</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">train_data</span><span class="o">=</span> <span class="n">train</span><span class="p">,</span><span class="n">test_data</span><span class="o">=</span><span class="n">test</span><span class="p">,</span><span class="n">forecast</span><span class="o">=</span><span class="n">forecast</span><span class="p">,</span><span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;MAPE&#39;</span><span class="p">,</span><span class="s1">&#39;MSE&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
 <div class="section" id="what-s-next">

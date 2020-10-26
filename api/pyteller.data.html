@@ -89,7 +89,8 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../readme.html#load-the-data">1. Load the data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../readme.html#forecast">1. Forecast</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#forecast">2. Forecast</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#evaluate">3. Evaluate</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../readme.html#what-s-next">What’s next?</a></li>
 </ul>
 </li>
@@ -100,7 +101,7 @@
 <li class="toctree-l2"><a class="reference internal" href="pyteller.html#subpackages">Subpackages</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="pyteller.evaluation.html">pyteller.evaluation package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="pyteller.evaluation.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pyteller.evaluation.html#module-contents">Module contents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyteller.evaluation.html#module-pyteller.evaluation">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="pyteller.primitives.html">pyteller.primitives package</a><ul>
@@ -213,8 +214,66 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="pyteller-data-module">
-<h1>pyteller.data module<a class="headerlink" href="#pyteller-data-module" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-pyteller.data">
+<span id="pyteller-data-module"></span><h1>pyteller.data module<a class="headerlink" href="#module-pyteller.data" title="Permalink to this headline">¶</a></h1>
+<p><strong>Functions:</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyteller.data.download" title="pyteller.data.download"><code class="xref py py-obj docutils literal notranslate"><span class="pre">download</span></code></a>(name[, test_size, data_path])</p></td>
+<td><p>Load the CSV with the given name from S3.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyteller.data.load_csv" title="pyteller.data.load_csv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_csv</span></code></a>(path)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyteller.data.load_signal" title="pyteller.data.load_signal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_signal</span></code></a>(data[, train_size, …])</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="pyteller.data.download">
+<code class="sig-prename descclassname">pyteller.data.</code><code class="sig-name descname">download</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">test_size=None</em>, <em class="sig-param">data_path='/home/runner/work/pyteller/pyteller/pyteller/data'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyteller/data.html#download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyteller.data.download" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the CSV with the given name from S3.</p>
+<p>If the CSV has never been loaded before, it will be downloaded
+from the [pyteller bucket](<a class="reference external" href="https://pyteller.s3.amazonaws.com">https://pyteller.s3.amazonaws.com</a>) or
+the S3 bucket specified following the <cite>s3://{bucket}/path/to/the.csv</cite> format,
+and then cached inside the <cite>data</cite> folder, within the <cite>pyteller</cite> package
+directory, and then returned.</p>
+<p>Otherwise, if it has been downloaded and cached before, it will be directly
+loaded from the <cite>pyteller/data</cite> folder without contacting S3.</p>
+<p>If a <cite>test_size</cite> value is given, the data will be split in two parts
+without altering its order, making the second one proportionally as
+big as the given value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Name of the CSV to load.</p></li>
+<li><p><strong>test_size</strong> (<em>float</em>) – Value between 0 and 1 indicating the proportional
+size of the test split. If 0 or None (default), the data is not split.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>If no test_size is given, a single pandas.DataFrame is returned containing all
+the data. If test_size is given, a tuple containing one pandas.DataFrame for
+the train split and another one for the test split is returned.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyteller.data.load_csv">
+<code class="sig-prename descclassname">pyteller.data.</code><code class="sig-name descname">load_csv</code><span class="sig-paren">(</span><em class="sig-param">path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyteller/data.html#load_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyteller.data.load_csv" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pyteller.data.load_signal">
+<code class="sig-prename descclassname">pyteller.data.</code><code class="sig-name descname">load_signal</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">train_size=0.75</em>, <em class="sig-param">timestamp_col=None</em>, <em class="sig-param">entity_cols=None</em>, <em class="sig-param">targets=None</em>, <em class="sig-param">dynamic_variables=None</em>, <em class="sig-param">static_variables=None</em>, <em class="sig-param">column_dict=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyteller/data.html#load_signal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyteller.data.load_signal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
 
 

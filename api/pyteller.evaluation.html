@@ -89,7 +89,8 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../readme.html#load-the-data">1. Load the data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../readme.html#forecast">1. Forecast</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#forecast">2. Forecast</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#evaluate">3. Evaluate</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../readme.html#what-s-next">What’s next?</a></li>
 </ul>
 </li>
@@ -100,7 +101,7 @@
 <li class="toctree-l2 current"><a class="reference internal" href="pyteller.html#subpackages">Subpackages</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">pyteller.evaluation package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-contents">Module contents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-pyteller.evaluation">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="pyteller.primitives.html">pyteller.primitives package</a><ul>
@@ -223,8 +224,32 @@
 </ul>
 </div>
 </div>
-<div class="section" id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pyteller.evaluation">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyteller.evaluation" title="Permalink to this headline">¶</a></h2>
+<p><strong>Functions:</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">MASE</span></code>(training_series, prediction_series, …)</p></td>
+<td><p># Source: <a class="reference external" href="https://github.com/CamDavidsonPilon/Python-Numerics/blob/master/TimeSeries/MASE.py">https://github.com/CamDavidsonPilon/Python-Numerics/blob/master/TimeSeries/MASE.py</a> Computes Mean absolute scaled error forcast error for univariate time series prediction.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">accuracy_score</span></code>(y_true, y_pred[, normalize, …])</p></td>
+<td><p>Accuracy classification score.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean_absolute_error</span></code>(y_true, y_pred[, …])</p></td>
+<td><p>Mean absolute error regression loss</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean_squared_error</span></code>(y_true, y_pred[, …])</p></td>
+<td><p>Mean squared error regression loss</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sMAPE</span></code>(prediction_series, testing_series)</p></td>
+<td><p>Computes the Symmetric mean absolute percentage error forcast error for univariate time series prediction.</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 

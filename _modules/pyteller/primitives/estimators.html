@@ -87,7 +87,8 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../readme.html#load-the-data">1. Load the data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../readme.html#forecast">1. Forecast</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../readme.html#forecast">2. Forecast</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../readme.html#evaluate">3. Evaluate</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../readme.html#what-s-next">What’s next?</a></li>
 </ul>
 </li>
@@ -98,7 +99,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../api/pyteller.html#subpackages">Subpackages</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../api/pyteller.evaluation.html">pyteller.evaluation package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../api/pyteller.evaluation.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../api/pyteller.evaluation.html#module-contents">Module contents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/pyteller.evaluation.html#module-pyteller.evaluation">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api/pyteller.primitives.html">pyteller.primitives package</a><ul>
@@ -243,20 +244,18 @@
 <span class="sd">    used in real scenarios.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_column</span><span class="o">=</span><span class="s1">&#39;target&#39;</span><span class="p">,</span><span class="n">lead</span> <span class="o">=</span> <span class="s1">&#39;lead&#39;</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_value_column</span> <span class="o">=</span> <span class="n">value_column</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lead</span> <span class="o">=</span> <span class="n">lead</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">values_col</span> <span class="o">=</span> <span class="s1">&#39;target&#39;</span>
 
     <span class="c1"># def fit(self, X):</span>
     <span class="c1">#     self.values = X[self._value_column]</span>
-<div class="viewcode-block" id="Persistence.predict"><a class="viewcode-back" href="../../../api/pyteller.primitives.estimators.html#pyteller.primitives.estimators.Persistence.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">X</span><span class="p">):</span>
+<div class="viewcode-block" id="Persistence.predict"><a class="viewcode-back" href="../../../api/pyteller.primitives.estimators.html#pyteller.primitives.estimators.Persistence.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">X</span><span class="p">,</span><span class="n">pred_length</span><span class="p">):</span>
         <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
         <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_value_column</span><span class="p">]</span>
-        <span class="n">preds</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">X</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">][</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">lead</span><span class="p">:]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">])</span>
-        <span class="n">preds</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">lead</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">lead</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span>
+        <span class="n">preds</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">X</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">][</span><span class="o">-</span><span class="n">pred_length</span><span class="p">:]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">])</span>
+        <span class="n">preds</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">pred_length</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="n">pred_length</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">preds</span></div></div>
-        <span class="c1"># return np.full(self.lead,self.values.iloc[-1])</span>
 
 
 <div class="viewcode-block" id="split_sequence"><a class="viewcode-back" href="../../../api/pyteller.primitives.estimators.html#pyteller.primitives.estimators.split_sequence">[docs]</a><span class="k">def</span> <span class="nf">split_sequence</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">target_column</span><span class="p">,</span> <span class="n">sequence_size</span><span class="p">,</span> <span class="n">overlap_size</span><span class="p">):</span>
