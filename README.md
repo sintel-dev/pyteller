@@ -45,7 +45,7 @@ be browsed in the following Google [sheet](https://docs.google.com/spreadsheets/
    * [I.1 Input](#input)
    * [I.2 Output](#output)
    * [I.3 Datasets in the library](#datasets-in-the-library)
-* [II. pyteller Pipelines](#orion-pipelines)
+* [II. pyteller Pipelines](#pyteller-pipelines)
    * [II.1 Current Available Pipelines](#current-available-pipelines)
 * [III. Install](#install)
 * [IV. Quick Start](#quick-start)
@@ -177,25 +177,7 @@ For development and evaluation of pipelines, we include the following datasets:
 * No modifications were made after downloading pjm_hourly_est.csv
 We also use PJM electricity demand data found [here](https://dataminer2.pjm.com/feed/inst_load).
 
-### Data Loading
 
-This formatted datasets can be browsed and downloaded directly from the
-[d3-ai-orion AWS S3 Bucket](https://pyteller.amazonaws.com/index.html).
-
-# Orion Pipelines
-
-The main component in the Orion project are the **Orion Pipelines**, which consist of
-[MLBlocks Pipelines](https://hdi-project.github.io/MLBlocks/advanced_usage/pipelines.html)
-specialized in detecting anomalies in time series.
-
-As ``MLPipeline`` instances, **Orion Pipelines**:
-
-* consist of a list of one or more [MLPrimitives](https://hdi-project.github.io/MLPrimitives/)
-* can be *fitted* on some data and later on used to *predict* anomalies on more data
-* can be *scored* by comparing their predictions with some known anomalies
-* have *hyperparameters* that can be *tuned* to improve their anomaly detection performance
-* can be stored as a JSON file that includes all the primitives that compose them, as well as
-  other required configuration options.
 
 ## Current Available Pipelines
 
