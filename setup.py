@@ -12,10 +12,6 @@ with open('HISTORY.md', encoding='utf-8') as history_file:
     history = history_file.read()
 
 install_requires = [
-]
-
-setup_requires = [
-    'pytest-runner>=2.11.1',
     's3fs>=0.2.2,<0.5',
     'baytune>=0.2.3,<0.3',
     'mlblocks>=0.3.0,<0.4',
@@ -27,6 +23,10 @@ setup_requires = [
     'scikit-learn>=0.20.1,<0.21',
     'tabulate>=0.8.3,<0.9',
     'Keras>=2.1.6,<2.4'
+]
+
+setup_requires = [
+    'pytest-runner>=2.11.1'
 ]
 
 tests_require = [
