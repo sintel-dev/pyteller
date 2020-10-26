@@ -274,7 +274,7 @@ train,test  = load_signal(
     train_size=.75
 )
 ```
-## 1. Forecast
+## 2. Forecast
 Once we have the data, let us try to use a pyteller pipeline to make a forecast.
 
 
@@ -295,12 +295,12 @@ hyperparameters = hyperparameters,
 ```
 
 
-Now, since the poersistence pipeline does not require a fit method, we are ready t0 forecast:
+Now, since the poersistence pipeline does not require a fit method, we are ready to forecast:
 
 ```python3
 forecast = pyteller.predict(test_data=test)
 ```
-
+## 3. Evaluate
 Now, we can evaluate the forecasts
 
 ```python3
