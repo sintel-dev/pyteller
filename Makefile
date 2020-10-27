@@ -102,11 +102,11 @@ bumpversion-release: ## Merge master to stable and bumpversion release
 	git push --tags origin stable
 
 .PHONY: bumpversion-release-test
- bumpversion-release-test: ## Merge master to stable and bumpversion release
- 	git checkout stable || git checkout -b stable
- 	git merge --no-ff master -m"make release-tag: Merge branch 'master' into stable"
- 	bumpversion release --no-tag
- 	@echo git push --tags origin stable
+bumpversion-release-test: ## Merge master to stable and bumpversion release
+	git checkout stable || git checkout -b stable
+	git merge --no-ff master -m"make release-tag: Merge branch 'master' into stable"
+	bumpversion release --no-tag
+	@echo git push --tags origin stable
 
 .PHONY: bumpversion-patch
 bumpversion-patch: ## Merge stable to master and bumpversion patch
