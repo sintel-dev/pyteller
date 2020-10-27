@@ -24,5 +24,3 @@ def _run_pipeline(pipeline, train, test):
 
     LOGGER.debug("%s events found", len(events))
     return events
-
-

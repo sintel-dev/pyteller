@@ -19,7 +19,7 @@ BENCHMARK_DATA = pd.read_csv(S3_URL.format(
     BUCKET, 'datasets.csv'), index_col=0, header=None).applymap(ast.literal_eval).to_dict()[1]
 # BENCHMARK_PARAMS = pd.read_csv(S3_URL.format(
 #     BUCKET, 'parameters.csv'), index_col=0, header=None).applymap(ast.literal_eval).to_dict()[1]
-BENCHMARK_PARAMS=[]
+BENCHMARK_PARAMS = []
 BENCHMARK_PATH = os.path.join(os.path.join(
     os.path.dirname(os.path.abspath(__file__)), '..'),
     'benchmark'
@@ -28,6 +28,7 @@ BENCHMARK_PATH = os.path.join(os.path.join(
 VERIFIED_PIPELINES = [
     'persistence'
 ]
+
 
 def _sort_leaderboard(df, rank, metrics):
     if rank not in df.columns:
@@ -45,22 +46,20 @@ def _sort_leaderboard(df, rank, metrics):
     return df.set_index('pipeline').reset_index()
 
 
-def _load_signal(dataset,signal, holdout):
-    #TODO: make this a spread sheet in s3 bucket and make it so the user can input signal
+def _load_signal(dataset, signal, holdout):
+    # TODO: make this a spread sheet in s3 bucket and make it so the user can input signal
     meta_path = os.path.join(os.path.dirname(__file__), 'data', dataset + '.json')
     with open(meta_path) as f:
         columns = json.load(f)
 
-
-    train,test =  load_signal(dataset,column_dict=columns)
+    train, test = load_signal(dataset, column_dict=columns)
 
     return train, test
 
 
-
 def _evaluate_signal(pipeline, name, dataset, signal, hyperparameter, metrics,
                      holdout=True, detrend=False):
-    train, test = _load_signal(dataset,signal, holdout)
+    train, test = _load_signal(dataset, signal, holdout)
     pipeline = _load_pipeline(pipeline, hyperparameter)
     pyteller = Pyteller(
         pipeline=pipeline,
@@ -80,9 +79,9 @@ def _evaluate_signal(pipeline, name, dataset, signal, hyperparameter, metrics,
     #     for name, scorer in metrics.items() if name != 'MASE'
     # })
 
-    scores = pyteller.evaluate(train_data=train, test_data=test, forecast=forecast,detailed=True)
+    scores = pyteller.evaluate(train_data=train, test_data=test, forecast=forecast, detailed=True)
     scores['pipeline'] = name
-    #scores['holdout'] = holdout
+    # scores['holdout'] = holdout
     scores['dataset'] = dataset
     scores['signal'] = signal
     # scores['prediction length'] = forecast.shape[0]
@@ -134,7 +133,6 @@ def _evaluate_pipeline(pipeline, pipeline_name, dataset, signals, hyperparameter
     return scores
 
 
-
 def _evaluate_pipelines(pipelines, dataset, signals, hyperparameters, metrics, distributed,
                         holdout, detrend):
 
@@ -147,6 +145,7 @@ def _evaluate_pipelines(pipelines, dataset, signals, hyperparameters, metrics, d
 
     return scores
 
+
 def _get_parameter(parameters, name):
     if isinstance(parameters, dict) and name in parameters.keys():
         return parameters[name]
@@ -157,7 +156,6 @@ def _get_parameter(parameters, name):
 def _evaluate_datasets(pipelines, datasets, hyperparameters, metrics, distributed, holdout,
                        detrend):
     delayed = []
-
 
     for dataset, signals in datasets.items():
         LOGGER.info("Starting dataset {} with {} signals..".format(
@@ -257,6 +255,7 @@ def benchmark(pipelines=None, datasets=None, hyperparameters=None, metrics=METRI
 
     return _sort_leaderboard(results, rank, metrics)
 
+
 def main():
     # output path
     version = "results.csv"
@@ -266,23 +265,24 @@ def main():
     metrics = {k: partial(fun) for k, fun in METRICS.items()}
 
     # pipelines
-    pipelines = VERIFIED_PIPELINES #TODO : check if pipeline user inputs work
+    pipelines = VERIFIED_PIPELINES  # TODO : check if pipeline user inputs work
     datasets = {
-        # 'taxi':'value',
-        # 'AL_Weather':'tmpf',
-        'Wind': 'AT'
-        # 'pjm_hourly_est' : 'AEP',
-        # 'FasTrak' : 'Total Flow'
+        'taxi':'value',
+        'AL_Weather':'tmpf',
+        'Wind': 'AT',
+        'pjm_hourly_est' : 'AEP',
+        'FasTrak' : 'Total Flow'
     }
 
     results = benchmark(
-        pipelines=pipelines, metrics=metrics, datasets=datasets,output_path=output_path)
+        pipelines=pipelines, metrics=metrics, datasets=datasets, output_path=output_path)
     # TODO: summarize results for who wins compared to latest baseline
     output_path = os.path.join(BENCHMARK_PATH, 'leaderboard.csv')
     results.to_csv(output_path)
 
     # leaderboard = _summarize_results(results, metrics)
     # leaderboard.to_csv(output_path)
+
 
 if __name__ == "__main__":
     main()

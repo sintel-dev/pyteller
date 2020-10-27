@@ -40,12 +40,12 @@ class Persistence:
 
     # def fit(self, X):
     #     self.values = X[self._value_column]
-    def predict(self,X,pred_length):
+    def predict(self, X, pred_length):
         import numpy as np
         import pandas as pd
         self.values = X['target']
         preds = pd.DataFrame(data=X['timestamp'][-pred_length:].values, columns=['timestamp'])
-        preds['target'] = np.full((pred_length, 1), self.values.iloc[-pred_length-1])
+        preds['target'] = np.full((pred_length, 1), self.values.iloc[-pred_length - 1])
         return preds
 
 
@@ -93,4 +93,3 @@ def split_sequence(X, target_column, sequence_size, overlap_size):
         overlap = overlap_size
 
     return X_, index_
-
