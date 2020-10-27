@@ -101,6 +101,13 @@ bumpversion-release: ## Merge master to stable and bumpversion release
 	bumpversion release
 	git push --tags origin stable
 
+.PHONY: bumpversion-release-test
+ bumpversion-release-test: ## Merge master to stable and bumpversion release
+ 	git checkout stable || git checkout -b stable
+ 	git merge --no-ff master -m"make release-tag: Merge branch 'master' into stable"
+ 	bumpversion release --no-tag
+ 	@echo git push --tags origin stable
+
 .PHONY: bumpversion-patch
 bumpversion-patch: ## Merge stable to master and bumpversion patch
 	git checkout master
@@ -120,8 +127,15 @@ bumpversion-major: ## Bump the version the next major skipping the release
 bumpversion-candidate: ## Bump the version to the next candidate
 	bumpversion candidate --no-tag
 
+CLEAN_DIR := $(shell git status --short | grep -v ??)
 CURRENT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD 2>/dev/null)
 CHANGELOG_LINES := $(shell git diff HEAD..origin/stable HISTORY.md 2>&1 | wc -l)
+
+.PHONY: check-clean
+ check-clean: ## Check if the directory has uncommitted changes
+ ifneq ($(CLEAN_DIR),)
+ 	$(error There are uncommitted changes)
+ endif
 
 .PHONY: check-master
 check-master: ## Check if we are in master branch
@@ -137,6 +151,7 @@ endif
 
 .PHONY: check-release
 check-release: check-master check-history ## Check if the release can be made
+	@echo "A new release can be made"
 
 .PHONY: release
 release: check-release bumpversion-release publish bumpversion-patch
