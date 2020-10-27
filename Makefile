@@ -123,6 +123,11 @@ bumpversion-minor: ## Bump the version the next minor skipping the release
 bumpversion-major: ## Bump the version the next major skipping the release
 	bumpversion --no-tag major
 
+.PHONY: bumpversion-revert
+bumpversion-revert: ## Undo a previous bumpversion-release
+	git checkout master
+	git branch -D stable
+
 .PHONY: bumpversion-candidate
 bumpversion-candidate: ## Bump the version to the next candidate
 	bumpversion candidate --no-tag
