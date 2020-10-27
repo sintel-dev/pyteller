@@ -1,6 +1,5 @@
 import os
 import logging
-import numpy as np
 
 import pandas as pd
 
@@ -72,8 +71,6 @@ def load_csv(path):
     return pd.DataFrame(data)
 
 
-
-
 def load_signal(data,
                 train_size=.75,
                 timestamp_col=None,
@@ -88,7 +85,7 @@ def load_signal(data,
     else:
         data = download(data)
 
-    if column_dict != None:
+    if column_dict is not None:
         columns = column_dict
     else:
         columns = {
@@ -99,7 +96,7 @@ def load_signal(data,
             'static_variable': static_variables
         }
 # TODO more than one target
-        columns = {k: v for k, v in columns.items() if v != None}
+        columns = {k: v for k, v in columns.items() if v is not None}
     df = pd.DataFrame()
     for key in columns:
         df[key] = data[columns[key]]
@@ -107,15 +104,15 @@ def load_signal(data,
     train_length = round(len(df) * train_size)
     train = df.iloc[:train_length]
     test = df.iloc[train_length:]
-    if column_dict != None:
-        is_entity= 'entity' in column_dict
-    if entity_cols == None and is_entity==False:
-        train=train.assign(entity=1)
+    if column_dict is not None:
+        is_entity = 'entity' in column_dict
+    if entity_cols is None and is_entity == False:
+        train = train.assign(entity=1)
         test = test.assign(entity=1)
     train = train.groupby('entity')
     test = test.groupby('entity')
     for entity, train_entity in train:
-        if train_entity["timestamp"].is_unique==False:
-            raise ValueError('There are multiple values for a single timestamp, please choose an entity column that will group the data to have only one value for a timestep for each entity.')
+        if train_entity["timestamp"].is_unique == False:
+            raise ValueError(
+                'There are multiple values for a single timestamp, please choose an entity column that will group the data to have only one value for a timestep for each entity.')
     return train, test
-

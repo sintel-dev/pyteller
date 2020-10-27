@@ -54,7 +54,7 @@ install-develop: clean-build clean-pyc ## install the package in editable mode a
 test-all: ## run tests on every Python version with tox
 	tox -r -p auto
 
-.PHONY: fix-lint
+.PHONY: fix-lsint
 fix-lint: ## fix lint issues using autoflake, autopep8, and isort
 	find pyteller tests -name '*.py' | xargs autoflake --in-place --remove-all-unused-imports --remove-unused-variables
 	autopep8 --in-place --recursive --aggressive pyteller tests
