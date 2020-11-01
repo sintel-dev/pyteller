@@ -43,9 +43,13 @@ class Persistence:
     def predict(self, X, pred_length):
         import numpy as np
         import pandas as pd
-        self.values = X['target']
-        preds = pd.DataFrame(data=X['timestamp'][-pred_length:].values, columns=['timestamp'])
-        preds['target'] = np.full((pred_length, 1), self.values.iloc[-pred_length - 1])
+        signals = [col for col in X if col.startswith('signal')]
+        self.values = X[signals]
+        time = pd.DataFrame(data=X['timestamp'][-pred_length:].values, columns=['timestamp'])
+        # preds = self.values.iloc[-pred_length:, :]
+        preds = self.values.iloc[-pred_length - 1:-pred_length, :]
+        preds = pd.concat([preds]*pred_length)
+        preds['timestamp'] =time.values
         return preds
 
 

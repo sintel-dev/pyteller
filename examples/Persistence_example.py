@@ -1,17 +1,18 @@
 from pyteller.data import load_signal
 
 #Pick a dataset from the S3 bucket or give a local path
-dataset = 'FasTrak'
+dataset = 'AL_Weather'
 
-# Here we load the dataset and the user secifies what the columns are
+# Here we load the dataset and the user specifies what the columns are
 # Slpit the data into train and test data
+
 train,test = load_signal(
     data=dataset,
-    timestamp_col = 'timestamp',
-    targets='Total Flow',
+    timestamp_col = 'valid',
+    signals=['tmpf','dwpf'],
     static_variables=None,
     # entity_cols=None,
-    entity_cols='Location Identifier',
+    entity_cols='station',
     train_size=.75
 )
 # TODO: variable column for longform
