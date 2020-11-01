@@ -61,32 +61,35 @@ class Pyteller:
             metrics_[metric] = METRICS[metric]
         scores = list()
         for entity, forecast_entity in forecast:
-            score = {}
+
             pred_window = (test_data.get_group(entity)['timestamp']
                            >= forecast_entity['timestamp'].iloc[0]) & (
                 test_data.get_group(entity)['timestamp']
                 <= forecast_entity['timestamp'].iloc[-1])
             actual_entity = test_data.get_group(entity).loc[pred_window]
+            signals = [col for col in forecast_entity if col.startswith('signal')]
+            for signal in signals:
+                score = {}
+                if 'MASE' in metrics_:
+                    score['MASE'] = metrics_['MASE'](train_data.get_group(entity)[signal],
+                                                     forecast_entity[signal], actual_entity[signal])
 
-            if 'MASE' in metrics_:
-                score['MASE'] = metrics_['MASE'](train_data.get_group(entity)['target'],
-                                                 forecast_entity['target'], actual_entity['target'])
+                score.update({
+                    metric: METRICS[metric](actual_entity[signal], forecast_entity[signal])
+                    for metric in metrics_ if metric != 'MASE'
+                })
+                granularity = pd.to_datetime(
+                    train_data.get_group(entity)['timestamp'].iloc[1]) - pd.to_datetime(
+                    train_data.get_group(entity)['timestamp'].iloc[0])
+                score['entity'] = entity
+                score['signal']=signal
 
-            score.update({
-                metric: METRICS[metric](actual_entity['target'], forecast_entity['target'])
-                for metric in metrics_ if metric != 'MASE'
-            })
-            granularity = pd.to_datetime(
-                train_data.get_group(entity)['timestamp'].iloc[1]) - pd.to_datetime(
-                train_data.get_group(entity)['timestamp'].iloc[0])
-            score['entity'] = entity
-            scores.append(score)
-            if detailed == True:
-                score['granularity'] = granularity
-                score['prediction length'] = forecast_entity.shape[0]
-                score['length of training data'] = len(train_data.get_group(entity))
-                score['length of testing data'] = len(test_data.get_group(entity))
+                if detailed == True:
+                    score['granularity'] = granularity
+                    score['prediction length'] = forecast_entity.shape[0]
+                    score['length of training data'] = len(train_data.get_group(entity))
+                    score['length of testing data'] = len(test_data.get_group(entity))
+                scores.append(score)
+        # scores = pd.DataFrame.from_records(scores)
 
-        scores = pd.DataFrame.from_records(scores)
-
-        return scores
+        return pd.DataFrame(scores)

@@ -75,7 +75,7 @@ def load_signal(data,
                 train_size=.75,
                 timestamp_col=None,
                 entity_cols=None,
-                targets=None,
+                signals=None,
                 dynamic_variables=None,
                 static_variables=None,
                 column_dict=None):
@@ -86,33 +86,56 @@ def load_signal(data,
         data = download(data)
 
     if column_dict is not None:
-        columns = column_dict
+        allowed_keys = ['timestamp', 'signals', 'entity']
+        columns = {k: column_dict[k] for k in allowed_keys}
+        columns = {k: v for k, v in columns.items() if
+                   pd.Series(v).notna().all()}  # remove Nan value keys
     else:
         columns = {
+            'signals': signals,
             'timestamp': timestamp_col,
             'entity': entity_cols,
-            'target': targets,
+
             'dynamic_variable': dynamic_variables,
             'static_variable': static_variables
         }
-# TODO more than one target
-        columns = {k: v for k, v in columns.items() if v is not None}
-    df = pd.DataFrame()
-    for key in columns:
-        df[key] = data[columns[key]]
 
-    train_length = round(len(df) * train_size)
-    train = df.iloc[:train_length]
-    test = df.iloc[train_length:]
-    if column_dict is not None:
-        is_entity = 'entity' in column_dict
-    if entity_cols is None and is_entity == False:
-        train = train.assign(entity=1)
-        test = test.assign(entity=1)
-    train = train.groupby('entity')
-    test = test.groupby('entity')
-    for entity, train_entity in train:
-        if train_entity["timestamp"].is_unique == False:
-            raise ValueError(
-                'There are multiple values for a single timestamp, please choose an entity column that will group the data to have only one value for a timestep for each entity.')
+# TODO more than one target
+    columns = {k: v for k, v in columns.items() if v is not None}
+    df = pd.DataFrame()
+    if 'signals' in columns:
+        signals = columns['signals']
+        if isinstance(signals, str):
+            signals = [item.strip() for item in signals.split(',')]
+
+        df = data[signals]
+        signals_name = "".join('signal_{} '.format(x) for x in signals)  # add prefix signals
+        signals_name = [item.strip() for item in signals_name.split(' ')]
+        new_name = dict(zip(signals, signals_name))
+        df = df.rename(columns=new_name)
+    for key in columns:
+        if key != 'signals':
+            df[key] = data[columns[key]]
+
+    # if column_dict is not None:
+    #     is_entity = 'entity' in columns
+    # if entity_cols is None and is_entity == False:
+    # if is_entity == False:
+    if 'entity' not in df:
+        df = df.assign(entity=1)
+    train_df = pd.DataFrame()
+    test_df = pd.DataFrame()
+    df = df.groupby('entity')
+    for entity_name, entity_df in df:
+        train_length = round(len(entity_df) * train_size)
+        train = entity_df.iloc[:train_length]
+        test = entity_df.iloc[train_length:]
+        train_df = train_df.append(train)
+        test_df = test_df.append(test)
+    train = train_df.groupby('entity')
+    test = test_df.groupby('entity')
+    # for entity, train_entity in train:
+    #     if train_entity["timestamp"].is_unique == False:
+    #         raise ValueError(
+    #             'There are multiple values for a single timestamp, please choose an entity column that will group the data to have only one value for a timestep for each entity.')
     return train, test

@@ -17,6 +17,9 @@ S3_URL = 'https://{}.s3.amazonaws.com/{}'
 
 BENCHMARK_DATA = pd.read_csv(S3_URL.format(
     BUCKET, 'datasets.csv'), index_col=0, header=None).applymap(ast.literal_eval).to_dict()[1]
+META_DATA = pd.read_csv(S3_URL.format(
+    BUCKET, 'data_s3.csv'), index_col=0, header=0)
+META_DATA=META_DATA.loc[META_DATA.index.dropna()]
 # BENCHMARK_PARAMS = pd.read_csv(S3_URL.format(
 #     BUCKET, 'parameters.csv'), index_col=0, header=None).applymap(ast.literal_eval).to_dict()[1]
 BENCHMARK_PARAMS = []
@@ -46,20 +49,21 @@ def _sort_leaderboard(df, rank, metrics):
     return df.set_index('pipeline').reset_index()
 
 
-def _load_signal(dataset, signal, holdout):
+def _load_signal(dataset, columns, holdout):
     # TODO: make this a spread sheet in s3 bucket and make it so the user can input signal
-    meta_path = os.path.join(os.path.dirname(__file__), 'data', dataset + '.json')
-    with open(meta_path) as f:
-        columns = json.load(f)
+    # meta_path = os.path.join(os.path.dirname(__file__), 'data', dataset + '.json')
+    # with open(meta_path) as f:
+    #     columns = json.load(f)
+    #columns = META_DATA.loc[dataset].to_dict()
 
-    train, test = load_signal(dataset, column_dict=columns)
+    train, test = load_signal(dataset, column_dict=columns.to_dict())
 
     return train, test
 
 
-def _evaluate_signal(pipeline, name, dataset, signal, hyperparameter, metrics,
+def _evaluate_signal(pipeline, name, dataset, columns, hyperparameter, metrics,
                      holdout=True, detrend=False):
-    train, test = _load_signal(dataset, signal, holdout)
+    train, test = _load_signal(dataset, columns, holdout)
     pipeline = _load_pipeline(pipeline, hyperparameter)
     pyteller = Pyteller(
         pipeline=pipeline,
@@ -83,7 +87,7 @@ def _evaluate_signal(pipeline, name, dataset, signal, hyperparameter, metrics,
     scores['pipeline'] = name
     # scores['holdout'] = holdout
     scores['dataset'] = dataset
-    scores['signal'] = signal
+    # scores['signal'] = signal
     # scores['prediction length'] = forecast.shape[0]
     # scores['length of training data'] = len(train)
     # scores['length of testing data'] = len(test)
@@ -91,18 +95,18 @@ def _evaluate_signal(pipeline, name, dataset, signal, hyperparameter, metrics,
     return scores
 
 
-def _evaluate_pipeline(pipeline, pipeline_name, dataset, signals, hyperparameter, metrics,
+def _evaluate_pipeline(pipeline, pipeline_name, dataset, columns, hyperparameter, metrics,
                        distributed, holdout, detrend):
     if holdout is None:
         holdout = (True, False)
     elif not isinstance(holdout, tuple):
         holdout = (holdout, )
 
-    if hyperparameter is None:
-        file_path = os.path.join(
-            PIPELINE_DIR, pipeline_name, pipeline_name + '_' + dataset.lower() + '.json')
-        if os.path.exists(file_path):
-            hyperparameter = file_path
+    # if hyperparameter is None:
+    #     file_path = os.path.join(
+    #         PIPELINE_DIR, pipeline_name, pipeline_name + '_' + dataset.lower() + '.json')
+    #     if os.path.exists(file_path):
+    #         hyperparameter = file_path
 
     if isinstance(hyperparameter, str) and os.path.exists(hyperparameter):
         LOGGER.info("Loading hyperparameter %s", hyperparameter)
@@ -115,31 +119,30 @@ def _evaluate_pipeline(pipeline, pipeline_name, dataset, signals, hyperparameter
         function = _evaluate_signal
 
     scores = list()
-
-    if isinstance(signals, str):
+#TODO Fix
+    if isinstance(columns, str):
         for holdout_ in holdout:
-            score = function(pipeline, pipeline_name, dataset, signals, hyperparameter,
+            score = function(pipeline, pipeline_name, dataset, columns, hyperparameter,
                              metrics, holdout_, detrend)
             scores.append(score)
     else:
-        for signal in signals:
 
-            for holdout_ in holdout:
-                score = function(pipeline, pipeline_name, dataset, signal, hyperparameter,
-                                 metrics, holdout_, detrend)
+        for holdout_ in holdout:
+            score = function(pipeline, pipeline_name, dataset, columns, hyperparameter,
+                             metrics, holdout_, detrend)
 
-            scores.append(score)
+        scores.append(score)
 
     return scores
 
 
-def _evaluate_pipelines(pipelines, dataset, signals, hyperparameters, metrics, distributed,
+def _evaluate_pipelines(pipelines, dataset, columns, hyperparameters, metrics, distributed,
                         holdout, detrend):
 
     scores = list()
     for name, pipeline in pipelines.items():
         hyperparameter = _get_parameter(hyperparameters, name)
-        score = _evaluate_pipeline(pipeline, name, dataset, signals, hyperparameter,
+        score = _evaluate_pipeline(pipeline, name, dataset, columns, hyperparameter,
                                    metrics, distributed, holdout, detrend)
         scores.extend(score)
 
@@ -157,9 +160,13 @@ def _evaluate_datasets(pipelines, datasets, hyperparameters, metrics, distribute
                        detrend):
     delayed = []
 
-    for dataset, signals in datasets.items():
+    # for dataset, signals in datasets.items():
+    for dataset, columns in datasets.iterrows():
         LOGGER.info("Starting dataset {} with {} signals..".format(
-            dataset, len(signals)))
+            dataset, len(columns)))
+
+
+
 
         # dataset configuration
         hyperparameters_ = _get_parameter(hyperparameters, dataset)
@@ -168,7 +175,7 @@ def _evaluate_datasets(pipelines, datasets, hyperparameters, metrics, distribute
             detrend, holdout = parameters.values()
 
         result = _evaluate_pipelines(
-            pipelines, dataset, signals, hyperparameters_, metrics, distributed, holdout, detrend)
+            pipelines, dataset, columns, hyperparameters_, metrics, distributed, holdout, detrend)
 
         delayed.extend(result)
 
@@ -222,7 +229,7 @@ def benchmark(pipelines=None, datasets=None, hyperparameters=None, metrics=METRI
             by the indicated metric.
     """
     pipelines = pipelines or VERIFIED_PIPELINES
-    datasets = datasets or BENCHMARK_DATA
+    datasets = datasets or META_DATA#BENCHMARK_DATA
 
     if isinstance(pipelines, list):
         pipelines = {pipeline: pipeline for pipeline in pipelines}
@@ -266,16 +273,16 @@ def main():
 
     # pipelines
     pipelines = VERIFIED_PIPELINES  # TODO : check if pipeline user inputs work
-    datasets = {
-        'taxi':'value',
-        'AL_Weather':'tmpf',
-        'Wind': 'AT',
-        'pjm_hourly_est' : 'AEP',
-        'FasTrak' : 'Total Flow'
-    }
+    # datasets = {
+    #     'taxi':'value',
+    #     'AL_Weather':'tmpf',
+    #     'Wind': 'AT',
+    #     'pjm_hourly_est' : 'AEP',
+    #     'FasTrak' : 'Total Flow'
+    # }
 
     results = benchmark(
-        pipelines=pipelines, metrics=metrics, datasets=datasets, output_path=output_path)
+        pipelines=pipelines, metrics=metrics, output_path=output_path)
     # TODO: summarize results for who wins compared to latest baseline
     output_path = os.path.join(BENCHMARK_PATH, 'leaderboard.csv')
     results.to_csv(output_path)

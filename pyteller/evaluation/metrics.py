@@ -18,9 +18,9 @@ def MASE(training_series, prediction_series, testing_series):
     Returns: float of MASE
     """
     n = training_series.shape[0]
-    d = np.abs(np.diff(training_series)).sum() / (n - 1)
+    d = np.abs(np.diff(np.array(training_series,dtype=float))).sum() / (n - 1)
 
-    errors = np.abs(np.array(testing_series) - np.array(prediction_series)).mean()
+    errors = np.abs(np.array(testing_series,dtype=float) - np.array(prediction_series,dtype=float)).mean()
     if np.isnan(d) or errors == 0 or d == 0:
         return 0
     else:
@@ -39,8 +39,8 @@ def sMAPE(prediction_series, testing_series):
         absolute: "squares" to use sum of squares and root the result, "absolute" to use absolute values.
     Returns: float of sMAPE
     """
-    prediction_series = np.array(prediction_series)
-    testing_series = np.array(testing_series)
+    prediction_series = np.array(prediction_series,dtype=float)
+    testing_series = np.array(testing_series,dtype=float)
     zero = prediction_series[testing_series == 0]  # Check if two time steps are both zero
     if zero.size != 0:  # If there are indexes where the zeros align return zero, there is no error
         return 0
