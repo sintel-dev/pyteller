@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyteller.data &mdash; pyteller 0.1.0.dev0 documentation</title>
+  <title>pyteller.data &mdash; pyteller 0.0.1.dev0 documentation</title>
   
 
   
@@ -209,7 +209,6 @@
   <h1>Source code for pyteller.data</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
@@ -281,13 +280,11 @@
     <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
 
 
-
-
 <div class="viewcode-block" id="load_signal"><a class="viewcode-back" href="../../api/pyteller.data.html#pyteller.data.load_signal">[docs]</a><span class="k">def</span> <span class="nf">load_signal</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>
                 <span class="n">train_size</span><span class="o">=.</span><span class="mi">75</span><span class="p">,</span>
                 <span class="n">timestamp_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                 <span class="n">entity_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                <span class="n">targets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">signals</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                 <span class="n">dynamic_variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                 <span class="n">static_variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                 <span class="n">column_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -297,37 +294,60 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">download</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">column_dict</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">columns</span> <span class="o">=</span> <span class="n">column_dict</span>
+    <span class="k">if</span> <span class="n">column_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">allowed_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">,</span> <span class="s1">&#39;signals&#39;</span><span class="p">,</span> <span class="s1">&#39;entity&#39;</span><span class="p">]</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">column_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">allowed_keys</span><span class="p">}</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">columns</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span>
+                   <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">notna</span><span class="p">()</span><span class="o">.</span><span class="n">all</span><span class="p">()}</span>  <span class="c1"># remove Nan value keys</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">columns</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;signals&#39;</span><span class="p">:</span> <span class="n">signals</span><span class="p">,</span>
             <span class="s1">&#39;timestamp&#39;</span><span class="p">:</span> <span class="n">timestamp_col</span><span class="p">,</span>
             <span class="s1">&#39;entity&#39;</span><span class="p">:</span> <span class="n">entity_cols</span><span class="p">,</span>
-            <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="n">targets</span><span class="p">,</span>
+
             <span class="s1">&#39;dynamic_variable&#39;</span><span class="p">:</span> <span class="n">dynamic_variables</span><span class="p">,</span>
             <span class="s1">&#39;static_variable&#39;</span><span class="p">:</span> <span class="n">static_variables</span>
         <span class="p">}</span>
+
 <span class="c1"># TODO more than one target</span>
-        <span class="n">columns</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">columns</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">}</span>
+    <span class="n">columns</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">columns</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">}</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+    <span class="k">if</span> <span class="s1">&#39;signals&#39;</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
+        <span class="n">signals</span> <span class="o">=</span> <span class="n">columns</span><span class="p">[</span><span class="s1">&#39;signals&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">signals</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">signals</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">signals</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)]</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">signals</span><span class="p">]</span>
+        <span class="n">signals_name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;signal_</span><span class="si">{}</span><span class="s1"> &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">signals</span><span class="p">)</span>  <span class="c1"># add prefix signals</span>
+        <span class="n">signals_name</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">signals_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)]</span>
+        <span class="n">new_name</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">signals</span><span class="p">,</span> <span class="n">signals_name</span><span class="p">))</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">new_name</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
-        <span class="n">df</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">columns</span><span class="p">[</span><span class="n">key</span><span class="p">]]</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="o">!=</span> <span class="s1">&#39;signals&#39;</span><span class="p">:</span>
+            <span class="n">df</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">columns</span><span class="p">[</span><span class="n">key</span><span class="p">]]</span>
 
-    <span class="n">train_length</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span> <span class="o">*</span> <span class="n">train_size</span><span class="p">)</span>
-    <span class="n">train</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="n">train_length</span><span class="p">]</span>
-    <span class="n">test</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">train_length</span><span class="p">:]</span>
-    <span class="k">if</span> <span class="n">column_dict</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">is_entity</span><span class="o">=</span> <span class="s1">&#39;entity&#39;</span> <span class="ow">in</span> <span class="n">column_dict</span>
-    <span class="k">if</span> <span class="n">entity_cols</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">is_entity</span><span class="o">==</span><span class="kc">False</span><span class="p">:</span>
-        <span class="n">train</span><span class="o">=</span><span class="n">train</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">entity</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">test</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">entity</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">train</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;entity&#39;</span><span class="p">)</span>
-    <span class="n">test</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;entity&#39;</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">entity</span><span class="p">,</span> <span class="n">train_entity</span> <span class="ow">in</span> <span class="n">train</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">train_entity</span><span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">is_unique</span><span class="o">==</span><span class="kc">False</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;There are multiple values for a single timestamp, please choose an entity column that will group the data to have only one value for a timestep for each entity.&#39;</span><span class="p">)</span>
+    <span class="c1"># if column_dict is not None:</span>
+    <span class="c1">#     is_entity = &#39;entity&#39; in columns</span>
+    <span class="c1"># if entity_cols is None and is_entity == False:</span>
+    <span class="c1"># if is_entity == False:</span>
+    <span class="k">if</span> <span class="s1">&#39;entity&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">entity</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">train_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+    <span class="n">test_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;entity&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">entity_name</span><span class="p">,</span> <span class="n">entity_df</span> <span class="ow">in</span> <span class="n">df</span><span class="p">:</span>
+        <span class="n">train_length</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">entity_df</span><span class="p">)</span> <span class="o">*</span> <span class="n">train_size</span><span class="p">)</span>
+        <span class="n">train</span> <span class="o">=</span> <span class="n">entity_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="n">train_length</span><span class="p">]</span>
+        <span class="n">test</span> <span class="o">=</span> <span class="n">entity_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">train_length</span><span class="p">:]</span>
+        <span class="n">train_df</span> <span class="o">=</span> <span class="n">train_df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">train</span><span class="p">)</span>
+        <span class="n">test_df</span> <span class="o">=</span> <span class="n">test_df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+    <span class="n">train</span> <span class="o">=</span> <span class="n">train_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;entity&#39;</span><span class="p">)</span>
+    <span class="n">test</span> <span class="o">=</span> <span class="n">test_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;entity&#39;</span><span class="p">)</span>
+    <span class="c1"># for entity, train_entity in train:</span>
+    <span class="c1">#     if train_entity[&quot;timestamp&quot;].is_unique == False:</span>
+    <span class="c1">#         raise ValueError(</span>
+    <span class="c1">#             &#39;There are multiple values for a single timestamp, please choose an entity column that will group the data to have only one value for a timestep for each entity.&#39;)</span>
     <span class="k">return</span> <span class="n">train</span><span class="p">,</span> <span class="n">test</span></div>
-
 </pre></div>
 
            </div>

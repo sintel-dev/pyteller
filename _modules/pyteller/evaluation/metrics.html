@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyteller.evaluation.metrics &mdash; pyteller 0.1.0.dev0 documentation</title>
+  <title>pyteller.evaluation.metrics &mdash; pyteller 0.0.1.dev0 documentation</title>
   
 
   
@@ -207,11 +207,12 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pyteller.evaluation.metrics</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">accuracy_score</span><span class="p">,</span><span class="n">mean_absolute_error</span><span class="p">,</span> <span class="n">mean_squared_error</span><span class="p">)</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_squared_error</span><span class="p">,</span><span class="n">mean_absolute_error</span>
 <span class="c1"># TODO break up metrics between normalized and not normalized</span>
-<div class="viewcode-block" id="MASE"><a class="viewcode-back" href="../../../api/pyteller.evaluation.metrics.html#pyteller.evaluation.metrics.MASE">[docs]</a><span class="k">def</span> <span class="nf">MASE</span><span class="p">(</span> <span class="n">training_series</span><span class="p">,</span> <span class="n">prediction_series</span><span class="p">,</span><span class="n">testing_series</span><span class="p">):</span>
+
+
+<div class="viewcode-block" id="MASE"><a class="viewcode-back" href="../../../api/pyteller.evaluation.metrics.html#pyteller.evaluation.metrics.MASE">[docs]</a><span class="k">def</span> <span class="nf">MASE</span><span class="p">(</span><span class="n">training_series</span><span class="p">,</span> <span class="n">prediction_series</span><span class="p">,</span> <span class="n">testing_series</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    # Source: https://github.com/CamDavidsonPilon/Python-Numerics/blob/master/TimeSeries/MASE.py</span>
 <span class="sd">    Computes Mean absolute scaled error forcast error for univariate time series prediction.</span>
@@ -226,15 +227,16 @@
 <span class="sd">    Returns: float of MASE</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">n</span> <span class="o">=</span> <span class="n">training_series</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">training_series</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">training_series</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
 
-    <span class="n">errors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">testing_series</span><span class="p">)</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">prediction_series</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="ow">or</span> <span class="n">errors</span><span class="o">==</span><span class="mi">0</span> <span class="ow">or</span> <span class="n">d</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+    <span class="n">errors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">testing_series</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">prediction_series</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="ow">or</span> <span class="n">errors</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">d</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="mi">0</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">errors</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">/</span> <span class="n">d</span></div>
 
-<div class="viewcode-block" id="sMAPE"><a class="viewcode-back" href="../../../api/pyteller.evaluation.metrics.html#pyteller.evaluation.metrics.sMAPE">[docs]</a><span class="k">def</span> <span class="nf">sMAPE</span><span class="p">(</span> <span class="n">prediction_series</span><span class="p">,</span><span class="n">testing_series</span><span class="p">):</span>
+
+<div class="viewcode-block" id="sMAPE"><a class="viewcode-back" href="../../../api/pyteller.evaluation.metrics.html#pyteller.evaluation.metrics.sMAPE">[docs]</a><span class="k">def</span> <span class="nf">sMAPE</span><span class="p">(</span><span class="n">prediction_series</span><span class="p">,</span> <span class="n">testing_series</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    Computes the Symmetric mean absolute percentage error forcast error for univariate time series prediction.</span>
@@ -246,13 +248,14 @@
 <span class="sd">        absolute: &quot;squares&quot; to use sum of squares and root the result, &quot;absolute&quot; to use absolute values.</span>
 <span class="sd">    Returns: float of sMAPE</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">prediction_series</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">prediction_series</span><span class="p">)</span>
-    <span class="n">testing_series</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">testing_series</span><span class="p">)</span>
-    <span class="n">zero</span><span class="o">=</span><span class="n">prediction_series</span><span class="p">[</span><span class="n">testing_series</span><span class="o">==</span><span class="mi">0</span><span class="p">]</span> <span class="c1">#Check if two time steps are both zero</span>
-    <span class="k">if</span> <span class="n">zero</span><span class="o">.</span><span class="n">size</span><span class="o">!=</span><span class="mi">0</span><span class="p">:</span> <span class="c1">#If there are indexes where the zeros align return zero, there is no error</span>
+    <span class="n">prediction_series</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">prediction_series</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">testing_series</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">testing_series</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">zero</span> <span class="o">=</span> <span class="n">prediction_series</span><span class="p">[</span><span class="n">testing_series</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># Check if two time steps are both zero</span>
+    <span class="k">if</span> <span class="n">zero</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># If there are indexes where the zeros align return zero, there is no error</span>
         <span class="k">return</span> <span class="mi">0</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="mi">100</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">testing_series</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">prediction_series</span> <span class="o">-</span> <span class="n">testing_series</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">testing_series</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">prediction_series</span><span class="p">)))</span></div>
+        <span class="k">return</span> <span class="mi">100</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">testing_series</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">prediction_series</span>
+                                                             <span class="o">-</span> <span class="n">testing_series</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">testing_series</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">prediction_series</span><span class="p">)))</span></div>
 </pre></div>
 
            </div>

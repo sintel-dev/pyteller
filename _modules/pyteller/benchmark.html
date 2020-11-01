@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyteller.benchmark &mdash; pyteller 0.1.0.dev0 documentation</title>
+  <title>pyteller.benchmark &mdash; pyteller 0.0.1.dev0 documentation</title>
   
 
   
@@ -226,9 +226,12 @@
 
 <span class="n">BENCHMARK_DATA</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">S3_URL</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
     <span class="n">BUCKET</span><span class="p">,</span> <span class="s1">&#39;datasets.csv&#39;</span><span class="p">),</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">applymap</span><span class="p">(</span><span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">META_DATA</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">S3_URL</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">BUCKET</span><span class="p">,</span> <span class="s1">&#39;data_s3.csv&#39;</span><span class="p">),</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">META_DATA</span><span class="o">=</span><span class="n">META_DATA</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">META_DATA</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">dropna</span><span class="p">()]</span>
 <span class="c1"># BENCHMARK_PARAMS = pd.read_csv(S3_URL.format(</span>
 <span class="c1">#     BUCKET, &#39;parameters.csv&#39;), index_col=0, header=None).applymap(ast.literal_eval).to_dict()[1]</span>
-<span class="n">BENCHMARK_PARAMS</span><span class="o">=</span><span class="p">[]</span>
+<span class="n">BENCHMARK_PARAMS</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">BENCHMARK_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
     <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)),</span> <span class="s1">&#39;..&#39;</span><span class="p">),</span>
     <span class="s1">&#39;benchmark&#39;</span>
@@ -237,6 +240,7 @@
 <span class="n">VERIFIED_PIPELINES</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s1">&#39;persistence&#39;</span>
 <span class="p">]</span>
+
 
 <span class="k">def</span> <span class="nf">_sort_leaderboard</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">rank</span><span class="p">,</span> <span class="n">metrics</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">rank</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
@@ -254,22 +258,21 @@
     <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;pipeline&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
 
 
-<span class="k">def</span> <span class="nf">_load_signal</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span><span class="n">signal</span><span class="p">,</span> <span class="n">holdout</span><span class="p">):</span>
-    <span class="c1">#TODO: make this a spread sheet in s3 bucket and make it so the user can input signal</span>
-    <span class="n">meta_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">dataset</span> <span class="o">+</span> <span class="s1">&#39;.json&#39;</span><span class="p">)</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">meta_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">columns</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_load_signal</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">columns</span><span class="p">,</span> <span class="n">holdout</span><span class="p">):</span>
+    <span class="c1"># TODO: make this a spread sheet in s3 bucket and make it so the user can input signal</span>
+    <span class="c1"># meta_path = os.path.join(os.path.dirname(__file__), &#39;data&#39;, dataset + &#39;.json&#39;)</span>
+    <span class="c1"># with open(meta_path) as f:</span>
+    <span class="c1">#     columns = json.load(f)</span>
+    <span class="c1">#columns = META_DATA.loc[dataset].to_dict()</span>
 
-
-    <span class="n">train</span><span class="p">,</span><span class="n">test</span> <span class="o">=</span>  <span class="n">load_signal</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span><span class="n">column_dict</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
+    <span class="n">train</span><span class="p">,</span> <span class="n">test</span> <span class="o">=</span> <span class="n">load_signal</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">column_dict</span><span class="o">=</span><span class="n">columns</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
 
     <span class="k">return</span> <span class="n">train</span><span class="p">,</span> <span class="n">test</span>
 
 
-
-<span class="k">def</span> <span class="nf">_evaluate_signal</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">signal</span><span class="p">,</span> <span class="n">hyperparameter</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span>
+<span class="k">def</span> <span class="nf">_evaluate_signal</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">columns</span><span class="p">,</span> <span class="n">hyperparameter</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span>
                      <span class="n">holdout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">detrend</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="n">train</span><span class="p">,</span> <span class="n">test</span> <span class="o">=</span> <span class="n">_load_signal</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span><span class="n">signal</span><span class="p">,</span> <span class="n">holdout</span><span class="p">)</span>
+    <span class="n">train</span><span class="p">,</span> <span class="n">test</span> <span class="o">=</span> <span class="n">_load_signal</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">columns</span><span class="p">,</span> <span class="n">holdout</span><span class="p">)</span>
     <span class="n">pipeline</span> <span class="o">=</span> <span class="n">_load_pipeline</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">hyperparameter</span><span class="p">)</span>
     <span class="n">pyteller</span> <span class="o">=</span> <span class="n">Pyteller</span><span class="p">(</span>
         <span class="n">pipeline</span><span class="o">=</span><span class="n">pipeline</span><span class="p">,</span>
@@ -289,11 +292,11 @@
     <span class="c1">#     for name, scorer in metrics.items() if name != &#39;MASE&#39;</span>
     <span class="c1"># })</span>
 
-    <span class="n">scores</span> <span class="o">=</span> <span class="n">pyteller</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">train_data</span><span class="o">=</span><span class="n">train</span><span class="p">,</span> <span class="n">test_data</span><span class="o">=</span><span class="n">test</span><span class="p">,</span> <span class="n">forecast</span><span class="o">=</span><span class="n">forecast</span><span class="p">,</span><span class="n">detailed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">scores</span> <span class="o">=</span> <span class="n">pyteller</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">train_data</span><span class="o">=</span><span class="n">train</span><span class="p">,</span> <span class="n">test_data</span><span class="o">=</span><span class="n">test</span><span class="p">,</span> <span class="n">forecast</span><span class="o">=</span><span class="n">forecast</span><span class="p">,</span> <span class="n">detailed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">scores</span><span class="p">[</span><span class="s1">&#39;pipeline&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
-    <span class="c1">#scores[&#39;holdout&#39;] = holdout</span>
+    <span class="c1"># scores[&#39;holdout&#39;] = holdout</span>
     <span class="n">scores</span><span class="p">[</span><span class="s1">&#39;dataset&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataset</span>
-    <span class="n">scores</span><span class="p">[</span><span class="s1">&#39;signal&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">signal</span>
+    <span class="c1"># scores[&#39;signal&#39;] = signal</span>
     <span class="c1"># scores[&#39;prediction length&#39;] = forecast.shape[0]</span>
     <span class="c1"># scores[&#39;length of training data&#39;] = len(train)</span>
     <span class="c1"># scores[&#39;length of testing data&#39;] = len(test)</span>
@@ -301,18 +304,18 @@
     <span class="k">return</span> <span class="n">scores</span>
 
 
-<span class="k">def</span> <span class="nf">_evaluate_pipeline</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">pipeline_name</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">signals</span><span class="p">,</span> <span class="n">hyperparameter</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span>
+<span class="k">def</span> <span class="nf">_evaluate_pipeline</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">pipeline_name</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">columns</span><span class="p">,</span> <span class="n">hyperparameter</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span>
                        <span class="n">distributed</span><span class="p">,</span> <span class="n">holdout</span><span class="p">,</span> <span class="n">detrend</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">holdout</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">holdout</span> <span class="o">=</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
     <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">holdout</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
         <span class="n">holdout</span> <span class="o">=</span> <span class="p">(</span><span class="n">holdout</span><span class="p">,</span> <span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">hyperparameter</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-            <span class="n">PIPELINE_DIR</span><span class="p">,</span> <span class="n">pipeline_name</span><span class="p">,</span> <span class="n">pipeline_name</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">dataset</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;.json&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
-            <span class="n">hyperparameter</span> <span class="o">=</span> <span class="n">file_path</span>
+    <span class="c1"># if hyperparameter is None:</span>
+    <span class="c1">#     file_path = os.path.join(</span>
+    <span class="c1">#         PIPELINE_DIR, pipeline_name, pipeline_name + &#39;_&#39; + dataset.lower() + &#39;.json&#39;)</span>
+    <span class="c1">#     if os.path.exists(file_path):</span>
+    <span class="c1">#         hyperparameter = file_path</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hyperparameter</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">hyperparameter</span><span class="p">):</span>
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Loading hyperparameter </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">hyperparameter</span><span class="p">)</span>
@@ -325,36 +328,35 @@
         <span class="n">function</span> <span class="o">=</span> <span class="n">_evaluate_signal</span>
 
     <span class="n">scores</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">signals</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+<span class="c1">#TODO Fix</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">columns</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">holdout_</span> <span class="ow">in</span> <span class="n">holdout</span><span class="p">:</span>
-            <span class="n">score</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">pipeline_name</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">signals</span><span class="p">,</span> <span class="n">hyperparameter</span><span class="p">,</span>
+            <span class="n">score</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">pipeline_name</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">columns</span><span class="p">,</span> <span class="n">hyperparameter</span><span class="p">,</span>
                              <span class="n">metrics</span><span class="p">,</span> <span class="n">holdout_</span><span class="p">,</span> <span class="n">detrend</span><span class="p">)</span>
             <span class="n">scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">signal</span> <span class="ow">in</span> <span class="n">signals</span><span class="p">:</span>
 
-            <span class="k">for</span> <span class="n">holdout_</span> <span class="ow">in</span> <span class="n">holdout</span><span class="p">:</span>
-                <span class="n">score</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">pipeline_name</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">signal</span><span class="p">,</span> <span class="n">hyperparameter</span><span class="p">,</span>
-                                 <span class="n">metrics</span><span class="p">,</span> <span class="n">holdout_</span><span class="p">,</span> <span class="n">detrend</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">holdout_</span> <span class="ow">in</span> <span class="n">holdout</span><span class="p">:</span>
+            <span class="n">score</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">pipeline_name</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">columns</span><span class="p">,</span> <span class="n">hyperparameter</span><span class="p">,</span>
+                             <span class="n">metrics</span><span class="p">,</span> <span class="n">holdout_</span><span class="p">,</span> <span class="n">detrend</span><span class="p">)</span>
 
-            <span class="n">scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
+        <span class="n">scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">scores</span>
 
 
-
-<span class="k">def</span> <span class="nf">_evaluate_pipelines</span><span class="p">(</span><span class="n">pipelines</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">signals</span><span class="p">,</span> <span class="n">hyperparameters</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">distributed</span><span class="p">,</span>
+<span class="k">def</span> <span class="nf">_evaluate_pipelines</span><span class="p">(</span><span class="n">pipelines</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">columns</span><span class="p">,</span> <span class="n">hyperparameters</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">distributed</span><span class="p">,</span>
                         <span class="n">holdout</span><span class="p">,</span> <span class="n">detrend</span><span class="p">):</span>
 
     <span class="n">scores</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">pipeline</span> <span class="ow">in</span> <span class="n">pipelines</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">hyperparameter</span> <span class="o">=</span> <span class="n">_get_parameter</span><span class="p">(</span><span class="n">hyperparameters</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-        <span class="n">score</span> <span class="o">=</span> <span class="n">_evaluate_pipeline</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">signals</span><span class="p">,</span> <span class="n">hyperparameter</span><span class="p">,</span>
+        <span class="n">score</span> <span class="o">=</span> <span class="n">_evaluate_pipeline</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">columns</span><span class="p">,</span> <span class="n">hyperparameter</span><span class="p">,</span>
                                    <span class="n">metrics</span><span class="p">,</span> <span class="n">distributed</span><span class="p">,</span> <span class="n">holdout</span><span class="p">,</span> <span class="n">detrend</span><span class="p">)</span>
         <span class="n">scores</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">scores</span>
+
 
 <span class="k">def</span> <span class="nf">_get_parameter</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -367,10 +369,13 @@
                        <span class="n">detrend</span><span class="p">):</span>
     <span class="n">delayed</span> <span class="o">=</span> <span class="p">[]</span>
 
-
-    <span class="k">for</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">signals</span> <span class="ow">in</span> <span class="n">datasets</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="c1"># for dataset, signals in datasets.items():</span>
+    <span class="k">for</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">columns</span> <span class="ow">in</span> <span class="n">datasets</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting dataset </span><span class="si">{}</span><span class="s2"> with </span><span class="si">{}</span><span class="s2"> signals..&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">dataset</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">signals</span><span class="p">)))</span>
+            <span class="n">dataset</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">)))</span>
+
+
+
 
         <span class="c1"># dataset configuration</span>
         <span class="n">hyperparameters_</span> <span class="o">=</span> <span class="n">_get_parameter</span><span class="p">(</span><span class="n">hyperparameters</span><span class="p">,</span> <span class="n">dataset</span><span class="p">)</span>
@@ -379,7 +384,7 @@
             <span class="n">detrend</span><span class="p">,</span> <span class="n">holdout</span> <span class="o">=</span> <span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
 
         <span class="n">result</span> <span class="o">=</span> <span class="n">_evaluate_pipelines</span><span class="p">(</span>
-            <span class="n">pipelines</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">signals</span><span class="p">,</span> <span class="n">hyperparameters_</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">distributed</span><span class="p">,</span> <span class="n">holdout</span><span class="p">,</span> <span class="n">detrend</span><span class="p">)</span>
+            <span class="n">pipelines</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">columns</span><span class="p">,</span> <span class="n">hyperparameters_</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">distributed</span><span class="p">,</span> <span class="n">holdout</span><span class="p">,</span> <span class="n">detrend</span><span class="p">)</span>
 
         <span class="n">delayed</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 
@@ -433,7 +438,7 @@
 <span class="sd">            by the indicated metric.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">pipelines</span> <span class="o">=</span> <span class="n">pipelines</span> <span class="ow">or</span> <span class="n">VERIFIED_PIPELINES</span>
-    <span class="n">datasets</span> <span class="o">=</span> <span class="n">datasets</span> <span class="ow">or</span> <span class="n">BENCHMARK_DATA</span>
+    <span class="n">datasets</span> <span class="o">=</span> <span class="n">datasets</span> <span class="ow">or</span> <span class="n">META_DATA</span><span class="c1">#BENCHMARK_DATA</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pipelines</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
         <span class="n">pipelines</span> <span class="o">=</span> <span class="p">{</span><span class="n">pipeline</span><span class="p">:</span> <span class="n">pipeline</span> <span class="k">for</span> <span class="n">pipeline</span> <span class="ow">in</span> <span class="n">pipelines</span><span class="p">}</span>
@@ -466,6 +471,7 @@
 
     <span class="k">return</span> <span class="n">_sort_leaderboard</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">rank</span><span class="p">,</span> <span class="n">metrics</span><span class="p">)</span></div>
 
+
 <div class="viewcode-block" id="main"><a class="viewcode-back" href="../../api/pyteller.benchmark.html#pyteller.benchmark.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
     <span class="c1"># output path</span>
     <span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;results.csv&quot;</span>
@@ -475,23 +481,24 @@
     <span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">partial</span><span class="p">(</span><span class="n">fun</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">fun</span> <span class="ow">in</span> <span class="n">METRICS</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 
     <span class="c1"># pipelines</span>
-    <span class="n">pipelines</span> <span class="o">=</span> <span class="n">VERIFIED_PIPELINES</span> <span class="c1">#TODO : check if pipeline user inputs work</span>
-    <span class="n">datasets</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="c1"># &#39;taxi&#39;:&#39;value&#39;,</span>
-        <span class="c1"># &#39;AL_Weather&#39;:&#39;tmpf&#39;,</span>
-        <span class="s1">&#39;Wind&#39;</span><span class="p">:</span> <span class="s1">&#39;AT&#39;</span>
-        <span class="c1"># &#39;pjm_hourly_est&#39; : &#39;AEP&#39;,</span>
-        <span class="c1"># &#39;FasTrak&#39; : &#39;Total Flow&#39;</span>
-    <span class="p">}</span>
+    <span class="n">pipelines</span> <span class="o">=</span> <span class="n">VERIFIED_PIPELINES</span>  <span class="c1"># TODO : check if pipeline user inputs work</span>
+    <span class="c1"># datasets = {</span>
+    <span class="c1">#     &#39;taxi&#39;:&#39;value&#39;,</span>
+    <span class="c1">#     &#39;AL_Weather&#39;:&#39;tmpf&#39;,</span>
+    <span class="c1">#     &#39;Wind&#39;: &#39;AT&#39;,</span>
+    <span class="c1">#     &#39;pjm_hourly_est&#39; : &#39;AEP&#39;,</span>
+    <span class="c1">#     &#39;FasTrak&#39; : &#39;Total Flow&#39;</span>
+    <span class="c1"># }</span>
 
     <span class="n">results</span> <span class="o">=</span> <span class="n">benchmark</span><span class="p">(</span>
-        <span class="n">pipelines</span><span class="o">=</span><span class="n">pipelines</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="n">metrics</span><span class="p">,</span> <span class="n">datasets</span><span class="o">=</span><span class="n">datasets</span><span class="p">,</span><span class="n">output_path</span><span class="o">=</span><span class="n">output_path</span><span class="p">)</span>
+        <span class="n">pipelines</span><span class="o">=</span><span class="n">pipelines</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="n">metrics</span><span class="p">,</span> <span class="n">output_path</span><span class="o">=</span><span class="n">output_path</span><span class="p">)</span>
     <span class="c1"># TODO: summarize results for who wins compared to latest baseline</span>
     <span class="n">output_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">BENCHMARK_PATH</span><span class="p">,</span> <span class="s1">&#39;leaderboard.csv&#39;</span><span class="p">)</span>
     <span class="n">results</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span></div>
 
     <span class="c1"># leaderboard = _summarize_results(results, metrics)</span>
     <span class="c1"># leaderboard.to_csv(output_path)</span>
+
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>

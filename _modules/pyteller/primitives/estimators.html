@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyteller.primitives.estimators &mdash; pyteller 0.1.0.dev0 documentation</title>
+  <title>pyteller.primitives.estimators &mdash; pyteller 0.0.1.dev0 documentation</title>
   
 
   
@@ -249,12 +249,16 @@
 
     <span class="c1"># def fit(self, X):</span>
     <span class="c1">#     self.values = X[self._value_column]</span>
-<div class="viewcode-block" id="Persistence.predict"><a class="viewcode-back" href="../../../api/pyteller.primitives.estimators.html#pyteller.primitives.estimators.Persistence.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">X</span><span class="p">,</span><span class="n">pred_length</span><span class="p">):</span>
+<div class="viewcode-block" id="Persistence.predict"><a class="viewcode-back" href="../../../api/pyteller.primitives.estimators.html#pyteller.primitives.estimators.Persistence.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">pred_length</span><span class="p">):</span>
         <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
         <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span>
-        <span class="n">preds</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">X</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">][</span><span class="o">-</span><span class="n">pred_length</span><span class="p">:]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">])</span>
-        <span class="n">preds</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">pred_length</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="n">pred_length</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">signals</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">X</span> <span class="k">if</span> <span class="n">col</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;signal&#39;</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">signals</span><span class="p">]</span>
+        <span class="n">time</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">X</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">][</span><span class="o">-</span><span class="n">pred_length</span><span class="p">:]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">])</span>
+        <span class="c1"># preds = self.values.iloc[-pred_length:, :]</span>
+        <span class="n">preds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="n">pred_length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="n">pred_length</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">preds</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">preds</span><span class="p">]</span><span class="o">*</span><span class="n">pred_length</span><span class="p">)</span>
+        <span class="n">preds</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span> <span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">values</span>
         <span class="k">return</span> <span class="n">preds</span></div></div>
 
 
@@ -302,7 +306,6 @@
         <span class="n">overlap</span> <span class="o">=</span> <span class="n">overlap_size</span>
 
     <span class="k">return</span> <span class="n">X_</span><span class="p">,</span> <span class="n">index_</span></div>
-
 </pre></div>
 
            </div>
