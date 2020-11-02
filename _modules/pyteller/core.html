@@ -143,7 +143,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../../authors.html#contributors">Contributors</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../history.html#id1">0.1.0 - 2020-11-02</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -234,11 +237,13 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pipeline</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">hyperparameters</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">pred_length</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">offset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">goal</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">goal_window</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline</span> <span class="o">=</span> <span class="n">pipeline</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_hyperparameters</span> <span class="o">=</span> <span class="n">hyperparameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pred_length</span> <span class="o">=</span> <span class="n">pred_length</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">offset</span><span class="o">=</span><span class="n">offset</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">goal</span> <span class="o">=</span> <span class="n">goal</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mlpipeline</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_mlpipeline</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fitted</span> <span class="o">=</span> <span class="kc">False</span>
@@ -252,6 +257,7 @@
         <span class="k">for</span> <span class="n">entity</span><span class="p">,</span> <span class="n">test_entity</span> <span class="ow">in</span> <span class="n">test_data</span><span class="p">:</span>
             <span class="n">preds_entity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mlpipeline</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">test_entity</span><span class="p">,</span>
                                                     <span class="n">pred_length</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pred_length</span><span class="p">,</span>
+                                                    <span class="n">offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">offset</span><span class="p">,</span>
                                                     <span class="n">goal</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">goal</span><span class="p">,</span>
                                                     <span class="n">goal_window</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
             <span class="n">preds_entity</span><span class="p">[</span><span class="s1">&#39;entity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">entity</span>
