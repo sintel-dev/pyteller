@@ -234,8 +234,15 @@ def benchmark(pipelines=None, datasets=None, hyperparameters=None, metrics=METRI
     if isinstance(pipelines, list):
         pipelines = {pipeline: pipeline for pipeline in pipelines}
 
-    if isinstance(datasets, list):
-        datasets = {'dataset': datasets}
+    if isinstance(datasets, dict):
+        drop_these = [x for x in list(META_DATA.index) if x not in list(datasets.keys())]
+        datasets2=META_DATA.drop(drop_these)
+        for index, value in datasets2['signals'].items():
+            if ',' in value:
+                keep_signals =','.join(datasets[index])
+                datasets2.loc[index]['signals'] = keep_signals
+        datasets=datasets2
+
 
     if isinstance(hyperparameters, list):
         hyperparameters = {pipeline: hyperparameter for pipeline, hyperparameter in
