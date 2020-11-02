@@ -25,11 +25,13 @@ class Pyteller:
     def __init__(self, pipeline=None,
                  hyperparameters: dict = None,
                  pred_length=None,
+                 offset=None,
                  goal=None,
                  goal_window=None):
         self._pipeline = pipeline
         self._hyperparameters = hyperparameters
         self.pred_length = pred_length
+        self.offset=offset
         self.goal = goal
         self._mlpipeline = self._get_mlpipeline()
         self._fitted = False
@@ -43,6 +45,7 @@ class Pyteller:
         for entity, test_entity in test_data:
             preds_entity = self._mlpipeline.predict(X=test_entity,
                                                     pred_length=self.pred_length,
+                                                    offset=self.offset,
                                                     goal=self.goal,
                                                     goal_window=None)
             preds_entity['entity'] = entity

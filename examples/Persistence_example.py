@@ -28,6 +28,7 @@ pyteller = Pyteller (
 hyperparameters = hyperparameters,
     pipeline = 'persistence',
     pred_length = 3,
+    offset=5,
     goal = None,
     goal_window = None
 
