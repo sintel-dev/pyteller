@@ -89,7 +89,11 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../readme.html#load-the-data">1. Load the data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../readme.html#forecast">2. Forecast</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#set-forecast-settings">2. Set Forecast Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#fit-the-data-to-the-mdoel">3. Fit the data to the mdoel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#save-the-trained-model">4. Save the trained model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#load-the-new-data">5. Load the new data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#forecast">6. Forecast</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../readme.html#evaluate">3. Evaluate</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../readme.html#what-s-next">What’s next?</a></li>
 </ul>
@@ -217,99 +221,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-pyteller.benchmark">
-<span id="pyteller-benchmark-module"></span><h1>pyteller.benchmark module<a class="headerlink" href="#module-pyteller.benchmark" title="Permalink to this headline">¶</a></h1>
-<p><strong>Classes:</strong></p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pyteller</span></code>([pipeline, hyperparameters, …])</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">partial</span></code></p></td>
-<td><p>partial(func, <a href="#id1"><span class="problematic" id="id2">*</span></a>args, <a href="#id3"><span class="problematic" id="id4">**</span></a>keywords) - new function with partial application of the given arguments and keywords.</p></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Functions:</strong></p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pyteller.benchmark.benchmark" title="pyteller.benchmark.benchmark"><code class="xref py py-obj docutils literal notranslate"><span class="pre">benchmark</span></code></a>([pipelines, datasets, …])</p></td>
-<td><p>Evaluate pipelines on the given datasets and evaluate the performance.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_signal</span></code>(data[, train_size, …])</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pyteller.benchmark.main" title="pyteller.benchmark.main"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main</span></code></a>()</p></td>
-<td><p></p></td>
-</tr>
-</tbody>
-</table>
-<dl class="function">
-<dt id="pyteller.benchmark.benchmark">
-<code class="sig-prename descclassname">pyteller.benchmark.</code><code class="sig-name descname">benchmark</code><span class="sig-paren">(</span><em class="sig-param">pipelines=None</em>, <em class="sig-param">datasets=None</em>, <em class="sig-param">hyperparameters=None</em>, <em class="sig-param">metrics={'MAPE': &lt;function mean_absolute_error&gt;</em>, <em class="sig-param">'MASE': &lt;function MASE&gt;</em>, <em class="sig-param">'MSE': &lt;function mean_squared_error&gt;</em>, <em class="sig-param">'sMAPE': &lt;function sMAPE&gt;}</em>, <em class="sig-param">rank='MAPE'</em>, <em class="sig-param">distributed=False</em>, <em class="sig-param">holdout=False</em>, <em class="sig-param">detrend=False</em>, <em class="sig-param">output_path=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyteller/benchmark.html#benchmark"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyteller.benchmark.benchmark" title="Permalink to this definition">¶</a></dt>
-<dd><p>Evaluate pipelines on the given datasets and evaluate the performance.
-The pipelines are used to analyze the given signals and later on the
-detected anomalies are scored against the known anomalies using the
-indicated metrics.
-Finally, the scores obtained with each metric are averaged accross all the signals,
-ranked by the indicated metric and returned on a <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code>.
-:param pipelines: dictionary with pipeline names as keys and their</p>
-<blockquote>
-<div><p>JSON paths as values. If a list is given, it should be of JSON paths,
-and the paths themselves will be used as names. If not give, all verified
-pipelines will be used for evaluation.</p>
-</div></blockquote>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>datasets</strong> (<em>dict</em><em> or </em><em>list</em>) – dictionary of dataset name as keys and list of signals as
-values. If a list is given then it will be under a generic name <code class="docutils literal notranslate"><span class="pre">dataset</span></code>.
-If not given, all benchmark datasets will be used used.</p></li>
-<li><p><strong>hyperparameters</strong> (<em>dict</em><em> or </em><em>list</em>) – dictionary with pipeline names as keys
-and their hyperparameter JSON paths or dictionaries as values. If a list is
-given, it should be of corresponding order to pipelines.</p></li>
-<li><p><strong>metrics</strong> (<em>dict</em><em> or </em><em>list</em>) – dictionary with metric names as keys and
-scoring functions as values. If a list is given, it should be of scoring
-functions, and they <code class="docutils literal notranslate"><span class="pre">__name__</span></code> value will be used as the metric name.
-If not given, all the available metrics will be used.</p></li>
-<li><p><strong>rank</strong> (<em>str</em>) – Sort and rank the pipelines based on the given metric.
-If not given, rank using the first metric.</p></li>
-<li><p><strong>distributed</strong> (<em>bool</em>) – Whether to use dask for distributed computing. If not given,
-use <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
-<li><p><strong>holdout</strong> (<em>bool</em>) – Whether to use the prespecified train-test split. If not given,
-use <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
-<li><p><strong>detrend</strong> (<em>bool</em>) – Whether to use <code class="docutils literal notranslate"><span class="pre">scipy.detrend</span></code>. If not given, use <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
-<li><p><strong>output_path</strong> (<em>str</em>) – Location to save the intermediatry results. If not given,
-intermediatry results will not be saved.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>Table containing the average of the scores obtained with</dt><dd><p>each scoring function accross all the signals for each pipeline, ranked
-by the indicated metric.</p>
-</dd>
-</dl>
-</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>pandas.DataFrame</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyteller.benchmark.main">
-<code class="sig-prename descclassname">pyteller.benchmark.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyteller/benchmark.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyteller.benchmark.main" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+  <div class="section" id="pyteller-benchmark-module">
+<h1>pyteller.benchmark module<a class="headerlink" href="#pyteller-benchmark-module" title="Permalink to this headline">¶</a></h1>
 </div>
 
 

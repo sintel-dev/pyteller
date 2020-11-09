@@ -89,7 +89,11 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../readme.html#load-the-data">1. Load the data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../readme.html#forecast">2. Forecast</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#set-forecast-settings">2. Set Forecast Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#fit-the-data-to-the-mdoel">3. Fit the data to the mdoel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#save-the-trained-model">4. Save the trained model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#load-the-new-data">5. Load the new data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#forecast">6. Forecast</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../readme.html#evaluate">3. Evaluate</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../readme.html#what-s-next">What’s next?</a></li>
 </ul>
@@ -232,7 +236,10 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#pyteller.data.load_csv" title="pyteller.data.load_csv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_csv</span></code></a>(path)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pyteller.data.load_signal" title="pyteller.data.load_signal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_signal</span></code></a>(data[, train_size, …])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyteller.data.load_data" title="pyteller.data.load_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_data</span></code></a>(data[, train_size, timestamp_col, …])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyteller.data.organize_data" title="pyteller.data.organize_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">organize_data</span></code></a>(data[, train_size, …])</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -273,8 +280,13 @@ the train split and another one for the test split is returned.</p>
 <dd></dd></dl>
 
 <dl class="function">
-<dt id="pyteller.data.load_signal">
-<code class="sig-prename descclassname">pyteller.data.</code><code class="sig-name descname">load_signal</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">train_size=0.75</em>, <em class="sig-param">timestamp_col=None</em>, <em class="sig-param">entity_cols=None</em>, <em class="sig-param">signals=None</em>, <em class="sig-param">dynamic_variables=None</em>, <em class="sig-param">static_variables=None</em>, <em class="sig-param">column_dict=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyteller/data.html#load_signal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyteller.data.load_signal" title="Permalink to this definition">¶</a></dt>
+<dt id="pyteller.data.load_data">
+<code class="sig-prename descclassname">pyteller.data.</code><code class="sig-name descname">load_data</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">train_size=0.75</em>, <em class="sig-param">timestamp_col=None</em>, <em class="sig-param">entity_cols=None</em>, <em class="sig-param">signals=None</em>, <em class="sig-param">dynamic_variables=None</em>, <em class="sig-param">static_variables=None</em>, <em class="sig-param">column_dict=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyteller/data.html#load_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyteller.data.load_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pyteller.data.organize_data">
+<code class="sig-prename descclassname">pyteller.data.</code><code class="sig-name descname">organize_data</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">train_size=1</em>, <em class="sig-param">timestamp_col=None</em>, <em class="sig-param">entity_cols=None</em>, <em class="sig-param">signals=None</em>, <em class="sig-param">dynamic_variables=None</em>, <em class="sig-param">static_variables=None</em>, <em class="sig-param">column_dict=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyteller/data.html#organize_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyteller.data.organize_data" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>

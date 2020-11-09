@@ -89,7 +89,11 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../readme.html#load-the-data">1. Load the data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../readme.html#forecast">2. Forecast</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#set-forecast-settings">2. Set Forecast Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#fit-the-data-to-the-mdoel">3. Fit the data to the mdoel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#save-the-trained-model">4. Save the trained model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#load-the-new-data">5. Load the new data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#forecast">6. Forecast</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../readme.html#evaluate">3. Evaluate</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../readme.html#what-s-next">What’s next?</a></li>
 </ul>
@@ -230,14 +234,26 @@
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">MLPipeline</span></code>([pipeline, primitives, …])</p></td>
 <td><p>MLPipeline Class.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pyteller.core.Pyteller" title="pyteller.core.Pyteller"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pyteller</span></code></a>([pipeline, hyperparameters, …])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyteller.core.Pyteller" title="pyteller.core.Pyteller"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pyteller</span></code></a>([data, timestamp_col, signals, …])</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Functions:</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">organize_data</span></code>(data[, train_size, …])</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
 </table>
 <dl class="class">
 <dt id="pyteller.core.Pyteller">
-<em class="property">class </em><code class="sig-prename descclassname">pyteller.core.</code><code class="sig-name descname">Pyteller</code><span class="sig-paren">(</span><em class="sig-param">pipeline=None</em>, <em class="sig-param">hyperparameters: dict = None</em>, <em class="sig-param">pred_length=None</em>, <em class="sig-param">offset=None</em>, <em class="sig-param">goal=None</em>, <em class="sig-param">goal_window=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyteller/core.html#Pyteller"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyteller.core.Pyteller" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pyteller.core.</code><code class="sig-name descname">Pyteller</code><span class="sig-paren">(</span><em class="sig-param">data=None</em>, <em class="sig-param">timestamp_col=None</em>, <em class="sig-param">signals=None</em>, <em class="sig-param">static_variables=None</em>, <em class="sig-param">entity_cols=None</em>, <em class="sig-param">train_size=0.75</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyteller/core.html#Pyteller"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyteller.core.Pyteller" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p><strong>Methods:</strong></p>
 <table class="longtable docutils align-default">
@@ -249,8 +265,20 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#pyteller.core.Pyteller.evaluate" title="pyteller.core.Pyteller.evaluate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">evaluate</span></code></a>(forecast[, fit, train_data, …])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pyteller.core.Pyteller.predict" title="pyteller.core.Pyteller.predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict</span></code></a>(test_data)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyteller.core.Pyteller.fit" title="pyteller.core.Pyteller.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>([data])</p></td>
+<td><p>Fit the pipeline to the given data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyteller.core.Pyteller.forecast" title="pyteller.core.Pyteller.forecast"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forecast</span></code></a>([test_data])</p></td>
 <td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyteller.core.Pyteller.forecast_settings" title="pyteller.core.Pyteller.forecast_settings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forecast_settings</span></code></a>([pipeline, …])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyteller.core.Pyteller.load" title="pyteller.core.Pyteller.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(path)</p></td>
+<td><p>Load a pyteller instance from a pickle file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyteller.core.Pyteller.save" title="pyteller.core.Pyteller.save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code></a>(path)</p></td>
+<td><p>Save this object using pickle.</p></td>
 </tr>
 </tbody>
 </table>
@@ -260,9 +288,56 @@
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="pyteller.core.Pyteller.predict">
-<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">test_data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyteller/core.html#Pyteller.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyteller.core.Pyteller.predict" title="Permalink to this definition">¶</a></dt>
+<dt id="pyteller.core.Pyteller.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">data=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyteller/core.html#Pyteller.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyteller.core.Pyteller.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the pipeline to the given data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>DataFrame</em>) – Input data, passed as a <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code> containing
+exactly two columns: timestamp and value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyteller.core.Pyteller.forecast">
+<code class="sig-name descname">forecast</code><span class="sig-paren">(</span><em class="sig-param">test_data=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyteller/core.html#Pyteller.forecast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyteller.core.Pyteller.forecast" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="method">
+<dt id="pyteller.core.Pyteller.forecast_settings">
+<code class="sig-name descname">forecast_settings</code><span class="sig-paren">(</span><em class="sig-param">pipeline=None</em>, <em class="sig-param">hyperparameters: dict = None</em>, <em class="sig-param">pred_length=None</em>, <em class="sig-param">offset=None</em>, <em class="sig-param">goal=None</em>, <em class="sig-param">goal_window=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyteller/core.html#Pyteller.forecast_settings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyteller.core.Pyteller.forecast_settings" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyteller.core.Pyteller.load">
+<em class="property">classmethod </em><code class="sig-name descname">load</code><span class="sig-paren">(</span><em class="sig-param">path: str</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyteller/core.html#Pyteller.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyteller.core.Pyteller.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a pyteller instance from a pickle file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – Path to the file where the instance has been
+previously serialized.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Orion</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If the serialized object is not a pyteller instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyteller.core.Pyteller.save">
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param">path: str</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyteller/core.html#Pyteller.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyteller.core.Pyteller.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save this object using pickle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – Path to the file where the serialization of
+this object will be stored.</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 

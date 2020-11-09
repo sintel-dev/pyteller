@@ -87,7 +87,11 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../readme.html#load-the-data">1. Load the data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../readme.html#forecast">2. Forecast</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html#set-forecast-settings">2. Set Forecast Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html#fit-the-data-to-the-mdoel">3. Fit the data to the mdoel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html#save-the-trained-model">4. Save the trained model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html#load-the-new-data">5. Load the new data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html#forecast">6. Forecast</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../readme.html#evaluate">3. Evaluate</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../readme.html#what-s-next">What’s next?</a></li>
 </ul>
@@ -216,10 +220,11 @@
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
-
+<span class="kn">from</span> <span class="nn">pyteller.data</span> <span class="kn">import</span> <span class="n">organize_data</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">mlblocks</span> <span class="kn">import</span> <span class="n">MLPipeline</span>
 <span class="kn">from</span> <span class="nn">pyteller.evaluation</span> <span class="kn">import</span> <span class="n">METRICS_NORM</span> <span class="k">as</span> <span class="n">METRICS</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
 
 
 <div class="viewcode-block" id="Pyteller"><a class="viewcode-back" href="../../api/pyteller.core.html#pyteller.core.Pyteller">[docs]</a><span class="k">class</span> <span class="nc">Pyteller</span><span class="p">:</span>
@@ -234,27 +239,64 @@
             <span class="n">mlpipeline</span><span class="o">.</span><span class="n">set_hyperparameters</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_hyperparameters</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">mlpipeline</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pipeline</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">hyperparameters</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">pred_length</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">offset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">goal</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">goal_window</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">timestamp_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">signals</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">static_variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">entity_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">train_size</span><span class="o">=.</span><span class="mi">75</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">signals</span><span class="o">=</span><span class="n">signals</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">test</span> <span class="o">=</span> <span class="n">organize_data</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">timestamp_col</span> <span class="o">=</span> <span class="s1">&#39;valid&#39;</span><span class="p">,</span>
+            <span class="n">signals</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;tmpf&#39;</span><span class="p">,</span><span class="s1">&#39;dwpf&#39;</span><span class="p">],</span>
+            <span class="n">static_variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">entity_cols</span><span class="o">=</span><span class="s1">&#39;station&#39;</span><span class="p">,</span>
+            <span class="n">train_size</span><span class="o">=</span><span class="mi">1</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="Pyteller.forecast_settings"><a class="viewcode-back" href="../../api/pyteller.core.html#pyteller.core.Pyteller.forecast_settings">[docs]</a>    <span class="k">def</span> <span class="nf">forecast_settings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                          <span class="n">pipeline</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                          <span class="n">hyperparameters</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                          <span class="n">pred_length</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                          <span class="n">offset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                          <span class="n">goal</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                          <span class="n">goal_window</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline</span> <span class="o">=</span> <span class="n">pipeline</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_hyperparameters</span> <span class="o">=</span> <span class="n">hyperparameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pred_length</span> <span class="o">=</span> <span class="n">pred_length</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">offset</span><span class="o">=</span><span class="n">offset</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">goal</span> <span class="o">=</span> <span class="n">goal</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mlpipeline</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_mlpipeline</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_fitted</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fitted</span> <span class="o">=</span> <span class="kc">False</span></div>
 
 <span class="c1"># TODO: fit user facing abstraction</span>
 <span class="c1"># TODO: save/load</span>
 <span class="c1"># TODO: commnet in blocks</span>
-<div class="viewcode-block" id="Pyteller.predict"><a class="viewcode-back" href="../../api/pyteller.core.html#pyteller.core.Pyteller.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_data</span><span class="p">):</span>
+<span class="c1"># TODO: switch entity with signal</span>
+<div class="viewcode-block" id="Pyteller.fit"><a class="viewcode-back" href="../../api/pyteller.core.html#pyteller.core.Pyteller.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Fit the pipeline to the given data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data (DataFrame):</span>
+<span class="sd">                Input data, passed as a ``pandas.DataFrame`` containing</span>
+<span class="sd">                exactly two columns: timestamp and value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mlpipeline</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_mlpipeline</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">entity</span><span class="p">,</span> <span class="n">train_entity</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_mlpipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">train_entity</span><span class="p">,</span>
+                             <span class="n">pred_length</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pred_length</span><span class="p">,</span>
+                            <span class="n">entity</span><span class="o">=</span><span class="n">entity</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fitted</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The pipeline is fitted&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Pyteller.forecast"><a class="viewcode-back" href="../../api/pyteller.core.html#pyteller.core.Pyteller.forecast">[docs]</a>    <span class="k">def</span> <span class="nf">forecast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="c1"># Allow for multiple entities</span>
         <span class="n">preds</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">entity</span><span class="p">,</span> <span class="n">test_entity</span> <span class="ow">in</span> <span class="n">test_data</span><span class="p">:</span>
+        <span class="n">time</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">entity</span><span class="p">,</span> <span class="n">test_entity</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">test</span><span class="p">:</span>
             <span class="n">preds_entity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mlpipeline</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">test_entity</span><span class="p">,</span>
                                                     <span class="n">pred_length</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pred_length</span><span class="p">,</span>
                                                     <span class="n">offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">offset</span><span class="p">,</span>
@@ -262,6 +304,20 @@
                                                     <span class="n">goal_window</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
             <span class="n">preds_entity</span><span class="p">[</span><span class="s1">&#39;entity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">entity</span>
             <span class="n">preds</span> <span class="o">=</span> <span class="n">preds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">preds_entity</span><span class="p">)</span>
+            <span class="n">time</span><span class="p">[</span><span class="n">entity</span><span class="p">]</span> <span class="o">=</span> <span class="n">preds_entity</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39; to &#39;</span> <span class="o">+</span> \
+                           <span class="n">preds_entity</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">to_print</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;Forecast Summary:&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Signals predicted: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signals</span><span class="p">),</span>
+            <span class="c1"># &quot;\tEntities predicted: {}&quot;.format(preds.entity.unique()),</span>
+            <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Entities predicted: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="p">),</span>
+            <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Pipeline: : </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pipeline</span><span class="p">),</span>
+            <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Offset: : </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">offset</span><span class="p">),</span>
+            <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Prediction length: : </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pred_length</span><span class="p">),</span>
+            <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Prediction goal: : </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">goal</span><span class="p">),</span>
+        <span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">to_print</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">preds</span></div>
 
 <div class="viewcode-block" id="Pyteller.evaluate"><a class="viewcode-back" href="../../api/pyteller.core.html#pyteller.core.Pyteller.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">forecast</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
@@ -271,6 +327,7 @@
                  <span class="n">detailed</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                  <span class="n">metrics</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">METRICS</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
         <span class="n">forecast</span> <span class="o">=</span> <span class="n">forecast</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;entity&#39;</span><span class="p">)</span>
+
         <span class="n">metrics_</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">:</span>
             <span class="n">metrics_</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span> <span class="o">=</span> <span class="n">METRICS</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span>
@@ -307,7 +364,43 @@
                 <span class="n">scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
         <span class="c1"># scores = pd.DataFrame.from_records(scores)</span>
 
-        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Pyteller.save"><a class="viewcode-back" href="../../api/pyteller.core.html#pyteller.core.Pyteller.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Save this object using pickle.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            path (str):</span>
+<span class="sd">                Path to the file where the serialization of</span>
+<span class="sd">                this object will be stored.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">pickle_file</span><span class="p">:</span>
+            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pickle_file</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Pyteller.load"><a class="viewcode-back" href="../../api/pyteller.core.html#pyteller.core.Pyteller.load">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load a pyteller instance from a pickle file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            path (str):</span>
+<span class="sd">                Path to the file where the instance has been</span>
+<span class="sd">                previously serialized.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Orion</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError:</span>
+<span class="sd">                If the serialized object is not a pyteller instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">pickle_file</span><span class="p">:</span>
+            <span class="n">orion</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">pickle_file</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">orion</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Serialized object is not a pyteller instance&#39;</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">orion</span></div></div>
 </pre></div>
 
            </div>

@@ -87,7 +87,11 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../readme.html#load-the-data">1. Load the data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../readme.html#forecast">2. Forecast</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html#set-forecast-settings">2. Set Forecast Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html#fit-the-data-to-the-mdoel">3. Fit the data to the mdoel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html#save-the-trained-model">4. Save the trained model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html#load-the-new-data">5. Load the new data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html#forecast">6. Forecast</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../readme.html#evaluate">3. Evaluate</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../readme.html#what-s-next">What’s next?</a></li>
 </ul>
@@ -283,7 +287,7 @@
     <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="load_signal"><a class="viewcode-back" href="../../api/pyteller.data.html#pyteller.data.load_signal">[docs]</a><span class="k">def</span> <span class="nf">load_signal</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>
+<div class="viewcode-block" id="load_data"><a class="viewcode-back" href="../../api/pyteller.data.html#pyteller.data.load_data">[docs]</a><span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>
                 <span class="n">train_size</span><span class="o">=.</span><span class="mi">75</span><span class="p">,</span>
                 <span class="n">timestamp_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                 <span class="n">entity_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -296,6 +300,16 @@
         <span class="n">data</span> <span class="o">=</span> <span class="n">load_csv</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">download</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="organize_data"><a class="viewcode-back" href="../../api/pyteller.data.html#pyteller.data.organize_data">[docs]</a><span class="k">def</span> <span class="nf">organize_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>
+              <span class="n">train_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+              <span class="n">timestamp_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+              <span class="n">entity_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+              <span class="n">signals</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+              <span class="n">dynamic_variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+              <span class="n">static_variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+              <span class="n">column_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
     <span class="k">if</span> <span class="n">column_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">allowed_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">,</span> <span class="s1">&#39;signals&#39;</span><span class="p">,</span> <span class="s1">&#39;entity&#39;</span><span class="p">]</span>
