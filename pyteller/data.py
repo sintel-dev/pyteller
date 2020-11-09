@@ -71,7 +71,7 @@ def load_csv(path):
     return pd.DataFrame(data)
 
 
-def load_signal(data,
+def load_data(data,
                 train_size=.75,
                 timestamp_col=None,
                 entity_cols=None,
@@ -84,6 +84,16 @@ def load_signal(data,
         data = load_csv(data)
     else:
         data = download(data)
+    return data
+
+def organize_data(data,
+              train_size=1,
+              timestamp_col=None,
+              entity_cols=None,
+              signals=None,
+              dynamic_variables=None,
+              static_variables=None,
+              column_dict=None):
 
     if column_dict is not None:
         allowed_keys = ['timestamp', 'signals', 'entity']

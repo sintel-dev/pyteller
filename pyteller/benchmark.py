@@ -70,7 +70,7 @@ def _evaluate_signal(pipeline, name, dataset, columns, hyperparameter, metrics,
         pred_length=3
     )
 
-    forecast = pyteller.predict(test)
+    forecast = pyteller.forecast(test)
     # pred_window = (test['timestamp'] >= forecast['timestamp'].iloc[0]) & (
     #         test['timestamp'] <= forecast['timestamp'].iloc[-1])
     # actual=test.loc[pred_window]
