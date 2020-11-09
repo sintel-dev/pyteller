@@ -12,7 +12,7 @@ pyteller = Pyteller (
     signals=['tmpf', 'dwpf'],
     static_variables=None,
     entity_cols='station',
-    # train_size=.75
+    train_size=.75
 )
 
 #forecast settings user may want to play around with

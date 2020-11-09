@@ -38,7 +38,7 @@ class Pyteller:
             signals=['tmpf','dwpf'],
             static_variables=None,
             entity_cols='station',
-            train_size=1
+            train_size=.75
         )
 
     def forecast_settings(self,
@@ -78,6 +78,8 @@ class Pyteller:
 
     def forecast(self, test_data=None):
         # Allow for multiple entities
+        # self.test=test_data
+
         preds = pd.DataFrame()
         time = {}
         for entity, test_entity in self.test:
