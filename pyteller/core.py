@@ -4,10 +4,11 @@
 import json
 import os
 from typing import List
-
+from pyteller.data import organize_data
 import pandas as pd
 from mlblocks import MLPipeline
 from pyteller.evaluation import METRICS_NORM as METRICS
+import pickle
 
 
 class Pyteller:
@@ -22,12 +23,31 @@ class Pyteller:
             mlpipeline.set_hyperparameters(self._hyperparameters)
         return mlpipeline
 
-    def __init__(self, pipeline=None,
-                 hyperparameters: dict = None,
-                 pred_length=None,
-                 offset=None,
-                 goal=None,
-                 goal_window=None):
+    def __init__(self,
+                 data=None,
+                 timestamp_col=None,
+                 signals=None,
+                 static_variables=None,
+                 entity_cols=None,
+                 train_size=.75):
+        self.signals=signals
+
+        self.train,self.test = organize_data(
+            data=data,
+            timestamp_col = 'valid',
+            signals=['tmpf','dwpf'],
+            static_variables=None,
+            entity_cols='station',
+            train_size=1
+        )
+
+    def forecast_settings(self,
+                          pipeline=None,
+                          hyperparameters: dict = None,
+                          pred_length=None,
+                          offset=None,
+                          goal=None,
+                          goal_window=None):
         self._pipeline = pipeline
         self._hyperparameters = hyperparameters
         self.pred_length = pred_length
@@ -39,10 +59,28 @@ class Pyteller:
 # TODO: fit user facing abstraction
 # TODO: save/load
 # TODO: commnet in blocks
-    def predict(self, test_data):
+# TODO: switch entity with signal
+    def fit(self, data=None):
+        """Fit the pipeline to the given data.
+
+        Args:
+            data (DataFrame):
+                Input data, passed as a ``pandas.DataFrame`` containing
+                exactly two columns: timestamp and value.
+        """
+        self._mlpipeline = self._get_mlpipeline()
+        for entity, train_entity in self.train:
+            self._mlpipeline.fit(X=train_entity,
+                             pred_length=self.pred_length,
+                            entity=entity)
+        self._fitted = True
+        print('The pipeline is fitted')
+
+    def forecast(self, test_data=None):
         # Allow for multiple entities
         preds = pd.DataFrame()
-        for entity, test_entity in test_data:
+        time = {}
+        for entity, test_entity in self.test:
             preds_entity = self._mlpipeline.predict(X=test_entity,
                                                     pred_length=self.pred_length,
                                                     offset=self.offset,
@@ -50,6 +88,20 @@ class Pyteller:
                                                     goal_window=None)
             preds_entity['entity'] = entity
             preds = preds.append(preds_entity)
+            time[entity] = preds_entity['timestamp'].iloc[0] + ' to ' + \
+                           preds_entity['timestamp'].iloc[-1]
+
+        to_print = [
+            'Forecast Summary:',
+            "\tSignals predicted: {}".format(self.signals),
+            # "\tEntities predicted: {}".format(preds.entity.unique()),
+            "\tEntities predicted: {}".format(time),
+            "\tPipeline: : {}".format(self._pipeline),
+            "\tOffset: : {}".format(self.offset),
+            "\tPrediction length: : {}".format(self.pred_length),
+            "\tPrediction goal: : {}".format(self.goal),
+        ]
+        print('\n'.join(to_print))
         return preds
 
     def evaluate(self, forecast: pd.DataFrame,
@@ -59,6 +111,7 @@ class Pyteller:
                  detailed=False,
                  metrics: List[str] = METRICS) -> pd.Series:
         forecast = forecast.groupby('entity')
+
         metrics_ = {}
         for metric in metrics:
             metrics_[metric] = METRICS[metric]
@@ -96,3 +149,39 @@ class Pyteller:
         # scores = pd.DataFrame.from_records(scores)
 
         return pd.DataFrame(scores)
+
+
+    def save(self, path: str):
+        """Save this object using pickle.
+
+        Args:
+            path (str):
+                Path to the file where the serialization of
+                this object will be stored.
+        """
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, 'wb') as pickle_file:
+            pickle.dump(self, pickle_file)
+
+    @classmethod
+    def load(cls, path: str):
+        """Load a pyteller instance from a pickle file.
+
+        Args:
+            path (str):
+                Path to the file where the instance has been
+                previously serialized.
+
+        Returns:
+            Orion
+
+        Raises:
+            ValueError:
+                If the serialized object is not a pyteller instance.
+        """
+        with open(path, 'rb') as pickle_file:
+            orion = pickle.load(pickle_file)
+            if not isinstance(orion, cls):
+                raise ValueError('Serialized object is not a pyteller instance')
+
+            return orion

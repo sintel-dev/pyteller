@@ -1,4 +1,7 @@
-
+import numpy as np
+import pandas as pd
+from sklearn.metrics import mean_absolute_error
+from dateutil.parser import parse
 class MeanEstimator:
 
     """Mean Estimator.
@@ -38,18 +41,39 @@ class Persistence:
     def __init__(self):
         self.values_col = 'target'
 
-    # def fit(self, X):
-    #     self.values = X[self._value_column]
-    def predict(self, X, pred_length):
-        import numpy as np
-        import pandas as pd
+    def fit(self, X,pred_length,entity):
+
         signals = [col for col in X if col.startswith('signal')]
         self.values = X[signals]
         time = pd.DataFrame(data=X['timestamp'][-pred_length:].values, columns=['timestamp'])
-        # preds = self.values.iloc[-pred_length:, :]
         preds = self.values.iloc[-pred_length - 1:-pred_length, :]
         preds = pd.concat([preds]*pred_length)
         preds['timestamp'] =time.values
+
+        #Validation
+        time_col = pd.to_datetime(X['timestamp'])
+        X = X.assign(timestamp=time_col)
+        pred_window = ((X['timestamp'])
+                       >= parse(preds['timestamp'].iloc[0])) & (
+                          (X['timestamp'])
+                          <= parse(preds['timestamp'].iloc[-1]))
+
+        actuals = X.loc[pred_window][signals]
+        val = mean_absolute_error(actuals, preds[signals])
+        print('training MAE for entity ',entity,': ',val)
+
+
+
+    # def fit(self, X):
+    #     self.values = X[self._value_column]
+    def predict(self, X, pred_length):
+        signals = [col for col in X if col.startswith('signal')]
+        self.values = X[signals]
+        time = pd.DataFrame(data=X['timestamp'][-pred_length:].values, columns=['timestamp'])
+        preds = self.values.iloc[-pred_length - 1:-pred_length, :]
+        preds = pd.concat([preds]*pred_length)
+        preds['timestamp'] =time.values
+
         return preds
 
 

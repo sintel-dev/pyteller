@@ -20,7 +20,7 @@ def _run_pipeline(pipeline, train, test):
     pipeline.fit(train)
 
     LOGGER.debug("Finding events")
-    events = pipeline.predict(test)
+    events = pipeline.forecast(test)
 
     LOGGER.debug("%s events found", len(events))
     return events

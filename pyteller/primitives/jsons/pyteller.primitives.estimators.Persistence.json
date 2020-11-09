@@ -10,6 +10,31 @@
     "modalities": [],
     "primitive": "pyteller.primitives.estimators.Persistence",
     "fit": {
+        "method": "fit",
+        "args": [
+            {
+                "name": "X",
+                "type": "ndarray"
+            },
+             {
+                "name": "pred_length",
+                "type": "int"
+
+            },
+
+                         {
+                "name": "entity",
+                "type": "str"
+
+            }
+        ],
+                "output": [
+            {
+                "name": "val",
+                "type": "float"
+            }
+        ]
+
     },
     "produce": {
         "method": "predict",
