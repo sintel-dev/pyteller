@@ -274,7 +274,7 @@ The output is a dataframe:
 ```
 
 
-Once we have the data, create an instance of the `Pyteller` class with input arguments of the loaded data and its the column names.
+Once we have the data, create an instance of the `Pyteller` class, where the input arguments are loaded data and the column names.
 The user also specifies which signals they want to predict for here.
 
 ```python3
@@ -289,24 +289,26 @@ pyteller = Pyteller (
 )
 ```
 
-This creates training data  `pyteller.train` in the form of a DataFrameGroupBy object, which is a collection of dataframes, one for each entity. This allows for managing seperate models for each entity, but common models for multiple signals at a time.
-The output can be viewed by iterating through `pyteller.train`:
+This creates training data  `pyteller.train` in the form of a DataFrameGroupBy object, which is a collection of dataframes, one for each entity. This allows for creating seperate models for each entity, but common models for multiple signals at a time.
+
+
+One dataframe of an entity can be viewed by iterating through `pyteller.train`:
 ```python3
 for entity, train_entity in pyteller.train:
     training_data=train_entity
 ```
-training_data is the dataset that takes into account the user specified column names and the signals they want to predict for, and is for one entity only:
+`training_data` is the dataset that takes into account the user specified column names and the signals they want to predict for, and is for one entity only:
 ```
        timestamp  signal_tmpf  signal_dwpf  entity
 0     1/1/16 0:15   41.000      39.200        8A0
 1     1/1/16 0:15   39.200      37.400        8A0
-2     1/1/16 0:35   37.400      37.400       8A0
+2     1/1/16 0:35   37.400      37.400        8A0
 3     1/1/16 0:35   37.400      37.400        8A0
 4     1/1/16 0:55   37.400      37.400        8A0
 ```
 
  ## 2. Set Forecast Settings
-Now that the data is in the correct format, the user must specify the forecast settings with the `pyteller.forecast_settings` method:
+Now that the data is in the correct format, the user can specify the forecast settings with the `pyteller.forecast_settings` method:
 ```python3
 pyteller.forecast_settings(
     pipeline = 'persistence',
@@ -316,8 +318,8 @@ pyteller.forecast_settings(
     goal_window = None
 )
 ```
-## 3. Fit the data to the mdoel
-The user now calls the `pyteller.fit` method to fit the data to the pipeline. The default is to use all the training data, pyteller.train
+## 3. Fit the data
+The user now calls the `pyteller.fit` method to fit the data to the pipeline. The default is to use all the training data, `pyteller.train`
 ```python3
 pyteller.fit()
 ```
@@ -337,16 +339,16 @@ pyteller.save('../fit_models/persistence')
 ```
 
 ## 5. Load the new data
-Once the user gets new data, they can load it in the same way they loaded the training data.
+Once the user gets new data that they want to use to make a prediction, they can load it in the same way they loaded the training data.
 ```python3
 input_data=load_data('../pyteller/data/AL_Weather_input.csv')
  ```
 
  ## 6. Forecast
-Now the user calls the `pyteller.forecast` method, which will output the forecasts for all signals and all entities
+To make a forecast, the user calls the `pyteller.forecast` method, which will output the forecasts for all signals and all entities.
 
 ```python3
-forecast = pyteller.forecast()
+forecast = pyteller.forecast(input_data)
 ```
 The output is a dataframe of all the predictions:
 
@@ -364,7 +366,7 @@ and a print statement of a summary of the forecast:
 ```python3
 Forecast Summary:
 	Signals predicted: ['tmpf', 'dwpf']
-	Entities predicted: {}
+	Entities predicted: {'4A6': '2/4/16 18:15 to 2/4/16 18:55', '8A0': '2/4/16 18:15 to 2/4/16 18:55'}
 	Pipeline: : persistence
 	Offset: : 5
 	Prediction length: : 3
