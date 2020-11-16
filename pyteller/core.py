@@ -12,6 +12,16 @@ import pickle
 
 
 class Pyteller:
+    def _load_pipeline(self,pipeline, hyperparams=None):
+        if isinstance(pipeline, str) and os.path.isfile(pipeline):
+            pipeline = MLPipeline.load(pipeline)
+        else:
+            pipeline = MLPipeline(pipeline)
+
+        if hyperparams is not None:
+            pipeline.set_hyperparameters(hyperparams)
+
+        return pipeline
 
     def _get_mlpipeline(self):
         pipeline = self._pipeline
@@ -24,43 +34,36 @@ class Pyteller:
         return mlpipeline
 
     def __init__(self,
-                 data=None,
-                 timestamp_col=None,
-                 signals=None,
-                 static_variables=None,
-                 entity_cols=None,
-                 train_size=.75):
-        self.signals=signals
-
-        self.train,self.test = organize_data(
-            data=data,
-            timestamp_col = 'valid',
-            signals=['tmpf','dwpf'],
-            static_variables=None,
-            entity_cols='station',
-            train_size=.75
-        )
-
-    def forecast_settings(self,
-                          pipeline=None,
-                          hyperparameters: dict = None,
-                          pred_length=None,
-                          offset=None,
-                          goal=None,
-                          goal_window=None):
+              pipeline=None,
+              hyperparameters: dict = None,
+              pred_length=None,
+              offset=None,
+              goal=None,
+              goal_window=None):
         self._pipeline = pipeline
         self._hyperparameters = hyperparameters
         self.pred_length = pred_length
         self.offset=offset
         self.goal = goal
+        self.goal_window=goal_window
         self._mlpipeline = self._get_mlpipeline()
         self._fitted = False
+        self.hyperparameters=hyperparameters
+
 
 # TODO: fit user facing abstraction
 # TODO: save/load
 # TODO: commnet in blocks
 # TODO: switch entity with signal
-    def fit(self, data=None):
+    def fit(self,
+            data=None,
+            timestamp_col = None,
+            target_signals=None,
+            static_variables=None,
+            entity_col=None,
+            entities=None,
+            train_size=None
+        ):
         """Fit the pipeline to the given data.
 
         Args:
@@ -68,43 +71,68 @@ class Pyteller:
                 Input data, passed as a ``pandas.DataFrame`` containing
                 exactly two columns: timestamp and value.
         """
-        self._mlpipeline = self._get_mlpipeline()
-        for entity, train_entity in self.train:
-            self._mlpipeline.fit(X=train_entity,
-                             pred_length=self.pred_length,
-                            entity=entity)
+        self.target_signal=target_signals
+        self.timestamp_col=timestamp_col
+        self.static_variables=static_variables
+        self.entity_cols=entity_col
+        self.entities=entities
+        self.train_size=train_size
+
+        # self._mlpipeline = self._get_mlpipeline()
+        self._mlpipeline = self._load_pipeline(self._pipeline, self._hyperparameters)
+        self.train_length = round(len(data) * train_size)
+        # train_df = data.iloc[:self.train_length]
+        train = organize_data(self,
+            data=data,
+            timestamp_col = self.timestamp_col,
+            signal=self.target_signal,
+            static_variables=self.static_variables,
+            entity_cols=self.entity_cols,
+            entities=self.entities,
+            train_size=self.train_size
+        )
+
+
+        self._mlpipeline.fit(X=train,
+                         pred_length=self.pred_length,
+                        )
         self._fitted = True
+
         print('The pipeline is fitted')
 
-    def forecast(self, test_data=None):
-        # Allow for multiple entities
-        # self.test=test_data
+    def forecast(self, data=None):
 
-        preds = pd.DataFrame()
-        time = {}
-        for entity, test_entity in self.test:
-            preds_entity = self._mlpipeline.predict(X=test_entity,
-                                                    pred_length=self.pred_length,
-                                                    offset=self.offset,
-                                                    goal=self.goal,
-                                                    goal_window=None)
-            preds_entity['entity'] = entity
-            preds = preds.append(preds_entity)
-            time[entity] = preds_entity['timestamp'].iloc[0] + ' to ' + \
-                           preds_entity['timestamp'].iloc[-1]
+        test = organize_data(self,
+            data=data,
+            timestamp_col = self.timestamp_col,
+            signal=self.target_signal,
+            static_variables=self.static_variables,
+            entity_cols=self.entity_cols,
+            entities=self.entities,
+            train_size=self.train_size
+        )
+
+        prediction = self._mlpipeline.predict(X=test,
+                                                pred_length=self.pred_length,
+                                                offset=self.offset,
+                                                goal=self.goal,
+                                                goal_window=None)
+
+        self.time = prediction['timestamp'].iloc[0] + ' to ' + \
+                       prediction['timestamp'].iloc[-1]
 
         to_print = [
             'Forecast Summary:',
-            "\tSignals predicted: {}".format(self.signals),
+            "\tSignals predicted: {}".format(self.target_signal),
             # "\tEntities predicted: {}".format(preds.entity.unique()),
-            "\tEntities predicted: {}".format(time),
+            "\tEntities predicted: {} from {}".format(self.entities, self.time),
             "\tPipeline: : {}".format(self._pipeline),
             "\tOffset: : {}".format(self.offset),
             "\tPrediction length: : {}".format(self.pred_length),
             "\tPrediction goal: : {}".format(self.goal),
         ]
         print('\n'.join(to_print))
-        return preds
+        return prediction
 
     def evaluate(self, forecast: pd.DataFrame,
                  fit: bool = False,
@@ -112,42 +140,55 @@ class Pyteller:
                  test_data: pd.DataFrame = None,
                  detailed=False,
                  metrics: List[str] = METRICS) -> pd.Series:
-        forecast = forecast.groupby('entity')
+
 
         metrics_ = {}
+        if isinstance(metrics, str):
+            metrics = [metrics]
         for metric in metrics:
             metrics_[metric] = METRICS[metric]
         scores = list()
-        for entity, forecast_entity in forecast:
 
-            pred_window = (test_data.get_group(entity)['timestamp']
-                           >= forecast_entity['timestamp'].iloc[0]) & (
-                test_data.get_group(entity)['timestamp']
-                <= forecast_entity['timestamp'].iloc[-1])
-            actual_entity = test_data.get_group(entity).loc[pred_window]
-            signals = [col for col in forecast_entity if col.startswith('signal')]
-            for signal in signals:
-                score = {}
-                if 'MASE' in metrics_:
-                    score['MASE'] = metrics_['MASE'](train_data.get_group(entity)[signal],
-                                                     forecast_entity[signal], actual_entity[signal])
+        test_data = organize_data(self,
+            data=test_data,
+            timestamp_col = self.timestamp_col,
+            signal=self.target_signal,
+            static_variables=self.static_variables,
+            entity_cols=self.entity_cols,
+            entities=self.entities,
+            train_size=self.train_size
+        )
 
-                score.update({
-                    metric: METRICS[metric](actual_entity[signal], forecast_entity[signal])
-                    for metric in metrics_ if metric != 'MASE'
-                })
-                granularity = pd.to_datetime(
-                    train_data.get_group(entity)['timestamp'].iloc[1]) - pd.to_datetime(
-                    train_data.get_group(entity)['timestamp'].iloc[0])
-                score['entity'] = entity
-                score['signal']=signal
+        pred_window = (test_data['timestamp']
+                       >= forecast['timestamp'].iloc[0]) & (
+            test_data['timestamp']
+            <= forecast['timestamp'].iloc[-1])
+        actual = test_data.loc[pred_window]
+        # signals = [col for col in forecast_entity if col.startswith('signal')]
+        if isinstance(self.entities, str):
+            self.entities = [self.entities]
+        for entity in self.entities:
+            score = {}
+            # if 'MASE' in metrics_:
+            #     score['MASE'] = metrics_['MASE'](train_data[entity],
+            #                                      forecast[entity], actual[entity])
 
-                if detailed == True:
-                    score['granularity'] = granularity
-                    score['prediction length'] = forecast_entity.shape[0]
-                    score['length of training data'] = len(train_data.get_group(entity))
-                    score['length of testing data'] = len(test_data.get_group(entity))
-                scores.append(score)
+            score.update({
+                metric: METRICS[metric](actual[entity], forecast[entity])
+                for metric in metrics_ if metric != 'MASE'
+            })
+            granularity = pd.to_datetime(
+                actual['timestamp'].iloc[1]) - pd.to_datetime(
+                actual['timestamp'].iloc[0])
+            score['entity'] = entity
+
+
+            if detailed == True:
+                score['granularity'] = granularity
+                score['prediction length'] = forecast.shape[0]
+                score['length of training data'] = len(train_data.get_group(entity))
+                score['length of testing data'] = len(test_data.get_group(entity))
+            scores.append(score)
         # scores = pd.DataFrame.from_records(scores)
 
         return pd.DataFrame(scores)
@@ -182,8 +223,8 @@ class Pyteller:
                 If the serialized object is not a pyteller instance.
         """
         with open(path, 'rb') as pickle_file:
-            orion = pickle.load(pickle_file)
+            pyteller = pickle.load(pickle_file)
             if not isinstance(orion, cls):
                 raise ValueError('Serialized object is not a pyteller instance')
 
-            return orion
+            return pyteller
