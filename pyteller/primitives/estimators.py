@@ -41,10 +41,10 @@ class Persistence:
     def __init__(self):
         self.values_col = 'target'
 
-    def fit(self, X,pred_length,entity):
+    def fit(self, X,pred_length):
 
-        signals = [col for col in X if col.startswith('signal')]
-        self.values = X[signals]
+        values = [col for col in X if not col.startswith('timestamp')]
+        self.values = X[values]
         time = pd.DataFrame(data=X['timestamp'][-pred_length:].values, columns=['timestamp'])
         preds = self.values.iloc[-pred_length - 1:-pred_length, :]
         preds = pd.concat([preds]*pred_length)
@@ -58,17 +58,17 @@ class Persistence:
                           (X['timestamp'])
                           <= parse(preds['timestamp'].iloc[-1]))
 
-        actuals = X.loc[pred_window][signals]
-        val = mean_absolute_error(actuals, preds[signals])
-        print('training MAE for entity ',entity,': ',val)
+        actuals = X.loc[pred_window][values]
+        val = mean_absolute_error(actuals, preds[values])
+        print('training MAE: ' ,val)
 
 
 
     # def fit(self, X):
     #     self.values = X[self._value_column]
     def predict(self, X, pred_length):
-        signals = [col for col in X if col.startswith('signal')]
-        self.values = X[signals]
+        values = [col for col in X if not col.startswith('timestamp')]
+        self.values = X[values]
         time = pd.DataFrame(data=X['timestamp'][-pred_length:].values, columns=['timestamp'])
         preds = self.values.iloc[-pred_length - 1:-pred_length, :]
         preds = pd.concat([preds]*pred_length)

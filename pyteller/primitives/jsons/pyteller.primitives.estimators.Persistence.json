@@ -20,13 +20,8 @@
                 "name": "pred_length",
                 "type": "int"
 
-            },
-
-                         {
-                "name": "entity",
-                "type": "str"
-
             }
+
         ],
                 "output": [
             {

@@ -274,55 +274,32 @@ The output is a dataframe:
 ```
 
 
-Once we have the data, create an instance of the `Pyteller` class, where the input arguments are loaded data and the column names.
-The user also specifies which signals they want to predict for here.
+Once we have the data, create an instance of the `Pyteller` class, where the input arguments are the forecast settings.
 
 ```python3
 from pyteller.core import Pyteller
-
 pyteller = Pyteller (
+    pipeline='persistence',
+    pred_length=3,
+    offset=5,
+    goal=None,
+    goal_window=None
+)
+```
+
+## 2. Fit the data
+The user now calls the `pyteller.fit` method to fit the data to the pipeline. The inputs are the loaded data and the column names. The user also specifies which signal or entities they want to predict for here.
+```python3
+pyteller.fit(
     data=current_data,
     timestamp_col='valid',
-    signals=['tmpf', 'dwpf'],
+    target_signals='tmpf',
     static_variables=None,
-    entity_cols='station',
-)
+    entity_col='station',
+    train_size=.75)
 ```
 
-This creates training data  `pyteller.train` in the form of a DataFrameGroupBy object, which is a collection of dataframes, one for each entity. This allows for creating seperate models for each entity, but common models for multiple signals at a time.
 
-
-One dataframe of an entity can be viewed by iterating through `pyteller.train`:
-```python3
-for entity, train_entity in pyteller.train:
-    training_data=train_entity
-```
-`training_data` is the dataset that takes into account the user specified column names and the signals they want to predict for, and is for one entity only:
-```
-       timestamp  signal_tmpf  signal_dwpf  entity
-0     1/1/16 0:15   41.000      39.200        8A0
-1     1/1/16 0:15   39.200      37.400        8A0
-2     1/1/16 0:35   37.400      37.400        8A0
-3     1/1/16 0:35   37.400      37.400        8A0
-4     1/1/16 0:55   37.400      37.400        8A0
-```
-
- ## 2. Set Forecast Settings
-Now that the data is in the correct format, the user can specify the forecast settings with the `pyteller.forecast_settings` method:
-```python3
-pyteller.forecast_settings(
-    pipeline = 'persistence',
-    pred_length = 3,
-    offset=5,
-    goal = None,
-    goal_window = None
-)
-```
-## 3. Fit the data
-The user now calls the `pyteller.fit` method to fit the data to the pipeline. The default is to use all the training data, `pyteller.train`
-```python3
-pyteller.fit()
-```
 The output of the fitting process are print statements of the loss on the training data for each entity:
 ```python3
 training MAE for entity  4A6 :  0.6000000000000002
@@ -331,20 +308,20 @@ The pipeline is fitted
 
 ```
 
-## 4. Save the trained model
+## 3. Save the trained model
 At this point, the user has a trained model that can be pickled by calling the `pyteller.save` method, inputting the desired output path:
 
 ```python3
 pyteller.save('../fit_models/persistence')
 ```
 
-## 5. Load the new data
+## 4. Load the new data
 Once the user gets new data that they want to use to make a prediction, they can load it in the same way they loaded the training data.
 ```python3
 input_data=load_data('../pyteller/data/AL_Weather_input.csv')
  ```
 
- ## 6. Forecast
+ ## 5. Forecast
 To make a forecast, the user calls the `pyteller.forecast` method, which will output the forecasts for all signals and all entities.
 
 ```python3
@@ -353,19 +330,19 @@ forecast = pyteller.forecast(input_data)
 The output is a dataframe of all the predictions:
 
 ```python3
- timestamp     signal_tmpf  signal_dwpf  entity
- 2/4/16 18:15    42.800      33.800        8A0
- 2/4/16 18:35    42.800      33.800        8A0
- 2/4/16 18:55    42.800      33.800        8A0
- 2/4/16 18:15    46.400      24.800        4A6
- 2/4/16 18:35    46.400      24.800        4A6
- 2/4/16 18:55    46.400      24.800        4A6
+ timestamp     signal_tmpf    entity
+ 2/4/16 18:15    42.800        8A0
+ 2/4/16 18:35    42.800        8A0
+ 2/4/16 18:55    42.800        8A0
+ 2/4/16 18:15    46.400        4A6
+ 2/4/16 18:35    46.400        4A6
+ 2/4/16 18:55    46.400        4A6
 
 ```
 and a print statement of a summary of the forecast:
 ```python3
 Forecast Summary:
-	Signals predicted: ['tmpf', 'dwpf']
+	Signal predicted: ['tmpf']
 	Entities predicted: {'4A6': '2/4/16 18:15 to 2/4/16 18:55', '8A0': '2/4/16 18:15 to 2/4/16 18:55'}
 	Pipeline: : persistence
 	Offset: : 5
@@ -382,6 +359,15 @@ Now, we can evaluate the forecasts
 scores = pyteller.evaluate(metrics=['MAPE','MSE'])
 ```
 
+The output is a dataframe of the metrics for each entity:
+
+```python3
+ entity   MAPE    MSE
+  8A0     1.222   0.666
+  4A6     3.67    0.5
+
+
+```
 
 # What's next?
 

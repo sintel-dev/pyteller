@@ -2,6 +2,7 @@ import os
 import logging
 
 import pandas as pd
+import numpy as np
 
 LOGGER = logging.getLogger(__name__)
 
@@ -86,14 +87,16 @@ def load_data(data,
         data = download(data)
     return data
 
-def organize_data(data,
-              train_size=1,
-              timestamp_col=None,
-              entity_cols=None,
-              signals=None,
-              dynamic_variables=None,
-              static_variables=None,
-              column_dict=None):
+def organize_data(self,
+                  data,
+                  train_size=None,
+                  timestamp_col=None,
+                  entity_cols=None,
+                  entities=None,
+                  signal=None,
+                  dynamic_variables=None,
+                  static_variables=None,
+                  column_dict=None):
 
     if column_dict is not None:
         allowed_keys = ['timestamp', 'signals', 'entity']
@@ -102,50 +105,56 @@ def organize_data(data,
                    pd.Series(v).notna().all()}  # remove Nan value keys
     else:
         columns = {
-            'signals': signals,
+            'signal': signal,
             'timestamp': timestamp_col,
             'entity': entity_cols,
-
             'dynamic_variable': dynamic_variables,
             'static_variable': static_variables
         }
 
-# TODO more than one target
     columns = {k: v for k, v in columns.items() if v is not None}
+
     df = pd.DataFrame()
-    if 'signals' in columns:
-        signals = columns['signals']
-        if isinstance(signals, str):
-            signals = [item.strip() for item in signals.split(',')]
-
-        df = data[signals]
-        signals_name = "".join('signal_{} '.format(x) for x in signals)  # add prefix signals
-        signals_name = [item.strip() for item in signals_name.split(' ')]
-        new_name = dict(zip(signals, signals_name))
-        df = df.rename(columns=new_name)
     for key in columns:
-        if key != 'signals':
-            df[key] = data[columns[key]]
+        df[key] = data[columns[key]]
 
-    # if column_dict is not None:
-    #     is_entity = 'entity' in columns
-    # if entity_cols is None and is_entity == False:
-    # if is_entity == False:
-    if 'entity' not in df:
-        df = df.assign(entity=1)
-    train_df = pd.DataFrame()
-    test_df = pd.DataFrame()
-    df = df.groupby('entity')
-    for entity_name, entity_df in df:
-        train_length = round(len(entity_df) * train_size)
-        train = entity_df.iloc[:train_length]
-        test = entity_df.iloc[train_length:]
-        train_df = train_df.append(train)
-        test_df = test_df.append(test)
-    train = train_df.groupby('entity')
-    test = test_df.groupby('entity')
-    # for entity, train_entity in train:
-    #     if train_entity["timestamp"].is_unique == False:
-    #         raise ValueError(
-    #             'There are multiple values for a single timestamp, please choose an entity column that will group the data to have only one value for a timestep for each entity.')
-    return train, test
+
+    if 'entity' in columns:
+        df['entity']=df['entity'].astype(str) #Make all entities strings
+
+        #Find the unique values in the entity column
+        all_entities = df.entity.unique()
+        # all_entities = all_entities[~pd.isnull(all_entities)]
+
+        all_entities = [x for x in list(all_entities) if x != 'nan']
+        self.entities=all_entities #entities are the unique values in the specified entity column
+
+        #Make the long form into flatform by having entities as columns
+        df2 = df.groupby('timestamp')['signal'].apply(
+            lambda group_series: group_series.tolist()).reset_index()
+        df2[all_entities] = pd.DataFrame(df2.signal.tolist(), index=df2.index)
+        to_remove=list(['signal'])
+
+        if entities != None: #If a certain entity is specified from the entity column
+            to_remove=to_remove+list(all_entities)
+            to_remove=list(set(to_remove)-set(entities))#Don't remove it
+            self.entities=entities
+
+        df = df2.drop(to_remove, axis=1)
+
+    elif signal is not None: #If entity column is not specified and only one signal is
+        self.entities = signal
+        df=df.rename(columns={'signal':signal})
+
+    else: #If multiple entities are specified, but there is no entity column
+        self.entities=entities
+        for entity in entities:
+            df[entity] = data[[entity]]
+
+    # train_length = round(len(df) * train_size)
+    # train = df.iloc[:train_length]
+    # test = df.iloc[train_length:]
+    # df = df[['timestamp'] + [col for col in df.columns if col != 'timestamp']]
+    # df.set_index('timestamp', inplace=True)
+    df['timestamp']=pd.to_datetime(df['timestamp']).values.astype(np.int64) // 10 ** 6
+    return df
