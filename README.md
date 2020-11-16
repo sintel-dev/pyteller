@@ -352,22 +352,6 @@ Forecast Summary:
 ```
 
 
-## 3. Evaluate
-Now, we can evaluate the forecasts
-
-```python3
-scores = pyteller.evaluate(metrics=['MAPE','MSE'])
-```
-
-The output is a dataframe of the metrics for each entity:
-
-```python3
- entity   MAPE    MSE
-  8A0     1.222   0.666
-  4A6     3.67    0.5
-
-
-```
 
 # What's next?
 
