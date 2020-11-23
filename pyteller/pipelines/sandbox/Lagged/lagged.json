@@ -1,0 +1,9 @@
+{
+    "primitives": [
+        "pyteller.primitives.estimators.Lagged"
+
+    ],
+    "init_params": {
+
+    }
+}

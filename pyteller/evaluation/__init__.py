@@ -1,13 +1,14 @@
 from pyteller.evaluation.metrics import (
-    mean_absolute_error, mean_squared_error, MASE, sMAPE
+    mean_absolute_error, mean_squared_error, MASE, sMAPE, MAPE
 )
 
 
 METRICS_NORM = {
-    'MAPE': mean_absolute_error,
+    'MAE': mean_absolute_error,
     'MSE': mean_squared_error,
     'MASE': MASE,
-    'sMAPE': sMAPE
+    'sMAPE': sMAPE,
+    'MAPE': MAPE
     # 'accuracy': accuracy_score
 
 }

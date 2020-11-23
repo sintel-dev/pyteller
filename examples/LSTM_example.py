@@ -9,12 +9,11 @@ current_data=load_data('../pyteller/data/taxi.csv')
 from pyteller.core import Pyteller
 pyteller = Pyteller (
     pipeline='mean_24h_lstm',
-    pred_length=3,
+    pred_length=10,
     offset=5,
     goal=None,
     goal_window=None
 )
-
 
 pyteller.fit(
     data=current_data,
@@ -22,14 +21,14 @@ pyteller.fit(
     target_signals='value',
     static_variables=None,
     # entity_col='station',
-    # entities=,
     train_size=.75)
 
-input_data=load_data('../pyteller/data/taxi.csv')
+input_data=load_data('../pyteller/data/taxi_test.csv')
 forecast = pyteller.forecast(data=input_data)
 
-scores = pyteller.evaluate(forecast=forecast,test_data=input_data,metrics='MAPE')
 
-pyteller.save('../fit_models/persistence')
+scores = pyteller.evaluate(forecast=forecast, test_data=input_data, metrics='MAPE')
 
-# TODO dump training data
+# pyteller.save('../fit_models/persistence')
+
+

@@ -48,3 +48,6 @@ def sMAPE(prediction_series, testing_series):
     else:
         return 100 / len(testing_series) * np.sum(2 * np.abs(prediction_series
                                                              - testing_series) / (np.abs(testing_series) + np.abs(prediction_series)))
+
+def MAPE( prediction_series, testing_series):
+    return 1 / len(testing_series) * np.sum(abs((testing_series - prediction_series) / testing_series)) * 100
