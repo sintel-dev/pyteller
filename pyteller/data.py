@@ -156,5 +156,24 @@ def organize_data(self,
     # test = df.iloc[train_length:]
     # df = df[['timestamp'] + [col for col in df.columns if col != 'timestamp']]
     # df.set_index('timestamp', inplace=True)
-    df['timestamp']=pd.to_datetime(df['timestamp']).values.astype(np.int64) // 10 ** 6
+    df['timestamp']=pd.to_datetime(df['timestamp']).values.astype(np.int64) // 1e9
+    self.freq=df['timestamp'][1]-df['timestamp'][0]
+    return df
+
+
+def post_process(self, prediction):
+    prediction.index = pd.to_datetime(prediction.index.values * 1e9)
+    df = pd.concat([prediction[col] for col in prediction])
+
+    from datetime import timedelta
+
+    up = self.freq * (self.pred_length - 1)
+    end = prediction.index[-1] + timedelta(seconds=up)
+    freq = str(int(self.freq)) + 's'
+    index = pd.date_range(start=prediction.index[0], end=end, freq=freq)
+
+    df.index=index
+
+    cols = self.entities
+    df = df.to_frame(cols)
     return df

@@ -4,7 +4,7 @@
 import json
 import os
 from typing import List
-from pyteller.data import organize_data
+from pyteller.data import organize_data, post_process
 import pandas as pd
 from mlblocks import MLPipeline
 from pyteller.evaluation import METRICS_NORM as METRICS
@@ -48,7 +48,20 @@ class Pyteller:
         self.goal_window=goal_window
         self._mlpipeline = self._get_mlpipeline()
         self._fitted = False
-        self.hyperparameters=hyperparameters
+
+        hyperparameters = {
+            "mlprimitives.custom.timeseries_preprocessing.rolling_window_sequences#1": {
+                "target_size": self.pred_length,
+                "step_size": self.pred_length
+            },
+            "keras.Sequential.LSTMTimeSeriesRegressor#1": {
+                "dense_units": self.pred_length,
+            }
+
+        }
+
+
+        self._hyperparameters=hyperparameters
 
 
 # TODO: fit user facing abstraction
@@ -116,22 +129,25 @@ class Pyteller:
                                                 pred_length=self.pred_length,
                                                 offset=self.offset,
                                                 goal=self.goal,
-                                                goal_window=None)
+                                                goal_window=None
+                                              )
 
-        self.time = prediction['timestamp'].iloc[0] + ' to ' + \
-                       prediction['timestamp'].iloc[-1]
-
-        to_print = [
-            'Forecast Summary:',
-            "\tSignals predicted: {}".format(self.target_signal),
-            # "\tEntities predicted: {}".format(preds.entity.unique()),
-            "\tEntities predicted: {} from {}".format(self.entities, self.time),
-            "\tPipeline: : {}".format(self._pipeline),
-            "\tOffset: : {}".format(self.offset),
-            "\tPrediction length: : {}".format(self.pred_length),
-            "\tPrediction goal: : {}".format(self.goal),
-        ]
-        print('\n'.join(to_print))
+        prediction = post_process(self,prediction)
+        #
+        # self.time = prediction['timestamp'].iloc[0] + ' to ' + \
+        #                prediction['timestamp'].iloc[-1]
+        # print('pred')
+        # to_print = [
+        #     'Forecast Summary:',
+        #     "\tSignals predicted: {}".format(self.target_signal),
+        #     # "\tEntities predicted: {}".format(preds.entity.unique()),
+        #     "\tEntities predicted: {} from {}".format(self.entities, self.time),
+        #     "\tPipeline: : {}".format(self._pipeline),
+        #     "\tOffset: : {}".format(self.offset),
+        #     "\tPrediction length: : {}".format(self.pred_length),
+        #     "\tPrediction goal: : {}".format(self.goal),
+        # ]
+        # print('\n'.join(to_print))
         return prediction
 
     def evaluate(self, forecast: pd.DataFrame,
@@ -159,11 +175,13 @@ class Pyteller:
             train_size=self.train_size
         )
 
-        pred_window = (test_data['timestamp']
-                       >= forecast['timestamp'].iloc[0]) & (
-            test_data['timestamp']
-            <= forecast['timestamp'].iloc[-1])
-        actual = test_data.loc[pred_window]
+        # pred_window = (test_data['timestamp']
+        #                >= forecast['timestamp'].iloc[0]) & (
+        #     test_data['timestamp']
+        #     <= forecast['timestamp'].iloc[-1])
+        test_data['timestamp'] = pd.to_datetime(test_data['timestamp'] * 1e9)
+        test_data = test_data.set_index('timestamp')
+        actual = test_data[test_data.index.isin(forecast.index)]
         # signals = [col for col in forecast_entity if col.startswith('signal')]
         if isinstance(self.entities, str):
             self.entities = [self.entities]
@@ -177,14 +195,10 @@ class Pyteller:
                 metric: METRICS[metric](actual[entity], forecast[entity])
                 for metric in metrics_ if metric != 'MASE'
             })
-            granularity = pd.to_datetime(
-                actual['timestamp'].iloc[1]) - pd.to_datetime(
-                actual['timestamp'].iloc[0])
-            score['entity'] = entity
 
 
             if detailed == True:
-                score['granularity'] = granularity
+                score['granularity'] = self.freq
                 score['prediction length'] = forecast.shape[0]
                 score['length of training data'] = len(train_data.get_group(entity))
                 score['length of testing data'] = len(test_data.get_group(entity))
