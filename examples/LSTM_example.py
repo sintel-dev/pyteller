@@ -8,9 +8,10 @@ current_data=load_data('../pyteller/data/taxi.csv')
 # Initialization settings: user doesn't change these once new data comes in
 from pyteller.core import Pyteller
 pyteller = Pyteller (
-    pipeline='mean_24h_lstm',
-    pred_length=10,
-    offset=5,
+    # pipeline='lstm_taxi_no_offset',
+    pipeline='lagged_demand_max',
+    # pred_length=5,
+    # offset=5,
     goal=None,
     goal_window=None
 )
@@ -27,7 +28,9 @@ input_data=load_data('../pyteller/data/taxi_test.csv')
 forecast = pyteller.forecast(data=input_data)
 
 
-scores = pyteller.evaluate(forecast=forecast, test_data=input_data, metrics='MAPE')
+scores = pyteller.evaluate(forecast=forecast, test_data=input_data, metrics=['sMAPE','MAPE'])
+
+# plot(forecast)
 
 # pyteller.save('../fit_models/persistence')
 

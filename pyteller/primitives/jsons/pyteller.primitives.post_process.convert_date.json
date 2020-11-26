@@ -1,0 +1,37 @@
+{
+    "name": "pyteller.primitives.post_process.convert_date",
+    "contributors": [
+        "Skylar Eiskowitz <eiskowit@mit.edu>"
+    ],
+    "description": "Unscale data from the specified range.",
+    "classifiers": {
+        "type": "helper",
+        "subtype": "fitting"
+    },
+    "modalities": [],
+    "primitive": "pyteller.primitives.post_process.convert_date",
+    "produce": {
+        "args": [
+            {
+                "name": "X",
+                "type": "pandas.DataFrame"
+            },
+
+            {
+                "name": "entities",
+                "type": "str"
+            }
+        ],
+        "output": [
+            {
+                "name": "X",
+                "type": "pandas.DataFrame"
+            }
+        ]
+    },
+        "hyperparameters": {
+
+        }
+    }
+
+

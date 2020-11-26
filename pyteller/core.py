@@ -48,20 +48,8 @@ class Pyteller:
         self.goal_window=goal_window
         self._mlpipeline = self._get_mlpipeline()
         self._fitted = False
+        # self.modified_target_size= self.pred_length+self.offset
 
-        hyperparameters = {
-            "mlprimitives.custom.timeseries_preprocessing.rolling_window_sequences#1": {
-                "target_size": self.pred_length,
-                "step_size": self.pred_length
-            },
-            "keras.Sequential.LSTMTimeSeriesRegressor#1": {
-                "dense_units": self.pred_length,
-            }
-
-        }
-
-
-        self._hyperparameters=hyperparameters
 
 
 # TODO: fit user facing abstraction
@@ -92,7 +80,7 @@ class Pyteller:
         self.train_size=train_size
 
         # self._mlpipeline = self._get_mlpipeline()
-        self._mlpipeline = self._load_pipeline(self._pipeline, self._hyperparameters)
+
         self.train_length = round(len(data) * train_size)
         # train_df = data.iloc[:self.train_length]
         train = organize_data(self,
@@ -104,10 +92,32 @@ class Pyteller:
             entities=self.entities,
             train_size=self.train_size
         )
+        # hyperparameters = {
+        #
+        #     "keras.Sequential.LSTMTimeSeriesRegressor#1": {
+        #         "dense_units": self.pred_length+self.offset,
+        #     },
+        #     "mlprimitives.custom.timeseries_preprocessing.rolling_window_sequences#1": {
+        #         "target_size": self.pred_length+self.offset,
+        #     },
+        #      "pyteller.primitives.post_process.Flatten#1": {
+        #         "freq": self.freq,
+        #         "pred_length": self.pred_length,
+        #         "entities": self.entities
+        # }
+        #
+        # }
 
+
+        # self._hyperparameters=hyperparameters
+        self._mlpipeline = self._load_pipeline(self._pipeline, self._hyperparameters)
 
         self._mlpipeline.fit(X=train,
                          pred_length=self.pred_length,
+                         offset =self.offset,
+                        # modified_target_size=self.modified_target_size,
+                        freq=self.freq,
+                        entities=self.entities
                         )
         self._fitted = True
 
@@ -125,14 +135,17 @@ class Pyteller:
             train_size=self.train_size
         )
 
-        prediction = self._mlpipeline.predict(X=test,
-                                                pred_length=self.pred_length,
-                                                offset=self.offset,
-                                                goal=self.goal,
-                                                goal_window=None
+        prediction = self._mlpipeline.predict(
+                                            X=test,
+                                            pred_length=self.pred_length,
+                                            offset=self.offset,
+                                            goal=self.goal,
+                                            goal_window=None,
+                                            freq = self.freq,
+                                            entities = self.entities
                                               )
 
-        prediction = post_process(self,prediction)
+        # prediction = post_process(self,prediction)
         #
         # self.time = prediction['timestamp'].iloc[0] + ' to ' + \
         #                prediction['timestamp'].iloc[-1]
@@ -148,7 +161,12 @@ class Pyteller:
         #     "\tPrediction goal: : {}".format(self.goal),
         # ]
         # print('\n'.join(to_print))
-        return prediction
+        test['timestamp'] = pd.to_datetime(test['timestamp'] * 1e9)
+        actual = test.set_index('timestamp')
+        # y=prediction[0]
+        # y_hat=prediction[1]
+        actual = actual[actual.index.isin(prediction.index)]
+        return actual,prediction
 
     def evaluate(self, forecast: pd.DataFrame,
                  fit: bool = False,
@@ -165,23 +183,23 @@ class Pyteller:
             metrics_[metric] = METRICS[metric]
         scores = list()
 
-        test_data = organize_data(self,
-            data=test_data,
-            timestamp_col = self.timestamp_col,
-            signal=self.target_signal,
-            static_variables=self.static_variables,
-            entity_cols=self.entity_cols,
-            entities=self.entities,
-            train_size=self.train_size
-        )
+        # test_data = organize_data(self,
+        #     data=test_data,
+        #     timestamp_col = self.timestamp_col,
+        #     signal=self.target_signal,
+        #     static_variables=self.static_variables,
+        #     entity_cols=self.entity_cols,
+        #     entities=self.entities,
+        #     train_size=self.train_size
+        # )
 
         # pred_window = (test_data['timestamp']
         #                >= forecast['timestamp'].iloc[0]) & (
         #     test_data['timestamp']
         #     <= forecast['timestamp'].iloc[-1])
-        test_data['timestamp'] = pd.to_datetime(test_data['timestamp'] * 1e9)
-        test_data = test_data.set_index('timestamp')
-        actual = test_data[test_data.index.isin(forecast.index)]
+        # test_data['timestamp'] = pd.to_datetime(test_data['timestamp'] * 1e9)
+        # test_data = test_data.set_index('timestamp')
+        # actual = test_data[test_data.index.isin(forecast.index)]
         # signals = [col for col in forecast_entity if col.startswith('signal')]
         if isinstance(self.entities, str):
             self.entities = [self.entities]
@@ -192,7 +210,7 @@ class Pyteller:
             #                                      forecast[entity], actual[entity])
 
             score.update({
-                metric: METRICS[metric](actual[entity], forecast[entity])
+                metric: METRICS[metric](test_data[entity], forecast[entity])
                 for metric in metrics_ if metric != 'MASE'
             })
 
@@ -238,7 +256,7 @@ class Pyteller:
         """
         with open(path, 'rb') as pickle_file:
             pyteller = pickle.load(pickle_file)
-            if not isinstance(orion, cls):
-                raise ValueError('Serialized object is not a pyteller instance')
+            # if not isinstance(orion, cls):
+            #     raise ValueError('Serialized object is not a pyteller instance')
 
             return pyteller

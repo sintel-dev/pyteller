@@ -156,7 +156,8 @@ def organize_data(self,
     # test = df.iloc[train_length:]
     # df = df[['timestamp'] + [col for col in df.columns if col != 'timestamp']]
     # df.set_index('timestamp', inplace=True)
-    df['timestamp']=pd.to_datetime(df['timestamp']).values.astype(np.int64) // 1e9
+    if df['timestamp'].dtypes !='float' and df['timestamp'].dtypes !='int':
+        df['timestamp']=pd.to_datetime(df['timestamp']).values.astype(np.int64) // 1e9
     self.freq=df['timestamp'][1]-df['timestamp'][0]
     return df
 

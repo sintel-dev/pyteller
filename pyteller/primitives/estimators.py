@@ -121,3 +121,11 @@ def split_sequence(X, target_column, sequence_size, overlap_size):
         overlap = overlap_size
 
     return X_, index_
+
+
+def lagged(X, index, shift):
+    X = pd.DataFrame(data=X, index=index)
+    y = X.shift(shift)
+    y_hat=y.iloc[shift:, :]
+    target_index=y_hat.index
+    return np.asarray(y_hat), np.asarray(target_index)

@@ -1,0 +1,48 @@
+{
+    "primitives": [
+        "pyteller.primitives.post_process.get_index",
+        "sklearn.impute.SimpleImputer",
+        "pyteller.primitives.estimators.lagged",
+        "pandas.DataFrame",
+        "pyteller.primitives.post_process.convert_date"
+
+    ],
+"init_params": {
+            "pyteller.primitives.estimators.lagged": {
+            "shift": 2
+
+        }
+},
+        "input_names": {
+            "pandas.DataFrame#1": {
+                "index": "target_index",
+                "X": "y_hat"
+            },
+            "pyteller.primitives.post_process.convert_date#1": {
+                "X": "y_hat"
+            }
+        },
+    "output_names": {
+         "pyteller.primitives.estimators.lagged#1": {
+            "X": "y_hat"
+
+        },
+
+        "pandas.DataFrame#1": {
+            "X": "y_hat"
+        },
+
+         "pyteller.primitives.post_process.convert_date#1": {
+            "X": "y_hat"
+        }
+    },
+"outputs": {
+    "default": [
+        {
+            "name": "y_hat",
+            "variable": "pyteller.primitives.post_process.convert_date#1.y_hat"
+        }
+
+    ]
+}
+}

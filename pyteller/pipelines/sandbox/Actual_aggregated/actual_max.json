@@ -1,0 +1,24 @@
+{
+    "primitives": [
+        "mlprimitives.custom.timeseries_preprocessing.time_segments_aggregate",
+        "sklearn.impute.SimpleImputer",
+        "pandas.DataFrame",
+        "pyteller.primitives.post_process.convert_date"
+
+    ],
+"init_params": {
+        "mlprimitives.custom.timeseries_preprocessing.time_segments_aggregate#1": {
+            "time_column": "timestamp",
+            "interval": 300,
+            "method": "max"
+        }
+},
+        "input_names": {
+
+
+        },
+    "output_names": {
+
+    }
+}
+
