@@ -8,7 +8,8 @@ __version__ = '0.1.1.dev0'
 
 import os
 _BASE_PATH = os.path.abspath(os.path.dirname(__file__))
-MLBLOCKS_PRIMITIVES = os.path.join(_BASE_PATH, 'primitives', 'jsons')
+MLBLOCKS_PRIMITIVES = [os.path.join(_BASE_PATH, 'primitives', 'jsons'),
+os.path.join(_BASE_PATH, '../','pyteller','primitives', 'jsons')]
 # MLBLOCKS_PIPELINES = os.path.join(_BASE_PATH, 'pipelines')
 MLBLOCKS_PIPELINES = tuple(
     dirname

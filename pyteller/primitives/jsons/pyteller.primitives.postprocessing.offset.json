@@ -1,0 +1,65 @@
+{
+    "name": "pyteller.primitives.post_process.offset",
+    "contributors": [
+        "Skylar Eiskowitz <eiskowit@mit.edu>"
+    ],
+    "description": "add an offset to the targets ",
+    "classifiers": {
+        "type": "postprocessor",
+        "subtype": "aggregate"
+    },
+    "modalities": [],
+    "primitive": "pyteller.primitives.post_process.offset",
+    "produce": {
+        "args": [
+                        {
+                "name": "X",
+                "type": "pandas.DataFrame"
+            },
+
+            {
+                "name": "index",
+                "type": "pandas.DataFrame"
+            },
+            {
+                "name": "y",
+                "type": "pandas.DataFrame"
+            },
+            {
+                "name": "target_index",
+                "type": "pandas.DataFrame"
+            }
+
+
+        ],
+        "output": [
+            {
+                "name": "X",
+                "type": "pandas.DataFrame"
+            },
+            {
+                "name": "y",
+                "type": "pandas.DataFrame"
+            },
+                        {
+                "name": "index",
+                "type": "pandas.DataFrame"
+            },
+            {
+                "name": "target_index",
+                "type": "pandas.DataFrame"
+            }
+        ]
+    },
+        "hyperparameters": {
+             "fixed": {
+                 "offset": {
+                     "type": "int",
+                     "default": 10
+                 }
+             }
+        }
+
+    }
+
+

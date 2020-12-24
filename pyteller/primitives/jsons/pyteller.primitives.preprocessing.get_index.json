@@ -1,0 +1,34 @@
+{
+    "name": "pyteller.primitives.preprocessing.get_index",
+    "contributors": [
+        "Skylar Eiskowitz <eiskowit@mit.edu>"
+    ],
+    "description": "Stores the index of an input timeseries in the context",
+    "classifiers": {
+        "type": "preprocessor",
+        "subtype": "organize"
+    },
+    "modalities": [],
+    "primitive": "pyteller.primitives.preprocessing.get_index",
+   "produce": {
+        "args": [
+            {
+                "name": "X",
+                "type": "ndarray"
+            }
+        ],
+        "output": [
+            {
+                "name": "X",
+                "type": "ndarray"
+            },
+            {
+                "name": "index",
+                "type": "ndarray"
+            }
+        ]
+    },
+    "hyperparameters": {
+
+    }
+}

@@ -1,0 +1,33 @@
+{
+    "name": "pyteller.primitives.estimators.rho_loss",
+    "contributors": ["Skylar Eiskowitz <eiskowit@mit.edu>"],
+    "documentation": "",
+    "description": "Mkae a loss function",
+    "classifiers": {
+        "type": "estimator",
+        "subtype": "regressor"
+    },
+    "modalities": [],
+    "primitive": "pyteller.primitives.estimators.rho_loss",
+
+    "produce": {
+
+        "args": [
+
+        ],
+        "output": [
+            {
+                "name": "loss",
+                "type": "function"
+            }
+        ]
+    },
+    "hyperparameters": {
+        "fixed": {
+            "quantile": {
+                "type": "float",
+                "default": 0.5
+            }
+        }
+    }
+}

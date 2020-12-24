@@ -1,0 +1,47 @@
+{
+    "name": "pyteller.primitives.post_process.Select_target",
+    "contributors": [
+        "Skylar Eiskowitz <eiskowit@mit.edu>"
+    ],
+    "description": "Downselect rows wehre multiple predictions were for",
+    "classifiers": {
+        "type": "postprocessor",
+        "subtype": "flatten"
+    },
+    "modalities": [],
+    "primitive": "pyteller.primitives.post_process.Select_target",
+    "produce": {
+        "args": [
+            {
+                "name": "X",
+                "type": "pandas.DataFrame"
+            },
+
+            {
+                "name": "entities",
+                "type": "str"
+            },
+                  {
+                "name": "target_index",
+                "type": "ndarray"
+            }
+
+        ],
+        "output": [
+            {
+                "name": "X",
+                "type": "pandas.DataFrame"
+            }
+        ]
+    },
+        "hyperparameters": {
+            "fixed": {
+                "pred_length": {
+                    "type": "int",
+                    "default": 5
+                }
+            }
+        }
+    }
+
+
