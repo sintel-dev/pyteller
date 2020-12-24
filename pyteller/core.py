@@ -12,7 +12,7 @@ import pickle
 
 
 class Pyteller:
-    def _load_pipeline(self,pipeline, hyperparams=None):
+    def _load_pipeline(self, pipeline, hyperparams=None):
         if isinstance(pipeline, str) and os.path.isfile(pipeline):
             pipeline = MLPipeline.load(pipeline)
         else:
@@ -46,26 +46,26 @@ class Pyteller:
                 else:
                     dict = {}
                 dict[offset_primitives[i]] = self.offset
-                pipeline['init_params'][i]=dict
+                pipeline['init_params'][i] = dict
         mlpipeline = MLPipeline(pipeline)
         if self._hyperparameters:
             mlpipeline.set_hyperparameters(self._hyperparameters)
         return mlpipeline
 
     def __init__(self,
-              pipeline=None,
-              hyperparameters= None,
-              pred_length=None,
-              offset=None):
+                 pipeline=None,
+                 hyperparameters=None,
+                 pred_length=None,
+                 offset=None):
         self._pipeline = pipeline
         self._hyperparameters = hyperparameters
         self.pred_length = pred_length
-        self.offset=offset
+        self.offset = offset
         self._fitted = False
 
     def fit(self,
             data=None,
-            timestamp_col = None,
+            timestamp_col=None,
             target_signal=None,
             static_variables=None,
             entity_col=None,
@@ -79,18 +79,18 @@ class Pyteller:
                 Input data, passed as a ``pandas.DataFrame`` containing
                 exactly two columns: timestamp and value.
         """
-        self.target_signal=target_signal
-        self.timestamp_col=timestamp_col
-        self.static_variables=static_variables
-        self.entity_cols=entity_col
-        self.entities=entities
-        self.train_size=train_size
+        self.target_signal = target_signal
+        self.timestamp_col = timestamp_col
+        self.static_variables = static_variables
+        self.entity_cols = entity_col
+        self.entities = entities
+        self.train_size = train_size
 
         self._mlpipeline = self._get_mlpipeline()
 
         train = ingest_data(self,
                             data=data,
-                            timestamp_col = self.timestamp_col,
+                            timestamp_col=self.timestamp_col,
                             signal=self.target_signal,
                             static_variables=self.static_variables,
                             entity_col=self.entity_cols,
@@ -98,11 +98,11 @@ class Pyteller:
                             )
 
         self._mlpipeline.fit(X=train,
-                         pred_length=self.pred_length,
-                         offset =self.offset,
-                         freq=self.freq,
-                         entities=self.entities
-                        )
+                             pred_length=self.pred_length,
+                             offset=self.offset,
+                             freq=self.freq,
+                             entities=self.entities
+                             )
 
         self._fitted = True
         print('The pipeline is fitted')
@@ -122,7 +122,7 @@ class Pyteller:
         """
         test = ingest_data(self,
                            data=data,
-                           timestamp_col = self.timestamp_col,
+                           timestamp_col=self.timestamp_col,
                            signal=self.target_signal,
                            static_variables=self.static_variables,
                            entity_col=self.entity_cols,
@@ -130,22 +130,21 @@ class Pyteller:
                            )
 
         prediction = self._mlpipeline.predict(
-                                            X=test,
-                                            pred_length=self.pred_length,
-                                            offset=self.offset,
-                                            freq = self.freq,
-                                            entities = self.entities
-                                              )
+            X=test,
+            pred_length=self.pred_length,
+            offset=self.offset,
+            freq=self.freq,
+            entities=self.entities
+        )
         actual, prediction = egest_data(self, test, prediction)
 
-
-        return actual,prediction
+        return actual, prediction
 
     def evaluate(self, forecast,
-                 train_data= None,
-                 test_data = None,
+                 train_data=None,
+                 test_data=None,
                  detailed=False,
-                 metrics= METRICS) :
+                 metrics=METRICS):
         """Evaluate the performance against test set
 
         Args:
@@ -182,7 +181,7 @@ class Pyteller:
         for entity in self.entities:
             score = {}
             score.update({
-                metric: METRICS[metric](test_data[entity].values, forecast[entity].values[:,0])
+                metric: METRICS[metric](test_data[entity].values, forecast[entity].values[:, 0])
                 for metric in metrics_ if metric != 'MASE'
             })
 
@@ -194,7 +193,6 @@ class Pyteller:
             scores.append(score)
 
         return pd.DataFrame(scores)
-
 
     def save(self, path):
         """Save this object using pickle.

@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 
+
 def get_index(X, time_column='timestamp'):
     """Stores the index of an input time series in the context
     Args:
@@ -21,7 +22,6 @@ def get_index(X, time_column='timestamp'):
     X = X.sort_values(time_column).set_index(time_column)
 
     return np.asarray(X.values), np.asarray(X.index)
-
 
 
 def rolling_window_sequences(X, index, window_size, target_size, step_size, target_column, offset=0,

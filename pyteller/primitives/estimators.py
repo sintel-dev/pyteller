@@ -1,7 +1,6 @@
 import numpy as np
-import pandas as pd
 from sklearn.metrics import mean_absolute_error
-from dateutil.parser import parse
+
 
 class persistence:
 
@@ -14,17 +13,16 @@ class persistence:
     used in real scenarios.
     """
 
-    def __init__(self,pred_length,offset):
+    def __init__(self, pred_length, offset):
         self.pred_length = pred_length
         self.offset = offset
 
     def fit(self, X, y):
-        preds=np.repeat(X[:,-1], self.pred_length,axis=1)
-        #Validation
+        preds = np.repeat(X[:, -1], self.pred_length, axis=1)
+        # Validation
         val = mean_absolute_error(y, preds)
-        print('training MAE: ' ,val)
+        print('training MAE: ', val)
 
     def predict(self, X):
         preds = np.repeat(X[:, -1], self.pred_length, axis=1)
         return preds
-
