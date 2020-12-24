@@ -37,9 +37,13 @@ install: clean-build clean-pyc ## install the package to the active Python's sit
 install-test: clean-build clean-pyc ## install the package and test dependencies
 	pip install .[test]
 
+# .PHONY: test
+# test: ## run tests quickly with the default Python
+# 	python -m pytest --basetemp=${ENVTMPDIR} --cov=pyteller --cov-report xml
+
 .PHONY: test
 test: ## run tests quickly with the default Python
-	python -m pytest --basetemp=${ENVTMPDIR} --cov=pyteller --cov-report xml
+	python -m pytest tests --cov=pyteller
 
 .PHONY: lint
 lint: ## check style with flake8 and isort
