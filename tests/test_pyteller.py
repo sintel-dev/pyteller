@@ -38,4 +38,4 @@ class TestPyteller:
                 )
 
     def test_fit(self):
-        self.orion.fit(self.clean)
+        self.pyteller.fit(self.clean)
