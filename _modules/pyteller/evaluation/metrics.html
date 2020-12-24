@@ -87,12 +87,10 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../readme.html#load-the-data">1. Load the data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../readme.html#set-forecast-settings">2. Set Forecast Settings</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../readme.html#fit-the-data">3. Fit the data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../readme.html#save-the-trained-model">4. Save the trained model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../readme.html#load-the-new-data">5. Load the new data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../readme.html#forecast">6. Forecast</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../readme.html#evaluate">3. Evaluate</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../readme.html#fit-the-data">2. Fit the data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../readme.html#save-the-trained-model">3. Save the trained model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../readme.html#load-the-new-data">4. Load the new data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../readme.html#forecast">5. Forecast</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../readme.html#what-s-next">What’s next?</a></li>
 </ul>
 </li>
@@ -118,6 +116,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../api/pyteller.benchmark.html">pyteller.benchmark module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api/pyteller.core.html">pyteller.core module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api/pyteller.data.html">pyteller.data module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/pyteller.utils.html">pyteller.utils module</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/pyteller.html#module-pyteller">Module contents</a></li>
@@ -219,8 +218,10 @@
 <span class="c1"># TODO add MAPE</span>
 <span class="c1"># TODO break up metrics between normalized and not normalized</span>
 
+<div class="viewcode-block" id="root_mean_square_error"><a class="viewcode-back" href="../../../api/pyteller.evaluation.metrics.html#pyteller.evaluation.metrics.root_mean_square_error">[docs]</a><span class="k">def</span> <span class="nf">root_mean_square_error</span><span class="p">(</span><span class="n">testing_series</span><span class="p">,</span> <span class="n">prediction_series</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">testing_series</span><span class="p">,</span> <span class="n">prediction_series</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="MASE"><a class="viewcode-back" href="../../../api/pyteller.evaluation.metrics.html#pyteller.evaluation.metrics.MASE">[docs]</a><span class="k">def</span> <span class="nf">MASE</span><span class="p">(</span><span class="n">training_series</span><span class="p">,</span> <span class="n">prediction_series</span><span class="p">,</span> <span class="n">testing_series</span><span class="p">):</span>
+<div class="viewcode-block" id="MASE"><a class="viewcode-back" href="../../../api/pyteller.evaluation.metrics.html#pyteller.evaluation.metrics.MASE">[docs]</a><span class="k">def</span> <span class="nf">MASE</span><span class="p">(</span><span class="n">training_series</span><span class="p">,</span><span class="n">testing_series</span><span class="p">,</span> <span class="n">prediction_series</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    # Source: https://github.com/CamDavidsonPilon/Python-Numerics/blob/master/TimeSeries/MASE.py</span>
 <span class="sd">    Computes Mean absolute scaled error forcast error for univariate time series prediction.</span>
@@ -244,7 +245,7 @@
         <span class="k">return</span> <span class="n">errors</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">/</span> <span class="n">d</span></div>
 
 
-<div class="viewcode-block" id="sMAPE"><a class="viewcode-back" href="../../../api/pyteller.evaluation.metrics.html#pyteller.evaluation.metrics.sMAPE">[docs]</a><span class="k">def</span> <span class="nf">sMAPE</span><span class="p">(</span><span class="n">prediction_series</span><span class="p">,</span> <span class="n">testing_series</span><span class="p">):</span>
+<div class="viewcode-block" id="sMAPE"><a class="viewcode-back" href="../../../api/pyteller.evaluation.metrics.html#pyteller.evaluation.metrics.sMAPE">[docs]</a><span class="k">def</span> <span class="nf">sMAPE</span><span class="p">(</span><span class="n">testing_series</span><span class="p">,</span><span class="n">prediction_series</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    Computes the Symmetric mean absolute percentage error forcast error for univariate time series prediction.</span>
@@ -264,6 +265,16 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="mi">100</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">testing_series</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">prediction_series</span>
                                                              <span class="o">-</span> <span class="n">testing_series</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">testing_series</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">prediction_series</span><span class="p">)))</span></div>
+
+<div class="viewcode-block" id="MAPE"><a class="viewcode-back" href="../../../api/pyteller.evaluation.metrics.html#pyteller.evaluation.metrics.MAPE">[docs]</a><span class="k">def</span> <span class="nf">MAPE</span><span class="p">(</span> <span class="n">testing_series</span><span class="p">,</span><span class="n">prediction_series</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">testing_series</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="nb">abs</span><span class="p">((</span><span class="n">testing_series</span> <span class="o">-</span> <span class="n">prediction_series</span><span class="p">)</span> <span class="o">/</span> <span class="n">testing_series</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span></div>
+
+
+<div class="viewcode-block" id="under_pred"><a class="viewcode-back" href="../../../api/pyteller.evaluation.metrics.html#pyteller.evaluation.metrics.under_pred">[docs]</a><span class="k">def</span> <span class="nf">under_pred</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">y_hat</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">y</span> <span class="o">&gt;=</span> <span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span><span class="o">-</span><span class="n">y_hat</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="over_pred"><a class="viewcode-back" href="../../../api/pyteller.evaluation.metrics.html#pyteller.evaluation.metrics.over_pred">[docs]</a><span class="k">def</span> <span class="nf">over_pred</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y_hat</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">y</span> <span class="o">&lt;=</span> <span class="n">y_hat</span><span class="p">,</span> <span class="n">y_hat</span><span class="o">-</span><span class="n">y</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span></div>
 </pre></div>
 
            </div>

@@ -7,6 +7,8 @@ Submodules
 .. toctree::
 
    pyteller.primitives.estimators
+   pyteller.primitives.postprocessing
+   pyteller.primitives.preprocessing
 
 Module contents
 ---------------

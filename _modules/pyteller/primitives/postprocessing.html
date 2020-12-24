@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyteller.primitives.estimators &mdash; pyteller 0.1.1.dev0 documentation</title>
+  <title>pyteller.primitives.postprocessing &mdash; pyteller 0.1.1.dev0 documentation</title>
   
 
   
@@ -197,7 +197,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>pyteller.primitives.estimators</li>
+      <li>pyteller.primitives.postprocessing</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -212,36 +212,43 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for pyteller.primitives.estimators</h1><div class="highlight"><pre>
+  <h1>Source code for pyteller.primitives.postprocessing</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_absolute_error</span>
-<span class="kn">from</span> <span class="nn">dateutil.parser</span> <span class="kn">import</span> <span class="n">parse</span>
 
-<div class="viewcode-block" id="persistence"><a class="viewcode-back" href="../../../api/pyteller.primitives.estimators.html#pyteller.primitives.estimators.persistence">[docs]</a><span class="k">class</span> <span class="nc">persistence</span><span class="p">:</span>
+<div class="viewcode-block" id="flatten"><a class="viewcode-back" href="../../../api/pyteller.primitives.postprocessing.html#pyteller.primitives.postprocessing.flatten">[docs]</a><span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">pred_length</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span><span class="n">columns</span><span class="p">,</span><span class="n">freq</span><span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;Persistence Estimator.</span>
+    <span class="sd">&quot;&quot;&quot;flattens predictions and averages duplicate predicted values</span>
 
-<span class="sd">    This is a persistence estimator that always returns last value as the prediction,</span>
+<span class="sd">    The function takes in a an array and averages the predictions that are for the same timestep</span>
 
-<span class="sd">    This estimator is here only to serve as reference of what</span>
-<span class="sd">    an estimator primitive looks like, and is not intended to be</span>
-<span class="sd">    used in real scenarios.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        X (ndarray):</span>
+<span class="sd">            N-dimensional sequence to iterate over.</span>
+<span class="sd">        pred_length (int):</span>
+<span class="sd">            Length of the target sequence</span>
+<span class="sd">        index (ndarray):</span>
+<span class="sd">            Array containing the index values of X.</span>
+<span class="sd">        columns (list):</span>
+<span class="sd">            List with the names of the columns of the original dataset</span>
+<span class="sd">        freq (int):</span>
+<span class="sd">            Length of the target sequences.</span>
+
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ndarray, ndarray, ndarray, ndarray:</span>
+<span class="sd">            * input sequences.</span>
+<span class="sd">            * target sequences.</span>
+<span class="sd">            * first index value of each input sequence.</span>
+<span class="sd">            * first index value of each target sequence.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">pred_length</span><span class="p">,</span><span class="n">offset</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pred_length</span> <span class="o">=</span> <span class="n">pred_length</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="n">offset</span>
-
-<div class="viewcode-block" id="persistence.fit"><a class="viewcode-back" href="../../../api/pyteller.primitives.estimators.html#pyteller.primitives.estimators.persistence.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-        <span class="n">preds</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">pred_length</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="c1">#Validation</span>
-        <span class="n">val</span> <span class="o">=</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">preds</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;training MAE: &#39;</span> <span class="p">,</span><span class="n">val</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="persistence.predict"><a class="viewcode-back" href="../../../api/pyteller.primitives.estimators.html#pyteller.primitives.estimators.persistence.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-        <span class="n">preds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">pred_length</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">preds</span></div></div>
+    <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="p">[</span><span class="n">index</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">pred_length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">freq</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">df</span></div>
 
 </pre></div>
 

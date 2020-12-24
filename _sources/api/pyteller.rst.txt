@@ -18,6 +18,7 @@ Submodules
    pyteller.benchmark
    pyteller.core
    pyteller.data
+   pyteller.utils
 
 Module contents
 ---------------

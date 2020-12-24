@@ -89,12 +89,10 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../readme.html#load-the-data">1. Load the data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../readme.html#set-forecast-settings">2. Set Forecast Settings</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../readme.html#fit-the-data">3. Fit the data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../readme.html#save-the-trained-model">4. Save the trained model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../readme.html#load-the-new-data">5. Load the new data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../readme.html#forecast">6. Forecast</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../readme.html#evaluate">3. Evaluate</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#fit-the-data">2. Fit the data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#save-the-trained-model">3. Save the trained model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#load-the-new-data">4. Load the new data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#forecast">5. Forecast</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../readme.html#what-s-next">What’s next?</a></li>
 </ul>
 </li>
@@ -120,6 +118,7 @@
 <li class="toctree-l3"><a class="reference internal" href="pyteller.benchmark.html">pyteller.benchmark module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pyteller.core.html">pyteller.core module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pyteller.data.html">pyteller.data module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyteller.utils.html">pyteller.utils module</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="pyteller.html#module-pyteller">Module contents</a></li>
@@ -232,23 +231,34 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pyteller.evaluation.metrics.MASE" title="pyteller.evaluation.metrics.MASE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MASE</span></code></a>(training_series, prediction_series, …)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyteller.evaluation.metrics.MAPE" title="pyteller.evaluation.metrics.MAPE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MAPE</span></code></a>(testing_series, prediction_series)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyteller.evaluation.metrics.MASE" title="pyteller.evaluation.metrics.MASE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MASE</span></code></a>(training_series, testing_series, …)</p></td>
 <td><p># Source: <a class="reference external" href="https://github.com/CamDavidsonPilon/Python-Numerics/blob/master/TimeSeries/MASE.py">https://github.com/CamDavidsonPilon/Python-Numerics/blob/master/TimeSeries/MASE.py</a> Computes Mean absolute scaled error forcast error for univariate time series prediction.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean_absolute_error</span></code>(y_true, y_pred[, …])</p></td>
-<td><p>Mean absolute error regression loss</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyteller.evaluation.metrics.over_pred" title="pyteller.evaluation.metrics.over_pred"><code class="xref py py-obj docutils literal notranslate"><span class="pre">over_pred</span></code></a>(y, y_hat)</p></td>
+<td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean_squared_error</span></code>(y_true, y_pred[, …])</p></td>
-<td><p>Mean squared error regression loss</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyteller.evaluation.metrics.root_mean_square_error" title="pyteller.evaluation.metrics.root_mean_square_error"><code class="xref py py-obj docutils literal notranslate"><span class="pre">root_mean_square_error</span></code></a>(testing_series, …)</p></td>
+<td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pyteller.evaluation.metrics.sMAPE" title="pyteller.evaluation.metrics.sMAPE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sMAPE</span></code></a>(prediction_series, testing_series)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyteller.evaluation.metrics.sMAPE" title="pyteller.evaluation.metrics.sMAPE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sMAPE</span></code></a>(testing_series, prediction_series)</p></td>
 <td><p>Computes the Symmetric mean absolute percentage error forcast error for univariate time series prediction.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyteller.evaluation.metrics.under_pred" title="pyteller.evaluation.metrics.under_pred"><code class="xref py py-obj docutils literal notranslate"><span class="pre">under_pred</span></code></a>(y, y_hat)</p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
 <dl class="function">
+<dt id="pyteller.evaluation.metrics.MAPE">
+<code class="sig-prename descclassname">pyteller.evaluation.metrics.</code><code class="sig-name descname">MAPE</code><span class="sig-paren">(</span><em class="sig-param">testing_series</em>, <em class="sig-param">prediction_series</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyteller/evaluation/metrics.html#MAPE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyteller.evaluation.metrics.MAPE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
 <dt id="pyteller.evaluation.metrics.MASE">
-<code class="sig-prename descclassname">pyteller.evaluation.metrics.</code><code class="sig-name descname">MASE</code><span class="sig-paren">(</span><em class="sig-param">training_series</em>, <em class="sig-param">prediction_series</em>, <em class="sig-param">testing_series</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyteller/evaluation/metrics.html#MASE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyteller.evaluation.metrics.MASE" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pyteller.evaluation.metrics.</code><code class="sig-name descname">MASE</code><span class="sig-paren">(</span><em class="sig-param">training_series</em>, <em class="sig-param">testing_series</em>, <em class="sig-param">prediction_series</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyteller/evaluation/metrics.html#MASE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyteller.evaluation.metrics.MASE" title="Permalink to this definition">¶</a></dt>
 <dd><p># Source: <a class="reference external" href="https://github.com/CamDavidsonPilon/Python-Numerics/blob/master/TimeSeries/MASE.py">https://github.com/CamDavidsonPilon/Python-Numerics/blob/master/TimeSeries/MASE.py</a>
 Computes Mean absolute scaled error forcast error for univariate time series prediction.</p>
 <p>See “Another look at measures of forecast accuracy”, Rob J Hyndman</p>
@@ -266,8 +276,18 @@ Computes Mean absolute scaled error forcast error for univariate time series pre
 </dd></dl>
 
 <dl class="function">
+<dt id="pyteller.evaluation.metrics.over_pred">
+<code class="sig-prename descclassname">pyteller.evaluation.metrics.</code><code class="sig-name descname">over_pred</code><span class="sig-paren">(</span><em class="sig-param">y</em>, <em class="sig-param">y_hat</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyteller/evaluation/metrics.html#over_pred"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyteller.evaluation.metrics.over_pred" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pyteller.evaluation.metrics.root_mean_square_error">
+<code class="sig-prename descclassname">pyteller.evaluation.metrics.</code><code class="sig-name descname">root_mean_square_error</code><span class="sig-paren">(</span><em class="sig-param">testing_series</em>, <em class="sig-param">prediction_series</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyteller/evaluation/metrics.html#root_mean_square_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyteller.evaluation.metrics.root_mean_square_error" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
 <dt id="pyteller.evaluation.metrics.sMAPE">
-<code class="sig-prename descclassname">pyteller.evaluation.metrics.</code><code class="sig-name descname">sMAPE</code><span class="sig-paren">(</span><em class="sig-param">prediction_series</em>, <em class="sig-param">testing_series</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyteller/evaluation/metrics.html#sMAPE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyteller.evaluation.metrics.sMAPE" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pyteller.evaluation.metrics.</code><code class="sig-name descname">sMAPE</code><span class="sig-paren">(</span><em class="sig-param">testing_series</em>, <em class="sig-param">prediction_series</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyteller/evaluation/metrics.html#sMAPE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyteller.evaluation.metrics.sMAPE" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the Symmetric mean absolute percentage error forcast error for univariate time series prediction.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -281,6 +301,11 @@ Computes Mean absolute scaled error forcast error for univariate time series pre
 </dl>
 <p>Returns: float of sMAPE</p>
 </dd></dl>
+
+<dl class="function">
+<dt id="pyteller.evaluation.metrics.under_pred">
+<code class="sig-prename descclassname">pyteller.evaluation.metrics.</code><code class="sig-name descname">under_pred</code><span class="sig-paren">(</span><em class="sig-param">y</em>, <em class="sig-param">y_hat</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyteller/evaluation/metrics.html#under_pred"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyteller.evaluation.metrics.under_pred" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </div>
 

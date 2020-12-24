@@ -89,12 +89,10 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="#load-the-data">1. Load the data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#set-forecast-settings">2. Set Forecast Settings</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#fit-the-data">3. Fit the data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#save-the-trained-model">4. Save the trained model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#load-the-new-data">5. Load the new data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#forecast">6. Forecast</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#evaluate">3. Evaluate</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="#fit-the-data">2. Fit the data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#save-the-trained-model">3. Save the trained model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#load-the-new-data">4. Load the new data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#forecast">5. Forecast</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#what-s-next">What’s next?</a></li>
 </ul>
 </li>
@@ -120,6 +118,7 @@
 <li class="toctree-l3"><a class="reference internal" href="api/pyteller.benchmark.html">pyteller.benchmark module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/pyteller.core.html">pyteller.core module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/pyteller.data.html">pyteller.data module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/pyteller.utils.html">pyteller.utils module</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api/pyteller.html#module-pyteller">Module contents</a></li>
@@ -485,52 +484,28 @@ getting started with <strong>pyteller</strong>.</p>
 4     8A0    1/1/16 0:55   37.400     37.400       100.000     360.000      8.000      0.000       30.250    10.000      30.760
 </pre></div>
 </div>
-<p>Once we have the data, create an instance of the <code class="docutils literal notranslate"><span class="pre">Pyteller</span></code> class, where the input arguments are loaded data and the column names.
-The user also specifies which signals they want to predict for here.</p>
+<p>Once we have the data, create an instance of the <code class="docutils literal notranslate"><span class="pre">Pyteller</span></code> class, where the input arguments are the forecast settings.</p>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyteller.core</span> <span class="kn">import</span> <span class="n">Pyteller</span>
-
 <span class="n">pyteller</span> <span class="o">=</span> <span class="n">Pyteller</span> <span class="p">(</span>
-    <span class="n">data</span><span class="o">=</span><span class="n">current_data</span><span class="p">,</span>
-    <span class="n">timestamp_col</span><span class="o">=</span><span class="s1">&#39;valid&#39;</span><span class="p">,</span>
-    <span class="n">signals</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;tmpf&#39;</span><span class="p">,</span> <span class="s1">&#39;dwpf&#39;</span><span class="p">],</span>
-    <span class="n">static_variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">entity_cols</span><span class="o">=</span><span class="s1">&#39;station&#39;</span><span class="p">,</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<p>This creates training data  <code class="docutils literal notranslate"><span class="pre">pyteller.train</span></code> in the form of a DataFrameGroupBy object, which is a collection of dataframes, one for each entity. This allows for creating seperate models for each entity, but common models for multiple signals at a time.</p>
-<p>One dataframe of an entity can be viewed by iterating through <code class="docutils literal notranslate"><span class="pre">pyteller.train</span></code>:</p>
-<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">entity</span><span class="p">,</span> <span class="n">train_entity</span> <span class="ow">in</span> <span class="n">pyteller</span><span class="o">.</span><span class="n">train</span><span class="p">:</span>
-    <span class="n">training_data</span><span class="o">=</span><span class="n">train_entity</span>
-</pre></div>
-</div>
-<p><code class="docutils literal notranslate"><span class="pre">training_data</span></code> is the dataset that takes into account the user specified column names and the signals they want to predict for, and is for one entity only:</p>
-<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>       timestamp  signal_tmpf  signal_dwpf  entity
-0     1/1/16 0:15   41.000      39.200        8A0
-1     1/1/16 0:15   39.200      37.400        8A0
-2     1/1/16 0:35   37.400      37.400        8A0
-3     1/1/16 0:35   37.400      37.400        8A0
-4     1/1/16 0:55   37.400      37.400        8A0
-</pre></div>
-</div>
-</div>
-<div class="section" id="set-forecast-settings">
-<h1>2. Set Forecast Settings<a class="headerlink" href="#set-forecast-settings" title="Permalink to this headline">¶</a></h1>
-<p>Now that the data is in the correct format, the user can specify the forecast settings with the <code class="docutils literal notranslate"><span class="pre">pyteller.forecast_settings</span></code> method:</p>
-<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">pyteller</span><span class="o">.</span><span class="n">forecast_settings</span><span class="p">(</span>
-    <span class="n">pipeline</span> <span class="o">=</span> <span class="s1">&#39;persistence&#39;</span><span class="p">,</span>
-    <span class="n">pred_length</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="n">pipeline</span><span class="o">=</span><span class="s1">&#39;persistence&#39;</span><span class="p">,</span>
+    <span class="n">pred_length</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
     <span class="n">offset</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
-    <span class="n">goal</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">goal_window</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">goal</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">goal_window</span><span class="o">=</span><span class="kc">None</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="fit-the-data">
-<h1>3. Fit the data<a class="headerlink" href="#fit-the-data" title="Permalink to this headline">¶</a></h1>
-<p>The user now calls the <code class="docutils literal notranslate"><span class="pre">pyteller.fit</span></code> method to fit the data to the pipeline. The default is to use all the training data, <code class="docutils literal notranslate"><span class="pre">pyteller.train</span></code></p>
-<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">pyteller</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<h1>2. Fit the data<a class="headerlink" href="#fit-the-data" title="Permalink to this headline">¶</a></h1>
+<p>The user now calls the <code class="docutils literal notranslate"><span class="pre">pyteller.fit</span></code> method to fit the data to the pipeline. The inputs are the loaded data and the column names. The user also specifies which signal or entities they want to predict for here.</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">pyteller</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">current_data</span><span class="p">,</span>
+    <span class="n">timestamp_col</span><span class="o">=</span><span class="s1">&#39;valid&#39;</span><span class="p">,</span>
+    <span class="n">target_signals</span><span class="o">=</span><span class="s1">&#39;tmpf&#39;</span><span class="p">,</span>
+    <span class="n">static_variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">entity_col</span><span class="o">=</span><span class="s1">&#39;station&#39;</span><span class="p">,</span>
+    <span class="n">train_size</span><span class="o">=.</span><span class="mi">75</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The output of the fitting process are print statements of the loss on the training data for each entity:</p>
@@ -541,50 +516,43 @@ The user also specifies which signals they want to predict for here.</p>
 </div>
 </div>
 <div class="section" id="save-the-trained-model">
-<h1>4. Save the trained model<a class="headerlink" href="#save-the-trained-model" title="Permalink to this headline">¶</a></h1>
+<h1>3. Save the trained model<a class="headerlink" href="#save-the-trained-model" title="Permalink to this headline">¶</a></h1>
 <p>At this point, the user has a trained model that can be pickled by calling the <code class="docutils literal notranslate"><span class="pre">pyteller.save</span></code> method, inputting the desired output path:</p>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">pyteller</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;../fit_models/persistence&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="load-the-new-data">
-<h1>5. Load the new data<a class="headerlink" href="#load-the-new-data" title="Permalink to this headline">¶</a></h1>
+<h1>4. Load the new data<a class="headerlink" href="#load-the-new-data" title="Permalink to this headline">¶</a></h1>
 <p>Once the user gets new data that they want to use to make a prediction, they can load it in the same way they loaded the training data.</p>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">input_data</span><span class="o">=</span><span class="n">load_data</span><span class="p">(</span><span class="s1">&#39;../pyteller/data/AL_Weather_input.csv&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="forecast">
-<h1>6. Forecast<a class="headerlink" href="#forecast" title="Permalink to this headline">¶</a></h1>
+<h1>5. Forecast<a class="headerlink" href="#forecast" title="Permalink to this headline">¶</a></h1>
 <p>To make a forecast, the user calls the <code class="docutils literal notranslate"><span class="pre">pyteller.forecast</span></code> method, which will output the forecasts for all signals and all entities.</p>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">forecast</span> <span class="o">=</span> <span class="n">pyteller</span><span class="o">.</span><span class="n">forecast</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The output is a dataframe of all the predictions:</p>
-<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">timestamp</span>     <span class="n">signal_tmpf</span>  <span class="n">signal_dwpf</span>  <span class="n">entity</span>
-<span class="mi">2</span><span class="o">/</span><span class="mi">4</span><span class="o">/</span><span class="mi">16</span> <span class="mi">18</span><span class="p">:</span><span class="mi">15</span>    <span class="mf">42.800</span>      <span class="mf">33.800</span>        <span class="mi">8</span><span class="n">A0</span>
-<span class="mi">2</span><span class="o">/</span><span class="mi">4</span><span class="o">/</span><span class="mi">16</span> <span class="mi">18</span><span class="p">:</span><span class="mi">35</span>    <span class="mf">42.800</span>      <span class="mf">33.800</span>        <span class="mi">8</span><span class="n">A0</span>
-<span class="mi">2</span><span class="o">/</span><span class="mi">4</span><span class="o">/</span><span class="mi">16</span> <span class="mi">18</span><span class="p">:</span><span class="mi">55</span>    <span class="mf">42.800</span>      <span class="mf">33.800</span>        <span class="mi">8</span><span class="n">A0</span>
-<span class="mi">2</span><span class="o">/</span><span class="mi">4</span><span class="o">/</span><span class="mi">16</span> <span class="mi">18</span><span class="p">:</span><span class="mi">15</span>    <span class="mf">46.400</span>      <span class="mf">24.800</span>        <span class="mi">4</span><span class="n">A6</span>
-<span class="mi">2</span><span class="o">/</span><span class="mi">4</span><span class="o">/</span><span class="mi">16</span> <span class="mi">18</span><span class="p">:</span><span class="mi">35</span>    <span class="mf">46.400</span>      <span class="mf">24.800</span>        <span class="mi">4</span><span class="n">A6</span>
-<span class="mi">2</span><span class="o">/</span><span class="mi">4</span><span class="o">/</span><span class="mi">16</span> <span class="mi">18</span><span class="p">:</span><span class="mi">55</span>    <span class="mf">46.400</span>      <span class="mf">24.800</span>        <span class="mi">4</span><span class="n">A6</span>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">timestamp</span>     <span class="n">signal_tmpf</span>    <span class="n">entity</span>
+<span class="mi">2</span><span class="o">/</span><span class="mi">4</span><span class="o">/</span><span class="mi">16</span> <span class="mi">18</span><span class="p">:</span><span class="mi">15</span>    <span class="mf">42.800</span>        <span class="mi">8</span><span class="n">A0</span>
+<span class="mi">2</span><span class="o">/</span><span class="mi">4</span><span class="o">/</span><span class="mi">16</span> <span class="mi">18</span><span class="p">:</span><span class="mi">35</span>    <span class="mf">42.800</span>        <span class="mi">8</span><span class="n">A0</span>
+<span class="mi">2</span><span class="o">/</span><span class="mi">4</span><span class="o">/</span><span class="mi">16</span> <span class="mi">18</span><span class="p">:</span><span class="mi">55</span>    <span class="mf">42.800</span>        <span class="mi">8</span><span class="n">A0</span>
+<span class="mi">2</span><span class="o">/</span><span class="mi">4</span><span class="o">/</span><span class="mi">16</span> <span class="mi">18</span><span class="p">:</span><span class="mi">15</span>    <span class="mf">46.400</span>        <span class="mi">4</span><span class="n">A6</span>
+<span class="mi">2</span><span class="o">/</span><span class="mi">4</span><span class="o">/</span><span class="mi">16</span> <span class="mi">18</span><span class="p">:</span><span class="mi">35</span>    <span class="mf">46.400</span>        <span class="mi">4</span><span class="n">A6</span>
+<span class="mi">2</span><span class="o">/</span><span class="mi">4</span><span class="o">/</span><span class="mi">16</span> <span class="mi">18</span><span class="p">:</span><span class="mi">55</span>    <span class="mf">46.400</span>        <span class="mi">4</span><span class="n">A6</span>
 </pre></div>
 </div>
 <p>and a print statement of a summary of the forecast:</p>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">Forecast</span> <span class="n">Summary</span><span class="p">:</span>
-    <span class="n">Signals</span> <span class="n">predicted</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;tmpf&#39;</span><span class="p">,</span> <span class="s1">&#39;dwpf&#39;</span><span class="p">]</span>
+    <span class="n">Signal</span> <span class="n">predicted</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;tmpf&#39;</span><span class="p">]</span>
     <span class="n">Entities</span> <span class="n">predicted</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;4A6&#39;</span><span class="p">:</span> <span class="s1">&#39;2/4/16 18:15 to 2/4/16 18:55&#39;</span><span class="p">,</span> <span class="s1">&#39;8A0&#39;</span><span class="p">:</span> <span class="s1">&#39;2/4/16 18:15 to 2/4/16 18:55&#39;</span><span class="p">}</span>
     <span class="n">Pipeline</span><span class="p">:</span> <span class="p">:</span> <span class="n">persistence</span>
     <span class="n">Offset</span><span class="p">:</span> <span class="p">:</span> <span class="mi">5</span>
     <span class="n">Prediction</span> <span class="n">length</span><span class="p">:</span> <span class="p">:</span> <span class="mi">3</span>
     <span class="n">Prediction</span> <span class="n">goal</span><span class="p">:</span> <span class="p">:</span> <span class="kc">None</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="evaluate">
-<h1>3. Evaluate<a class="headerlink" href="#evaluate" title="Permalink to this headline">¶</a></h1>
-<p>Now, we can evaluate the forecasts</p>
-<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">scores</span> <span class="o">=</span> <span class="n">pyteller</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;MAPE&#39;</span><span class="p">,</span><span class="s1">&#39;MSE&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
 <div class="section" id="what-s-next">

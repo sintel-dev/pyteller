@@ -37,7 +37,7 @@
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="pyteller.analysis module" href="pyteller.analysis.html" />
+    <link rel="next" title="pyteller.primitives.postprocessing module" href="pyteller.primitives.postprocessing.html" />
     <link rel="prev" title="pyteller.primitives package" href="pyteller.primitives.html" /> 
 </head>
 
@@ -89,12 +89,10 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../readme.html#load-the-data">1. Load the data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../readme.html#set-forecast-settings">2. Set Forecast Settings</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../readme.html#fit-the-data">3. Fit the data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../readme.html#save-the-trained-model">4. Save the trained model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../readme.html#load-the-new-data">5. Load the new data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../readme.html#forecast">6. Forecast</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../readme.html#evaluate">3. Evaluate</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#fit-the-data">2. Fit the data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#save-the-trained-model">3. Save the trained model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#load-the-new-data">4. Load the new data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#forecast">5. Forecast</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../readme.html#what-s-next">What’s next?</a></li>
 </ul>
 </li>
@@ -120,6 +118,7 @@
 <li class="toctree-l3"><a class="reference internal" href="pyteller.benchmark.html">pyteller.benchmark module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pyteller.core.html">pyteller.core module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pyteller.data.html">pyteller.data module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyteller.utils.html">pyteller.utils module</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="pyteller.html#module-pyteller">Module contents</a></li>
@@ -232,72 +231,14 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pyteller.primitives.estimators.MeanEstimator" title="pyteller.primitives.estimators.MeanEstimator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MeanEstimator</span></code></a>([value_column])</p></td>
-<td><p>Mean Estimator.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pyteller.primitives.estimators.Persistence" title="pyteller.primitives.estimators.Persistence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Persistence</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyteller.primitives.estimators.persistence" title="pyteller.primitives.estimators.persistence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">persistence</span></code></a>(pred_length, offset)</p></td>
 <td><p>Persistence Estimator.</p></td>
 </tr>
 </tbody>
 </table>
-<p><strong>Functions:</strong></p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean_absolute_error</span></code>(y_true, y_pred[, …])</p></td>
-<td><p>Mean absolute error regression loss</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse</span></code>(timestr[, parserinfo])</p></td>
-<td><p>Parse a string in one of the supported formats, using the <code class="docutils literal notranslate"><span class="pre">parserinfo</span></code> parameters.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pyteller.primitives.estimators.split_sequence" title="pyteller.primitives.estimators.split_sequence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">split_sequence</span></code></a>(X, target_column, …)</p></td>
-<td><p>Split sequences of time series data.</p></td>
-</tr>
-</tbody>
-</table>
 <dl class="class">
-<dt id="pyteller.primitives.estimators.MeanEstimator">
-<em class="property">class </em><code class="sig-prename descclassname">pyteller.primitives.estimators.</code><code class="sig-name descname">MeanEstimator</code><span class="sig-paren">(</span><em class="sig-param">value_column='value'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyteller/primitives/estimators.html#MeanEstimator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyteller.primitives.estimators.MeanEstimator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Mean Estimator.</p>
-<p>This is a persistence estimator that always returns a constant value,
-which consist on the mean value from the given input.</p>
-<p>This estimator is here only to serve as reference of what
-an estimator primitive looks like, and is not intended to be
-used in real scenarios.</p>
-<p><strong>Methods:</strong></p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pyteller.primitives.estimators.MeanEstimator.fit" title="pyteller.primitives.estimators.MeanEstimator.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X)</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pyteller.primitives.estimators.MeanEstimator.predict" title="pyteller.primitives.estimators.MeanEstimator.predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict</span></code></a>(X)</p></td>
-<td><p></p></td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="pyteller.primitives.estimators.MeanEstimator.fit">
-<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">X</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyteller/primitives/estimators.html#MeanEstimator.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyteller.primitives.estimators.MeanEstimator.fit" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pyteller.primitives.estimators.MeanEstimator.predict">
-<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">X</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyteller/primitives/estimators.html#MeanEstimator.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyteller.primitives.estimators.MeanEstimator.predict" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="pyteller.primitives.estimators.Persistence">
-<em class="property">class </em><code class="sig-prename descclassname">pyteller.primitives.estimators.</code><code class="sig-name descname">Persistence</code><a class="reference internal" href="../_modules/pyteller/primitives/estimators.html#Persistence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyteller.primitives.estimators.Persistence" title="Permalink to this definition">¶</a></dt>
+<dt id="pyteller.primitives.estimators.persistence">
+<em class="property">class </em><code class="sig-prename descclassname">pyteller.primitives.estimators.</code><code class="sig-name descname">persistence</code><span class="sig-paren">(</span><em class="sig-param">pred_length</em>, <em class="sig-param">offset</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyteller/primitives/estimators.html#persistence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyteller.primitives.estimators.persistence" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Persistence Estimator.</p>
 <p>This is a persistence estimator that always returns last value as the prediction,</p>
@@ -311,54 +252,24 @@ used in real scenarios.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pyteller.primitives.estimators.Persistence.fit" title="pyteller.primitives.estimators.Persistence.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X, pred_length, entity)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyteller.primitives.estimators.persistence.fit" title="pyteller.primitives.estimators.persistence.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X, y)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pyteller.primitives.estimators.Persistence.predict" title="pyteller.primitives.estimators.Persistence.predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict</span></code></a>(X, pred_length)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyteller.primitives.estimators.persistence.predict" title="pyteller.primitives.estimators.persistence.predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict</span></code></a>(X)</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
 </table>
 <dl class="method">
-<dt id="pyteller.primitives.estimators.Persistence.fit">
-<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">X</em>, <em class="sig-param">pred_length</em>, <em class="sig-param">entity</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyteller/primitives/estimators.html#Persistence.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyteller.primitives.estimators.Persistence.fit" title="Permalink to this definition">¶</a></dt>
+<dt id="pyteller.primitives.estimators.persistence.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">X</em>, <em class="sig-param">y</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyteller/primitives/estimators.html#persistence.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyteller.primitives.estimators.persistence.fit" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="pyteller.primitives.estimators.Persistence.predict">
-<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">X</em>, <em class="sig-param">pred_length</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyteller/primitives/estimators.html#Persistence.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyteller.primitives.estimators.Persistence.predict" title="Permalink to this definition">¶</a></dt>
+<dt id="pyteller.primitives.estimators.persistence.predict">
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">X</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyteller/primitives/estimators.html#persistence.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyteller.primitives.estimators.persistence.predict" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</dd></dl>
-
-<dl class="function">
-<dt id="pyteller.primitives.estimators.split_sequence">
-<code class="sig-prename descclassname">pyteller.primitives.estimators.</code><code class="sig-name descname">split_sequence</code><span class="sig-paren">(</span><em class="sig-param">X</em>, <em class="sig-param">target_column</em>, <em class="sig-param">sequence_size</em>, <em class="sig-param">overlap_size</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyteller/primitives/estimators.html#split_sequence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyteller.primitives.estimators.split_sequence" title="Permalink to this definition">¶</a></dt>
-<dd><p>Split sequences of time series data.</p>
-<p>The function creates a list of input sequences by splitting the input sequence
-into partitions with a specified size and pads it with values from previous
-sequence according to the overlap size.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>X</strong> (<em>ndarray</em>) – N-dimensional value sequence to iterate over.</p></li>
-<li><p><strong>index</strong> (<em>ndarray</em>) – N-dimensional index sequence to iterate over.</p></li>
-<li><p><strong>target_column</strong> (<em>int</em>) – Indicating which column of X is the target.</p></li>
-<li><p><strong>sequence_size</strong> (<em>int</em>) – Length of the input sequences.</p></li>
-<li><p><strong>overlap_size</strong> (<em>int</em>) – Length of the values from previous window.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p>List of sliced value as ndarray.</p></li>
-<li><p>List of sliced index as ndarray.</p></li>
-</ul>
-</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>tuple</p>
-</dd>
-</dl>
 </dd></dl>
 
 </div>
@@ -371,7 +282,7 @@ sequence according to the overlap size.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="pyteller.analysis.html" class="btn btn-neutral float-right" title="pyteller.analysis module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="pyteller.primitives.postprocessing.html" class="btn btn-neutral float-right" title="pyteller.primitives.postprocessing module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="pyteller.primitives.html" class="btn btn-neutral float-left" title="pyteller.primitives package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
