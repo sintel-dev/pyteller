@@ -1,4 +1,23 @@
-def plot(dfs):
+from datetime import datetime
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+import matplotlib.gridspec as gridspec
+import os
+from sklearn.preprocessing import MinMaxScaler
+from pandas.plotting import register_matplotlib_converters
+register_matplotlib_converters()
+
+
+def convert_date(timelist):
+    converted = list()
+    for x in timelist:
+        converted.append(datetime.fromtimestamp(x))
+    return converted
+
+def plot(dfs,output_path,labels=None):
     """ Line plot for time series.
 
     This function plots time series
@@ -9,47 +28,38 @@ def plot(dfs):
     """
     if isinstance(dfs, pd.DataFrame):
         dfs = [dfs]
-
-    if not isinstance(anomalies, list):
-        anomalies = [anomalies]
-
-    df = dfs[0]
-    time = convert_date(df['timestamp'])
     months = mdates.MonthLocator()  # every month
     days = mdates.DayLocator()  # every day
+    hours = mdates.HourLocator()  # every day
 
-    month_fmt = mdates.DateFormatter('%b')
+    month_fmt = mdates.DateFormatter('%H')
 
     fig = plt.figure(figsize=(30, 6))
     ax = fig.add_subplot(111)
 
     for df in dfs:
-        plt.plot(time, df['value'])
+        plt.plot(df.index, df.iloc[:,0]/100,linewidth=3)
 
-    colors = ['red'] + ['green'] * (len(anomalies) - 1)
-    for i, anomaly in enumerate(anomalies):
-        if not isinstance(anomaly, list):
-            anomaly = list(anomaly[['start', 'end']].itertuples(index=False))
 
-        for _, anom in enumerate(anomaly):
-            t1 = convert_date_single(anom[0])
-            t2 = convert_date_single(anom[1])
-            plt.axvspan(t1, t2, color=colors[i], alpha=0.2)
 
-    plt.title('NYC Taxi Demand', size=34)
-    plt.ylabel('# passengers', size=30)
-    plt.xlabel('Time', size=30)
+    plt.title('Normalized Demand', size=34)
+    plt.ylabel('', size=30)
+    plt.xlabel('Hour', size=30)
     plt.xticks(size=26)
     plt.yticks(size=26)
-    plt.xlim([time[0], time[-1]])
+    # plt.xlim([time[0], time[-1]])
 
     # format xticks
-    ax.xaxis.set_major_locator(months)
+    ax.xaxis.set_major_locator(hours)
     ax.xaxis.set_major_formatter(month_fmt)
-    ax.xaxis.set_minor_locator(days)
+    # ax.xaxis.set_minor_locator(days)
 
     # format yticks
-    ylabels = ['{:,.0f}'.format(x) + 'K' for x in ax.get_yticks() / 1000]
-    ax.set_yticklabels(ylabels)
+    # ylabels = ['{:,.0f}'.format(x) + 'K' for x in ax.get_yticks() / 1000]
+    # ax.set_yticklabels(ylabels)
 
+    if labels:
+        plt.legend(labels=labels, loc=1, prop={'size': 26})
+    os.path.join('figs', output_path)
+    plt.savefig('figs/lstm.png')
     plt.show()

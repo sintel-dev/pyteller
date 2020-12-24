@@ -1,0 +1,51 @@
+{
+    "name": "pyteller.primitives.post_process.Flatten",
+    "contributors": [
+        "Skylar Eiskowitz <eiskowit@mit.edu>"
+    ],
+    "description": "flattens predictions and averages duplicate predicted values",
+    "classifiers": {
+        "type": "postprocessor",
+        "subtype": "flatten"
+    },
+    "modalities": [],
+    "primitive": "pyteller.primitives.postprocessing.flatten",
+    "produce": {
+        "args": [
+            {
+                "name": "X",
+                "type": "pandas.DataFrame"
+            },
+            {
+                "name": "index",
+                "type": "Index or array-like"
+            },
+            {
+                "name": "columns",
+                "type": "Index or array-like"
+            },
+            {
+                "name": "freq",
+                "type": "int"
+            }
+
+        ],
+        "output": [
+            {
+                "name": "X",
+                "type": "pandas.DataFrame"
+            }
+        ]
+    },
+        "hyperparameters": {
+            "fixed": {
+                "pred_length": {
+                    "type": "int",
+                    "default": 5
+                }
+            }
+
+        }
+    }
+
+

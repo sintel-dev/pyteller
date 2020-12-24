@@ -87,45 +87,35 @@ def load_data(data,
         data = download(data)
     return data
 
-def organize_data(self,
-                  data,
-                  train_size=None,
-                  timestamp_col=None,
-                  entity_cols=None,
-                  entities=None,
-                  signal=None,
-                  dynamic_variables=None,
-                  static_variables=None,
-                  column_dict=None):
+def ingest_data(self,
+                data,
+                timestamp_col=None,
+                entity_col=None,
+                entities=None,
+                signal=None,
+                dynamic_variables=None,
+                static_variables=None,
+                ):
+    #User specified multiple targets, this should be specified as multiple entities, fix here
+    entities = signal if isinstance(signal, list) else entities
+    signal = None if isinstance(signal, list) else signal
 
-    if column_dict is not None:
-        allowed_keys = ['timestamp', 'signals', 'entity']
-        columns = {k: column_dict[k] for k in allowed_keys}
-        columns = {k: v for k, v in columns.items() if
-                   pd.Series(v).notna().all()}  # remove Nan value keys
-    else:
-        columns = {
-            'signal': signal,
-            'timestamp': timestamp_col,
-            'entity': entity_cols,
-            'dynamic_variable': dynamic_variables,
-            'static_variable': static_variables
-        }
-
+    columns = {
+        'signal': signal,
+        'timestamp': timestamp_col,
+        'entity': entity_col,
+        'dynamic_variable': dynamic_variables,
+        'static_variable': static_variables
+    }
     columns = {k: v for k, v in columns.items() if v is not None}
 
     df = pd.DataFrame()
     for key in columns:
         df[key] = data[columns[key]]
 
-
-    if 'entity' in columns:
-        df['entity']=df['entity'].astype(str) #Make all entities strings
-
-        #Find the unique values in the entity column
-        all_entities = df.entity.unique()
-        # all_entities = all_entities[~pd.isnull(all_entities)]
-
+    if 'entity' in columns: #Scenario 1: user specifies entity column and target variable column
+        df['entity']=df['entity'].astype(str) # Make all entities strings
+        all_entities = df.entity.unique() # Find the unique values in the entity column
         all_entities = [x for x in list(all_entities) if x != 'nan']
         self.entities=all_entities #entities are the unique values in the specified entity column
 
@@ -135,30 +125,29 @@ def organize_data(self,
         df2[all_entities] = pd.DataFrame(df2.signal.tolist(), index=df2.index)
         to_remove=list(['signal'])
 
-        if entities != None: #If a certain entity is specified from the entity column
+        if entities != None: #Scenario 1b User specifies a certain entity from the entity column
             to_remove=to_remove+list(all_entities)
+            entities = [entities] if isinstance(entities, str) else entities
             to_remove=list(set(to_remove)-set(entities))#Don't remove it
+            # to_remove.remove(entities)
             self.entities=entities
 
         df = df2.drop(to_remove, axis=1)
 
-    elif signal is not None: #If entity column is not specified and only one signal is
+    elif signal is not None: #Scenario 2: user specfies one signal
         self.entities = signal
         df=df.rename(columns={'signal':signal})
 
-    else: #If multiple entities are specified, but there is no entity column
+    else: #Scenario 3 user specifies multiple entitiies but there is no entity column
         self.entities=entities
         for entity in entities:
             df[entity] = data[[entity]]
 
-    # train_length = round(len(df) * train_size)
-    # train = df.iloc[:train_length]
-    # test = df.iloc[train_length:]
-    # df = df[['timestamp'] + [col for col in df.columns if col != 'timestamp']]
-    # df.set_index('timestamp', inplace=True)
     if df['timestamp'].dtypes !='float' and df['timestamp'].dtypes !='int':
         df['timestamp']=pd.to_datetime(df['timestamp']).values.astype(np.int64) // 1e9
+    df = df.sort_values('timestamp')
     self.freq=df['timestamp'][1]-df['timestamp'][0]
+
     return df
 
 

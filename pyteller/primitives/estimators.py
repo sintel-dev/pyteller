@@ -27,7 +27,7 @@ class MeanEstimator:
         return np.full(len(X), self._mean)
 
 
-class Persistence:
+class persistence:
 
     """Persistence Estimator.
 
@@ -38,41 +38,22 @@ class Persistence:
     used in real scenarios.
     """
 
-    def __init__(self):
-        self.values_col = 'target'
+    def __init__(self,pred_length,offset):
+        self.pred_length = pred_length
+        self.offset = offset
 
-    def fit(self, X,pred_length):
-
-        values = [col for col in X if not col.startswith('timestamp')]
-        self.values = X[values]
-        time = pd.DataFrame(data=X['timestamp'][-pred_length:].values, columns=['timestamp'])
-        preds = self.values.iloc[-pred_length - 1:-pred_length, :]
-        preds = pd.concat([preds]*pred_length)
-        preds['timestamp'] =time.values
-
+    def fit(self, X, y):
+        preds=np.repeat(X[:,-1], self.pred_length,axis=1)
         #Validation
-        time_col = pd.to_datetime(X['timestamp'])
-        X = X.assign(timestamp=time_col)
-        pred_window = ((X['timestamp'])
-                       >= parse(preds['timestamp'].iloc[0])) & (
-                          (X['timestamp'])
-                          <= parse(preds['timestamp'].iloc[-1]))
-
-        actuals = X.loc[pred_window][values]
-        val = mean_absolute_error(actuals, preds[values])
+        val = mean_absolute_error(y, preds)
         print('training MAE: ' ,val)
 
 
 
     # def fit(self, X):
     #     self.values = X[self._value_column]
-    def predict(self, X, pred_length):
-        values = [col for col in X if not col.startswith('timestamp')]
-        self.values = X[values]
-        time = pd.DataFrame(data=X['timestamp'][-pred_length:].values, columns=['timestamp'])
-        preds = self.values.iloc[-pred_length - 1:-pred_length, :]
-        preds = pd.concat([preds]*pred_length)
-        preds['timestamp'] =time.values
+    def predict(self, X):
+        preds = np.repeat(X[:, -1], self.pred_length, axis=1)
 
         return preds
 
@@ -129,3 +110,30 @@ def lagged(X, index, shift):
     y_hat=y.iloc[shift:, :]
     target_index=y_hat.index
     return np.asarray(y_hat), np.asarray(target_index)
+
+import math
+def make_cylinder_volume_func(r):
+    def volume(h):
+        return math.pi * r * r * h
+    return volume
+
+def rho_loss():
+    import tensorflow as tf
+    def loss(q, y_p, y):
+        e = y_p - y
+        return tf.keras.backend.mean(tf.keras.backend.maximum(q * e, (q - 1) * e))
+    return rho_loss
+
+import numpy as np
+import pandas as pd
+from sklearn.metrics import mean_absolute_error
+from dateutil.parser import parse
+# class persistence:
+#
+#     def __init__(self, offset=1):
+#         super(NaiveForecaster, self).__init__()
+#         self.offset = offset
+#
+#     def fit(self, y, X=None, fh=None):
+#
+#         return self

@@ -1,0 +1,47 @@
+{
+    "name": "pyteller.primitives.estimators.diff",
+    "contributors": ["Skylar Eiskowitz <eiskowit@mit.edu>"],
+    "documentation": "",
+    "description": "Simple Estimator that returns the lagged values.",
+    "classifiers": {
+        "type": "estimator",
+        "subtype": "regressor"
+    },
+    "modalities": [],
+    "primitive": "pyteller.primitives.post_process.diff",
+
+    "produce": {
+
+        "args": [
+{
+                "name": "X",
+                "type": "ndarray"
+
+            },
+            {
+                "name": "index",
+                "type": "ndarray"
+
+            }
+
+
+
+        ],
+        "output": [
+            {
+                "name": "X",
+                "type": "ndarray"
+            },
+            {
+                "name": "index",
+                "type": "ndarray"
+            }
+        ]
+    },
+    "hyperparameters": {
+        "fixed": {
+                "interval":1
+
+        }
+    }
+}

@@ -1,0 +1,35 @@
+{
+    "name": "pyteller.primitives.post_process.Flatten",
+    "contributors": [
+        "Skylar Eiskowitz <eiskowit@mit.edu>"
+    ],
+    "description": "max across",
+    "classifiers": {
+        "type": "postprocessor",
+        "subtype": "aggregate"
+    },
+    "modalities": [],
+    "primitive": "pyteller.primitives.post_process.max_across",
+    "produce": {
+        "args": [
+            {
+                "name": "X",
+                "type": "pandas.DataFrame"
+            }
+
+
+        ],
+        "output": [
+            {
+                "name": "X",
+                "type": "pandas.DataFrame"
+            }
+        ]
+    },
+        "hyperparameters": {
+
+            }
+
+    }
+
+

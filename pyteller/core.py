@@ -3,8 +3,8 @@
 """Main module."""
 import json
 import os
-from typing import List
-from pyteller.data import organize_data, post_process
+
+from pyteller.data import ingest_data, post_process
 import pandas as pd
 from mlblocks import MLPipeline
 from pyteller.evaluation import METRICS_NORM as METRICS
@@ -28,6 +28,25 @@ class Pyteller:
         if isinstance(pipeline, str) and os.path.isfile(pipeline):
             with open(pipeline) as json_file:
                 pipeline = json.load(json_file)
+        if 'pipeline_arguments' in pipeline.keys():
+            pipeline_args = pipeline['pipeline_arguments']
+
+            pred_length_primitives = pipeline_args['pred_length']
+            for i in pred_length_primitives:
+                if i in pipeline['init_params'].keys():
+                    dict = pipeline['init_params'][i]
+                else:
+                    dict = {}
+                dict[pred_length_primitives[i]] = self.pred_length
+                pipeline['init_params'][i] = dict
+            offset_primitives = pipeline_args['offset']
+            for i in offset_primitives:
+                if i in pipeline['init_params'].keys():
+                    dict = pipeline['init_params'][i]
+                else:
+                    dict = {}
+                dict[offset_primitives[i]] = self.offset
+                pipeline['init_params'][i]=dict
         mlpipeline = MLPipeline(pipeline)
         if self._hyperparameters:
             mlpipeline.set_hyperparameters(self._hyperparameters)
@@ -35,21 +54,14 @@ class Pyteller:
 
     def __init__(self,
               pipeline=None,
-              hyperparameters: dict = None,
+              hyperparameters= None,
               pred_length=None,
-              offset=None,
-              goal=None,
-              goal_window=None):
+              offset=None):
         self._pipeline = pipeline
         self._hyperparameters = hyperparameters
         self.pred_length = pred_length
         self.offset=offset
-        self.goal = goal
-        self.goal_window=goal_window
-        self._mlpipeline = self._get_mlpipeline()
         self._fitted = False
-        # self.modified_target_size= self.pred_length+self.offset
-
 
 
 # TODO: fit user facing abstraction
@@ -59,12 +71,12 @@ class Pyteller:
     def fit(self,
             data=None,
             timestamp_col = None,
-            target_signals=None,
+            target_signal=None,
             static_variables=None,
             entity_col=None,
             entities=None,
             train_size=None
-        ):
+            ):
         """Fit the pipeline to the given data.
 
         Args:
@@ -72,75 +84,49 @@ class Pyteller:
                 Input data, passed as a ``pandas.DataFrame`` containing
                 exactly two columns: timestamp and value.
         """
-        self.target_signal=target_signals
+        self.target_signal=target_signal
         self.timestamp_col=timestamp_col
         self.static_variables=static_variables
         self.entity_cols=entity_col
         self.entities=entities
         self.train_size=train_size
 
-        # self._mlpipeline = self._get_mlpipeline()
+        self._mlpipeline = self._get_mlpipeline()
 
-        self.train_length = round(len(data) * train_size)
-        # train_df = data.iloc[:self.train_length]
-        train = organize_data(self,
-            data=data,
-            timestamp_col = self.timestamp_col,
-            signal=self.target_signal,
-            static_variables=self.static_variables,
-            entity_cols=self.entity_cols,
-            entities=self.entities,
-            train_size=self.train_size
-        )
-        # hyperparameters = {
-        #
-        #     "keras.Sequential.LSTMTimeSeriesRegressor#1": {
-        #         "dense_units": self.pred_length+self.offset,
-        #     },
-        #     "mlprimitives.custom.timeseries_preprocessing.rolling_window_sequences#1": {
-        #         "target_size": self.pred_length+self.offset,
-        #     },
-        #      "pyteller.primitives.post_process.Flatten#1": {
-        #         "freq": self.freq,
-        #         "pred_length": self.pred_length,
-        #         "entities": self.entities
-        # }
-        #
-        # }
-
-
-        # self._hyperparameters=hyperparameters
-        self._mlpipeline = self._load_pipeline(self._pipeline, self._hyperparameters)
+        train = ingest_data(self,
+                            data=data,
+                            timestamp_col = self.timestamp_col,
+                            signal=self.target_signal,
+                            static_variables=self.static_variables,
+                            entity_col=self.entity_cols,
+                            entities=self.entities
+                            )
 
         self._mlpipeline.fit(X=train,
                          pred_length=self.pred_length,
                          offset =self.offset,
-                        # modified_target_size=self.modified_target_size,
-                        freq=self.freq,
-                        entities=self.entities
+                         freq=self.freq,
+                         entities=self.entities
                         )
-        self._fitted = True
 
+        self._fitted = True
         print('The pipeline is fitted')
 
     def forecast(self, data=None):
 
-        test = organize_data(self,
-            data=data,
-            timestamp_col = self.timestamp_col,
-            signal=self.target_signal,
-            static_variables=self.static_variables,
-            entity_cols=self.entity_cols,
-            entities=self.entities,
-            train_size=self.train_size
-        )
+        test = ingest_data(self,
+                           data=data,
+                           timestamp_col = self.timestamp_col,
+                           signal=self.target_signal,
+                           static_variables=self.static_variables,
+                           entity_col=self.entity_cols,
+                           entities=self.entities,
+                           )
 
         prediction = self._mlpipeline.predict(
                                             X=test,
                                             pred_length=self.pred_length,
                                             offset=self.offset,
-                                            goal=self.goal,
-                                            goal_window=None,
                                             freq = self.freq,
                                             entities = self.entities
                                               )
@@ -161,19 +147,31 @@ class Pyteller:
         #     "\tPrediction goal: : {}".format(self.goal),
         # ]
         # print('\n'.join(to_print))
-        test['timestamp'] = pd.to_datetime(test['timestamp'] * 1e9)
+
+#prediction comes out of forecaster with index as number time stamp
+        #test set somes out of data loader astimesstamp seperate column
+        #Here we want to convert to date
+        if prediction.index.dtype == 'float' or prediction.index.dtype == 'int':
+            prediction.index = pd.to_datetime(prediction.index.values * 1e9)
+        else:
+            prediction.index = pd.to_datetime(prediction.index)
+
+        if test['timestamp'].dtypes == 'float' or test['timestamp'].dtypes == 'int':
+            test['timestamp'] = pd.to_datetime(test['timestamp'] * 1e9)
+        else:
+            test['timestamp']= pd.to_datetime(test['timestamp'])
+
         actual = test.set_index('timestamp')
-        # y=prediction[0]
-        # y_hat=prediction[1]
         actual = actual[actual.index.isin(prediction.index)]
+        prediction.columns = [self.entities]
         return actual,prediction
 
-    def evaluate(self, forecast: pd.DataFrame,
-                 fit: bool = False,
-                 train_data: pd.DataFrame = None,
-                 test_data: pd.DataFrame = None,
+    def evaluate(self, forecast,
+                 fit = False,
+                 train_data= None,
+                 test_data = None,
                  detailed=False,
-                 metrics: List[str] = METRICS) -> pd.Series:
+                 metrics= METRICS) :
 
 
         metrics_ = {}
@@ -210,7 +208,7 @@ class Pyteller:
             #                                      forecast[entity], actual[entity])
 
             score.update({
-                metric: METRICS[metric](test_data[entity], forecast[entity])
+                metric: METRICS[metric](test_data[entity].values, forecast[entity].values[:,0])
                 for metric in metrics_ if metric != 'MASE'
             })
 
@@ -226,7 +224,7 @@ class Pyteller:
         return pd.DataFrame(scores)
 
 
-    def save(self, path: str):
+    def save(self, path):
         """Save this object using pickle.
 
         Args:
@@ -239,7 +237,7 @@ class Pyteller:
             pickle.dump(self, pickle_file)
 
     @classmethod
-    def load(cls, path: str):
+    def load(cls, path):
         """Load a pyteller instance from a pickle file.
 
         Args:

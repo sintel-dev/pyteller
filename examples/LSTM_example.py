@@ -1,37 +1,26 @@
-from pyteller.data import load_data
-
 # Load the dataset from a dataset on the s3 bucket, or in this example the local file path
 from pyteller.data import load_data
-current_data=load_data('../pyteller/data/taxi.csv')
+current_data = load_data('pyteller/data/AL_Weather_current.csv')#.iloc[0:600,:]
 
 
-# Initialization settings: user doesn't change these once new data comes in
 from pyteller.core import Pyteller
-pyteller = Pyteller (
-    # pipeline='lstm_taxi_no_offset',
-    pipeline='lagged_demand_max',
-    # pred_length=5,
-    # offset=5,
-    goal=None,
-    goal_window=None
+pipeline = 'pyteller/pipelines/sandbox/LSTM/LSTM_offset.json'
+pyteller = Pyteller(
+    pipeline=pipeline,
+    pred_length=6,
+    offset=1
 )
 
 pyteller.fit(
     data=current_data,
-    timestamp_col='timestamp',
-    target_signals='value',
-    static_variables=None,
-    # entity_col='station',
-    train_size=.75)
+    timestamp_col='valid',
+    target_signal='tmpf',
+    # static_variables=None,
+    entity_col='station',
+    entities='8A0'
+    )
 
-input_data=load_data('../pyteller/data/taxi_test.csv')
-forecast = pyteller.forecast(data=input_data)
+input_data=load_data('pyteller/data/AL_Weather_input.csv')#.iloc[0:600,:]
+y,y_hat = pyteller.forecast(data=input_data)
 
-
-scores = pyteller.evaluate(forecast=forecast, test_data=input_data, metrics=['sMAPE','MAPE'])
-
-# plot(forecast)
-
-# pyteller.save('../fit_models/persistence')
-
-
+scores= pyteller.evaluate(forecast=y_hat, test_data=y, metrics=['MAPE','sMAPE'])
