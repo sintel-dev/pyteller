@@ -151,19 +151,18 @@ def ingest_data(self,
     return df
 
 
-def post_process(self, prediction):
-    prediction.index = pd.to_datetime(prediction.index.values * 1e9)
-    df = pd.concat([prediction[col] for col in prediction])
+def egest_data(self, test, prediction):
+    if prediction.index.dtype == 'float' or prediction.index.dtype == 'int':
+        prediction.index = pd.to_datetime(prediction.index.values * 1e9)
+    else:
+        prediction.index = pd.to_datetime(prediction.index)
 
-    from datetime import timedelta
+    if test['timestamp'].dtypes == 'float' or test['timestamp'].dtypes == 'int':
+        test['timestamp'] = pd.to_datetime(test['timestamp'] * 1e9)
+    else:
+        test['timestamp'] = pd.to_datetime(test['timestamp'])
 
-    up = self.freq * (self.pred_length - 1)
-    end = prediction.index[-1] + timedelta(seconds=up)
-    freq = str(int(self.freq)) + 's'
-    index = pd.date_range(start=prediction.index[0], end=end, freq=freq)
-
-    df.index=index
-
-    cols = self.entities
-    df = df.to_frame(cols)
-    return df
+    actual = test.set_index('timestamp')
+    actual = actual[actual.index.isin(prediction.index)]
+    prediction.columns = [self.entities]
+    return actual, prediction

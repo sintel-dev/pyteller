@@ -1,6 +1,6 @@
 # Load the dataset from a dataset on the s3 bucket, or in this example the local file path
 from pyteller.data import load_data
-current_data = load_data('pyteller/data/AL_Weather_current.csv')#.iloc[0:600,:]
+current_data = load_data('pyteller/data/AL_Weather_current.csv')
 
 
 from pyteller.core import Pyteller
@@ -17,10 +17,10 @@ pyteller.fit(
     target_signal='tmpf',
     # static_variables=None,
     entity_col='station',
-    # entities='8A0'
+    entities='8A0'
     )
 
-input_data=load_data('pyteller/data/AL_Weather_input.csv')#.iloc[0:600,:]
+input_data=load_data('pyteller/data/AL_Weather_input.csv')
 y,y_hat = pyteller.forecast(data=input_data)
 
 scores= pyteller.evaluate(forecast=y_hat, test_data=y, metrics=['MAPE','sMAPE'])
