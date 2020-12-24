@@ -15,6 +15,7 @@ def _load_pipeline(pipeline, hyperparams=None):
 
     return pipeline
 
+
 def _run_pipeline(pipeline, train, test):
     LOGGER.debug("Fitting the pipeline")
     pipeline.fit(train)

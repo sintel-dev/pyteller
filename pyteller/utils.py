@@ -1,12 +1,9 @@
 from datetime import datetime
 
-import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
-import matplotlib.gridspec as gridspec
 import os
-from sklearn.preprocessing import MinMaxScaler
 from pandas.plotting import register_matplotlib_converters
 register_matplotlib_converters()
 
@@ -17,7 +14,8 @@ def convert_date(timelist):
         converted.append(datetime.fromtimestamp(x))
     return converted
 
-def plot(dfs,output_path,labels=None):
+
+def plot(dfs, output_path, labels=None):
     """ Line plot for time series.
 
     This function plots time series
@@ -38,9 +36,7 @@ def plot(dfs,output_path,labels=None):
     ax = fig.add_subplot(111)
 
     for df in dfs:
-        plt.plot(df.index, df.iloc[:,0]/100,linewidth=3)
-
-
+        plt.plot(df.index, df.iloc[:, 0] / 100, linewidth=3)
 
     plt.title('Normalized Demand', size=34)
     plt.ylabel('', size=30)

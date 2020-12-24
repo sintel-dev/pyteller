@@ -19,7 +19,7 @@ BENCHMARK_DATA = pd.read_csv(S3_URL.format(
     BUCKET, 'datasets.csv'), index_col=0, header=None).applymap(ast.literal_eval).to_dict()[1]
 META_DATA = pd.read_csv(S3_URL.format(
     BUCKET, 'data_s3.csv'), index_col=0, header=0)
-META_DATA=META_DATA.loc[META_DATA.index.dropna()]
+META_DATA = META_DATA.loc[META_DATA.index.dropna()]
 # BENCHMARK_PARAMS = pd.read_csv(S3_URL.format(
 #     BUCKET, 'parameters.csv'), index_col=0, header=None).applymap(ast.literal_eval).to_dict()[1]
 BENCHMARK_PARAMS = []
@@ -119,7 +119,7 @@ def _evaluate_pipeline(pipeline, pipeline_name, dataset, columns, hyperparameter
         function = _evaluate_signal
 
     scores = list()
-#TODO Fix
+# TODO Fix
     if isinstance(columns, str):
         for holdout_ in holdout:
             score = function(pipeline, pipeline_name, dataset, columns, hyperparameter,
@@ -164,9 +164,6 @@ def _evaluate_datasets(pipelines, datasets, hyperparameters, metrics, distribute
     for dataset, columns in datasets.iterrows():
         LOGGER.info("Starting dataset {} with {} signals..".format(
             dataset, len(columns)))
-
-
-
 
         # dataset configuration
         hyperparameters_ = _get_parameter(hyperparameters, dataset)
@@ -229,20 +226,19 @@ def benchmark(pipelines=None, datasets=None, hyperparameters=None, metrics=METRI
             by the indicated metric.
     """
     pipelines = pipelines or VERIFIED_PIPELINES
-    datasets = datasets or META_DATA#BENCHMARK_DATA
+    datasets = datasets or META_DATA  # BENCHMARK_DATA
 
     if isinstance(pipelines, list):
         pipelines = {pipeline: pipeline for pipeline in pipelines}
 
     if isinstance(datasets, dict):
         drop_these = [x for x in list(META_DATA.index) if x not in list(datasets.keys())]
-        datasets2=META_DATA.drop(drop_these)
+        datasets2 = META_DATA.drop(drop_these)
         for index, value in datasets2['signals'].items():
             if ',' in value:
-                keep_signals =','.join(datasets[index])
+                keep_signals = ','.join(datasets[index])
                 datasets2.loc[index]['signals'] = keep_signals
-        datasets=datasets2
-
+        datasets = datasets2
 
     if isinstance(hyperparameters, list):
         hyperparameters = {pipeline: hyperparameter for pipeline, hyperparameter in
