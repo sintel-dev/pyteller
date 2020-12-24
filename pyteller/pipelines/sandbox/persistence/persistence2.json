@@ -1,9 +1,0 @@
-{
-    "primitives": [
-        "pyteller.primitives.estimators.persistence"
-
-    ],
-    "init_params": {
-
-    }
-}
