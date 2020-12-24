@@ -1,5 +1,5 @@
 import numpy as np
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error, mean_absolute_error
 # TODO add MAPE
 # TODO break up metrics between normalized and not normalized
 
