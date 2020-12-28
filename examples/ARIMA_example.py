@@ -4,10 +4,10 @@ current_data = load_data('pyteller/data/AL_Weather_current.csv')
 
 
 from pyteller.core import Pyteller
-pipeline = 'pyteller/pipelines/sandbox/persistence/persistence.json'
+pipeline = 'pyteller/pipelines/sandbox/ARIMA/arima.json'
 pyteller = Pyteller(
     pipeline=pipeline,
-    pred_length=5,
+    pred_length=1,
     offset=3
 )
 
@@ -17,7 +17,7 @@ pyteller.fit(
     target_signal='tmpf',
     # static_variables=None,
     entity_col='station',
-    # entities='8A0'
+    entities='8A0'
     )
 
 input_data=load_data('pyteller/data/AL_Weather_input.csv')

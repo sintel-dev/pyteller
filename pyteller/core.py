@@ -47,6 +47,14 @@ class Pyteller:
                     dict = {}
                 dict[offset_primitives[i]] = self.offset
                 pipeline['init_params'][i] = dict
+            target_col_primitives = pipeline_args['target_column']
+            for i in target_col_primitives:
+                if i in pipeline['init_params'].keys():
+                    dict = pipeline['init_params'][i]
+                else:
+                    dict = {}
+                dict[target_col_primitives[i]] = self.target_column
+                pipeline['init_params'][i] = dict
         mlpipeline = MLPipeline(pipeline)
         if self._hyperparameters:
             mlpipeline.set_hyperparameters(self._hyperparameters)
@@ -86,7 +94,7 @@ class Pyteller:
         self.entities = entities
         self.train_size = train_size
 
-        self._mlpipeline = self._get_mlpipeline()
+
 
         train = ingest_data(self,
                             data=data,
@@ -96,7 +104,7 @@ class Pyteller:
                             entity_col=self.entity_cols,
                             entities=self.entities
                             )
-
+        self._mlpipeline = self._get_mlpipeline()
         self._mlpipeline.fit(X=train,
                              pred_length=self.pred_length,
                              offset=self.offset,

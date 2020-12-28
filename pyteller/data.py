@@ -148,7 +148,7 @@ def ingest_data(self,
         df['timestamp'] = pd.to_datetime(df['timestamp']).values.astype(np.int64) // 1e9
     df = df.sort_values('timestamp')
     self.freq = df['timestamp'][1] - df['timestamp'][0]
-
+    self.target_column = list(range(len(self.entities)))
     return df
 
 
