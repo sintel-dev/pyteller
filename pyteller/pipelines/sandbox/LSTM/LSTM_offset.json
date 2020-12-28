@@ -68,6 +68,9 @@
         },
         "offset": {
             "pyteller.primitives.preprocessing.rolling_window_sequences#1": "offset"
+        },
+        "target_column": {
+            "pyteller.primitives.preprocessing.rolling_window_sequences#1": "target_column"
         }
     }
 }

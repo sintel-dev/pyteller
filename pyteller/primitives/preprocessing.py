@@ -24,7 +24,7 @@ def get_index(X, time_column='timestamp'):
     return np.asarray(X.values), np.asarray(X.index)
 
 
-def rolling_window_sequences(X, index, window_size, target_size, step_size, target_column, offset=0,
+def rolling_window_sequences(X, index, window_size, target_size, step_size, target_column=None, offset=0,
                              drop=None, drop_windows=False):
     """Create rolling window sequences out of time series data.
 
@@ -68,7 +68,7 @@ def rolling_window_sequences(X, index, window_size, target_size, step_size, targ
     out_y = list()
     X_index = list()
     y_index = list()
-    target = X[:, target_column]
+    target = np.squeeze(X[:, target_column])
 
     if drop_windows:
         if hasattr(drop, '__len__') and (not isinstance(drop, str)):
@@ -98,4 +98,5 @@ def rolling_window_sequences(X, index, window_size, target_size, step_size, targ
         y_index.append(index[end + offset])
         start = start + step_size
 
-    return np.asarray(out_X), np.asarray(out_y), np.asarray(X_index), np.asarray(y_index)
+    return np.asarray((out_X)), np.asarray((out_y)), np.asarray(X_index), np.asarray(y_index)
+    # return np.asarray(np.squeeze(out_X)), np.asarray(np.squeeze(out_y)), np.asarray(X_index), np.asarray(y_index)

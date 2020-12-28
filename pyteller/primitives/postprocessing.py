@@ -31,6 +31,9 @@ def flatten(X, pred_length, index, columns, freq):
     index = np.reshape(index, [index.size, 1])
     index = np.insert(index, 1, np.full((pred_length - 1, 1), freq), axis=1)
     index = np.cumsum(index, axis=1).flatten()
-    df = pd.DataFrame(data=X.flatten(), index=index, columns=columns)
+    if X.ndim==3:
+        df = pd.DataFrame(data=X.reshape(-1, X.shape[-1]), index=index, columns=columns)
+    else:
+        df = pd.DataFrame(data=X.flatten(), index=index, columns=columns)
     df = df.groupby(df.index).mean()
     return df

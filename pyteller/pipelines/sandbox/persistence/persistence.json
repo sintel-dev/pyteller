@@ -11,9 +11,9 @@
 
     "init_params": {
         "pyteller.primitives.preprocessing.rolling_window_sequences#1": {
-            "target_column": 0,
+
             "window_size": 18,
-            "step_size": 3
+            "step_size": 1
         }
     },
     "input_names": {
@@ -36,6 +36,10 @@
         "offset": {
             "pyteller.primitives.preprocessing.rolling_window_sequences#1": "offset",
             "pyteller.primitives.estimators.persistence#1": "offset"
+        },
+
+        "target_column": {
+            "pyteller.primitives.preprocessing.rolling_window_sequences#1": "target_column"
         }
     }
 
