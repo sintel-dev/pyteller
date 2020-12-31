@@ -236,3 +236,15 @@ class Pyteller:
             #     raise ValueError('Serialized object is not a pyteller instance')
 
             return pyteller
+
+    def save(self, path):
+        """Save this object using pickle.
+
+        Args:
+            path (str):
+                Path to the file where the serialization of
+                this object will be stored.
+        """
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, 'wb') as pickle_file:
+            pickle.dump(self, pickle_file)
