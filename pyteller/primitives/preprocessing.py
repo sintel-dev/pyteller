@@ -68,7 +68,8 @@ def rolling_window_sequences(X, index, window_size, target_size, step_size, targ
     out_y = list()
     X_index = list()
     y_index = list()
-    target = np.squeeze(X[:, target_column])
+    # target = np.squeeze(X[:, target_column])
+    target = X[:, target_column]
 
     if drop_windows:
         if hasattr(drop, '__len__') and (not isinstance(drop, str)):
