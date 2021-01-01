@@ -136,7 +136,7 @@ def ingest_data(self,
         df = df2.drop(to_remove, axis=1)
 
     elif signal is not None:  # Scenario 2: user specfies one signal
-        self.entities = signal
+        self.entities = [signal]
         df = df.rename(columns={'signal': signal})
 
     else:  # Scenario 3 user specifies multiple entitiies but there is no entity column
@@ -148,7 +148,10 @@ def ingest_data(self,
         df['timestamp'] = pd.to_datetime(df['timestamp']).values.astype(np.int64) // 1e9
     df = df.sort_values('timestamp')
     self.freq = df['timestamp'][1] - df['timestamp'][0]
-    self.target_column = list(range(len(self.entities)))
+    if isinstance(self.entities,str):
+        self.target_column=[0]
+    else:
+        self.target_column = list(range(len(self.entities)))
     return df
 
 
@@ -165,5 +168,5 @@ def egest_data(self, test, prediction):
 
     actual = test.set_index('timestamp')
     actual = actual[actual.index.isin(prediction.index)]
-    prediction.columns = [self.entities]
+    # prediction.columns = [self.entities]
     return actual, prediction

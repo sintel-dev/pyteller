@@ -189,7 +189,8 @@ class Pyteller:
         for entity in self.entities:
             score = {}
             score.update({
-                metric: METRICS[metric](test_data[entity].values, forecast[entity].values[:, 0])
+                metric: METRICS[metric](test_data[entity].values, forecast[entity].values)
+                # metric: METRICS[metric](test_data[entity].values, forecast[entity].values[:, 0])
                 for metric in metrics_ if metric != 'MASE'
             })
 
