@@ -13,16 +13,16 @@ with open('HISTORY.md', encoding='utf-8') as history_file:
 
 install_requires = [
     's3fs>=0.2.2,<0.5',
-    'baytune>=0.2.3,<=0.4.0',
-    'mlblocks>=0.4.0.dev0,<0.5',
-    'mlprimitives>=0.2.2',
-    'mongoengine>=0.16.3,<0.19',
-    'numpy<1.19.0,>=1.16.0',
-    'pandas>=1,<2',
+    'baytune>=0.2.3,<=0.3',
+    'mlblocks>=0.3.0,<0.4',
+    'mlprimitives>=0.2.2,<0.3',
+    'mongoengine>=0.16.3,<0.17',
+    'numpy>=1.15.4,<1.17',
+    'pandas>=0.23.4,<0.25',
     'pymongo>=3.7.2,<4',
-    'scikit-learn>=0.21',
+    'scikit-learn>=0.20.1,<0.21',
     'tabulate>=0.8.3,<0.9',
-    'Keras>=2.4'
+    'Keras>=2.1.6,<2.4',
 ]
 
 setup_requires = [
@@ -32,13 +32,14 @@ setup_requires = [
 tests_require = [
     'pytest>=3.4.2',
     'pytest-cov>=2.6.0',
+    'rundoc>=0.4.3,<0.5',
 ]
 
 development_requires = [
     # general
-    'bumpversion>=0.5.3',
     'pip>=9.0.1',
-    'watchdog>=0.8.3',
+    'bumpversion>=0.5.3,<0.6',
+    'watchdog>=0.8.3,<0.11',
 
     # docs
     'm2r>=0.2.0,<0.3',
@@ -47,20 +48,20 @@ development_requires = [
     'autodocsumm>=0.1.10',
 
     # style check
-    'flake8>=3.7.7',
-    'isort>=4.3.4',
+    'flake8>=3.7.7,<3.8',
+    'isort>=4.3.4,<5',
 
     # fix style issues
-    'autoflake>=1.2',
-    'autopep8>=1.4.3',
+    'autoflake>=1.2,<2',
+    'autopep8>=1.4.3,<2',
 
     # distribute on PyPI
-    'twine>=1.10.0',
+    'twine>=1.10.0,<4',
     'wheel>=0.30.0',
 
     # Advanced testing
-    'coverage>=4.5.1',
-    'tox>=2.9.1',
+    'coverage>=4.5.1,<6',
+    'tox>=2.9.1,<4',
 ]
 
 setup(
