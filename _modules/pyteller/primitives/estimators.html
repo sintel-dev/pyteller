@@ -214,9 +214,8 @@
             
   <h1>Source code for pyteller.primitives.estimators</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_absolute_error</span>
-<span class="kn">from</span> <span class="nn">dateutil.parser</span> <span class="kn">import</span> <span class="n">parse</span>
+
 
 <div class="viewcode-block" id="persistence"><a class="viewcode-back" href="../../../api/pyteller.primitives.estimators.html#pyteller.primitives.estimators.persistence">[docs]</a><span class="k">class</span> <span class="nc">persistence</span><span class="p">:</span>
 
@@ -229,20 +228,32 @@
 <span class="sd">    used in real scenarios.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">pred_length</span><span class="p">,</span><span class="n">offset</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pred_length</span><span class="p">,</span> <span class="n">offset</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pred_length</span> <span class="o">=</span> <span class="n">pred_length</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="n">offset</span>
 
 <div class="viewcode-block" id="persistence.fit"><a class="viewcode-back" href="../../../api/pyteller.primitives.estimators.html#pyteller.primitives.estimators.persistence.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-        <span class="n">preds</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">pred_length</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="c1">#Validation</span>
-        <span class="n">val</span> <span class="o">=</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">preds</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;training MAE: &#39;</span> <span class="p">,</span><span class="n">val</span><span class="p">)</span></div>
+        <span class="n">val</span><span class="o">=</span><span class="mi">0</span>
+        <span class="n">preds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]],</span> <span class="bp">self</span><span class="o">.</span><span class="n">pred_length</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]):</span>
+            <span class="n">pred</span><span class="p">,</span> <span class="n">y_</span> <span class="o">=</span> <span class="n">preds</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">y</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">]</span>
+            <span class="n">val</span> <span class="o">+=</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">y_</span><span class="p">,</span> <span class="n">pred</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;training MAE: &#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">/</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="persistence.predict"><a class="viewcode-back" href="../../../api/pyteller.primitives.estimators.html#pyteller.primitives.estimators.persistence.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-        <span class="n">preds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">pred_length</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">preds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]],</span> <span class="bp">self</span><span class="o">.</span><span class="n">pred_length</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">preds</span></div></div>
-
+    <span class="c1"># def fit(self, X, y):</span>
+    <span class="c1">#     val=0</span>
+    <span class="c1">#     preds = np.repeat(X[:, [-1], :], self.pred_length, axis=1)</span>
+    <span class="c1">#     for i in range(X.shape[2]):</span>
+    <span class="c1">#         pred, y_ = preds[:, :, i], y[:, :, i]</span>
+    <span class="c1">#         val += mean_absolute_error(y_, pred)</span>
+    <span class="c1">#     print(&#39;training MAE: &#39;, val/X.shape[2])</span>
+    <span class="c1">#</span>
+    <span class="c1"># def predict(self, X):</span>
+    <span class="c1">#     preds = np.repeat(X[:, [-1], :], self.pred_length, axis=1)</span>
+    <span class="c1">#     return preds</span>
 </pre></div>
 
            </div>

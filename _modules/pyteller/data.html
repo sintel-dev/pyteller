@@ -288,19 +288,20 @@
 
 
 <div class="viewcode-block" id="load_data"><a class="viewcode-back" href="../../api/pyteller.data.html#pyteller.data.load_data">[docs]</a><span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>
-                <span class="n">train_size</span><span class="o">=.</span><span class="mi">75</span><span class="p">,</span>
-                <span class="n">timestamp_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                <span class="n">entity_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                <span class="n">signals</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                <span class="n">dynamic_variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                <span class="n">static_variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                <span class="n">column_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+              <span class="n">train_size</span><span class="o">=.</span><span class="mi">75</span><span class="p">,</span>
+              <span class="n">timestamp_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+              <span class="n">entity_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+              <span class="n">signals</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+              <span class="n">dynamic_variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+              <span class="n">static_variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+              <span class="n">column_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">load_csv</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">download</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">data</span></div>
+
 
 <div class="viewcode-block" id="ingest_data"><a class="viewcode-back" href="../../api/pyteller.data.html#pyteller.data.ingest_data">[docs]</a><span class="k">def</span> <span class="nf">ingest_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                 <span class="n">data</span><span class="p">,</span>
@@ -311,7 +312,7 @@
                 <span class="n">dynamic_variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                 <span class="n">static_variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                 <span class="p">):</span>
-    <span class="c1">#User specified multiple targets, this should be specified as multiple entities, fix here</span>
+    <span class="c1"># User specified multiple targets, this should be specified as multiple entities, fix here</span>
     <span class="n">entities</span> <span class="o">=</span> <span class="n">signal</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="n">entities</span>
     <span class="n">signal</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="n">signal</span>
 
@@ -328,41 +329,44 @@
     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
         <span class="n">df</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">columns</span><span class="p">[</span><span class="n">key</span><span class="p">]]</span>
 
-    <span class="k">if</span> <span class="s1">&#39;entity&#39;</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span> <span class="c1">#Scenario 1: user specifies entity column and target variable column</span>
-        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;entity&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;entity&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span> <span class="c1"># Make all entities strings</span>
-        <span class="n">all_entities</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">entity</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span> <span class="c1"># Find the unique values in the entity column</span>
+    <span class="k">if</span> <span class="s1">&#39;entity&#39;</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>  <span class="c1"># Scenario 1: user specifies entity column and target variable column</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;entity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;entity&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>  <span class="c1"># Make all entities strings</span>
+        <span class="n">all_entities</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">entity</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>  <span class="c1"># Find the unique values in the entity column</span>
         <span class="n">all_entities</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">all_entities</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="s1">&#39;nan&#39;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="o">=</span><span class="n">all_entities</span> <span class="c1">#entities are the unique values in the specified entity column</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entities</span> <span class="o">=</span> <span class="n">all_entities</span>  <span class="c1"># entities are the unique values in the specified entity column</span>
 
-        <span class="c1">#Make the long form into flatform by having entities as columns</span>
+        <span class="c1"># Make the long form into flatform by having entities as columns</span>
         <span class="n">df2</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;timestamp&#39;</span><span class="p">)[</span><span class="s1">&#39;signal&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
             <span class="k">lambda</span> <span class="n">group_series</span><span class="p">:</span> <span class="n">group_series</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
         <span class="n">df2</span><span class="p">[</span><span class="n">all_entities</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df2</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">index</span><span class="o">=</span><span class="n">df2</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
-        <span class="n">to_remove</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span><span class="s1">&#39;signal&#39;</span><span class="p">])</span>
+        <span class="n">to_remove</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="s1">&#39;signal&#39;</span><span class="p">])</span>
 
-        <span class="k">if</span> <span class="n">entities</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span> <span class="c1">#Scenario 1b User specifies a certain entity from the entity column</span>
-            <span class="n">to_remove</span><span class="o">=</span><span class="n">to_remove</span><span class="o">+</span><span class="nb">list</span><span class="p">(</span><span class="n">all_entities</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">entities</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># Scenario 1b User specifies a certain entity from the entity column</span>
+            <span class="n">to_remove</span> <span class="o">=</span> <span class="n">to_remove</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">all_entities</span><span class="p">)</span>
             <span class="n">entities</span> <span class="o">=</span> <span class="p">[</span><span class="n">entities</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">entities</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">entities</span>
-            <span class="n">to_remove</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">to_remove</span><span class="p">)</span><span class="o">-</span><span class="nb">set</span><span class="p">(</span><span class="n">entities</span><span class="p">))</span><span class="c1">#Don&#39;t remove it</span>
+            <span class="n">to_remove</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">to_remove</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">entities</span><span class="p">))</span>  <span class="c1"># Don&#39;t remove it</span>
             <span class="c1"># to_remove.remove(entities)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="o">=</span><span class="n">entities</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">entities</span> <span class="o">=</span> <span class="n">entities</span>
 
         <span class="n">df</span> <span class="o">=</span> <span class="n">df2</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">to_remove</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
-    <span class="k">elif</span> <span class="n">signal</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="c1">#Scenario 2: user specfies one signal</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">entities</span> <span class="o">=</span> <span class="n">signal</span>
-        <span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;signal&#39;</span><span class="p">:</span><span class="n">signal</span><span class="p">})</span>
+    <span class="k">elif</span> <span class="n">signal</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># Scenario 2: user specfies one signal</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entities</span> <span class="o">=</span> <span class="p">[</span><span class="n">signal</span><span class="p">]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;signal&#39;</span><span class="p">:</span> <span class="n">signal</span><span class="p">})</span>
 
-    <span class="k">else</span><span class="p">:</span> <span class="c1">#Scenario 3 user specifies multiple entitiies but there is no entity column</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="o">=</span><span class="n">entities</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># Scenario 3 user specifies multiple entitiies but there is no entity column</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entities</span> <span class="o">=</span> <span class="n">entities</span>
         <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="n">entities</span><span class="p">:</span>
             <span class="n">df</span><span class="p">[</span><span class="n">entity</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[[</span><span class="n">entity</span><span class="p">]]</span>
 
-    <span class="k">if</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dtypes</span> <span class="o">!=</span><span class="s1">&#39;float&#39;</span> <span class="ow">and</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dtypes</span> <span class="o">!=</span><span class="s1">&#39;int&#39;</span><span class="p">:</span>
-        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span> <span class="o">//</span> <span class="mf">1e9</span>
+    <span class="k">if</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dtypes</span> <span class="o">!=</span> <span class="s1">&#39;float&#39;</span> <span class="ow">and</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dtypes</span> <span class="o">!=</span> <span class="s1">&#39;int&#39;</span><span class="p">:</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span> <span class="o">//</span> <span class="mf">1e9</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;timestamp&#39;</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">freq</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-
+    <span class="bp">self</span><span class="o">.</span><span class="n">freq</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_column</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_column</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="p">)))</span>
     <span class="k">return</span> <span class="n">df</span></div>
 
 
@@ -379,7 +383,7 @@
 
     <span class="n">actual</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;timestamp&#39;</span><span class="p">)</span>
     <span class="n">actual</span> <span class="o">=</span> <span class="n">actual</span><span class="p">[</span><span class="n">actual</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">prediction</span><span class="o">.</span><span class="n">index</span><span class="p">)]</span>
-    <span class="n">prediction</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="p">]</span>
+    <span class="c1"># prediction.columns = [self.entities]</span>
     <span class="k">return</span> <span class="n">actual</span><span class="p">,</span> <span class="n">prediction</span></div>
 </pre></div>
 

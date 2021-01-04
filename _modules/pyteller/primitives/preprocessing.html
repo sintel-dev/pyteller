@@ -216,6 +216,7 @@
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
+
 <div class="viewcode-block" id="get_index"><a class="viewcode-back" href="../../../api/pyteller.primitives.preprocessing.html#pyteller.primitives.preprocessing.get_index">[docs]</a><span class="k">def</span> <span class="nf">get_index</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">time_column</span><span class="o">=</span><span class="s1">&#39;timestamp&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Stores the index of an input time series in the context</span>
 <span class="sd">    Args:</span>
@@ -238,8 +239,7 @@
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">values</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">index</span><span class="p">)</span></div>
 
 
-
-<div class="viewcode-block" id="rolling_window_sequences"><a class="viewcode-back" href="../../../api/pyteller.primitives.preprocessing.html#pyteller.primitives.preprocessing.rolling_window_sequences">[docs]</a><span class="k">def</span> <span class="nf">rolling_window_sequences</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">window_size</span><span class="p">,</span> <span class="n">target_size</span><span class="p">,</span> <span class="n">step_size</span><span class="p">,</span> <span class="n">target_column</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<div class="viewcode-block" id="rolling_window_sequences"><a class="viewcode-back" href="../../../api/pyteller.primitives.preprocessing.html#pyteller.primitives.preprocessing.rolling_window_sequences">[docs]</a><span class="k">def</span> <span class="nf">rolling_window_sequences</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">window_size</span><span class="p">,</span> <span class="n">target_size</span><span class="p">,</span> <span class="n">step_size</span><span class="p">,</span> <span class="n">target_column</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                              <span class="n">drop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">drop_windows</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Create rolling window sequences out of time series data.</span>
 
@@ -283,6 +283,7 @@
     <span class="n">out_y</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
     <span class="n">X_index</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
     <span class="n">y_index</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="c1"># target = np.squeeze(X[:, target_column])</span>
     <span class="n">target</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:,</span> <span class="n">target_column</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="n">drop_windows</span><span class="p">:</span>
@@ -313,7 +314,8 @@
         <span class="n">y_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index</span><span class="p">[</span><span class="n">end</span> <span class="o">+</span> <span class="n">offset</span><span class="p">])</span>
         <span class="n">start</span> <span class="o">=</span> <span class="n">start</span> <span class="o">+</span> <span class="n">step_size</span>
 
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">out_X</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">out_y</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">X_index</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y_index</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">((</span><span class="n">out_X</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">((</span><span class="n">out_y</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">X_index</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y_index</span><span class="p">)</span></div>
+    <span class="c1"># return np.asarray(np.squeeze(out_X)), np.asarray(np.squeeze(out_y)), np.asarray(X_index), np.asarray(y_index)</span>
 </pre></div>
 
            </div>
