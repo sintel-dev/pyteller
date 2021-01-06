@@ -42,10 +42,12 @@ development_requires = [
     'watchdog>=0.8.3,<0.11',
 
     # docs
-    'm2r>=0.2.0,<0.3',
-    'Sphinx>=1.7.1,<3',
-    'sphinx_rtd_theme>=0.2.4,<0.5',
-    'autodocsumm>=0.1.10',
+    'm2r2>=0.2.5,<0.3',
+    'nbsphinx>=0.5.0,<0.7',
+    'Sphinx>=3,<3.3',
+    'pydata-sphinx-theme',
+    'autodocsumm>=0.1.10,<1',
+    'ipython>=6.5,<7.5',
 
     # style check
     'flake8>=3.7.7,<3.8',
@@ -73,10 +75,8 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
     ],
     description='Time series forecasting using MLPrimitives',
     entry_points={
@@ -101,7 +101,7 @@ setup(
     keywords='pyteller pyteller pyteller',
     name='pyteller',
     packages=find_packages(include=['pyteller', 'pyteller.*']),
-    python_requires='>=3.5',
+    python_requires='>=3.6,<3.8',
     setup_requires=setup_requires,
     test_suite='tests',
     tests_require=tests_require,

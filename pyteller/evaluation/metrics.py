@@ -1,7 +1,5 @@
 import numpy as np
-from sklearn.metrics import mean_squared_error, mean_absolute_error
-# TODO add MAPE
-# TODO break up metrics between normalized and not normalized
+from sklearn.metrics import mean_squared_error
 
 
 def root_mean_square_error(testing_series, prediction_series):
@@ -18,8 +16,10 @@ def MASE(training_series, testing_series, prediction_series):
     Args:
         training_series: the series used to train the model, 1d numpy array
         testing_series: the test series to predict, 1d numpy array or float
-        prediction_series: the prediction of testing_series, 1d numpy array (same size as testing_series) or float
-        absolute: "squares" to use sum of squares and root the result, "absolute" to use absolute values.
+        prediction_series: the prediction of testing_series, 1d numpy array
+        (same size as testing_series) or float
+        absolute: "squares" to use sum of squares and root the result, "absolute"
+        to use absolute values.
     Returns: float of MASE
     """
     n = training_series.shape[0]
@@ -41,13 +41,16 @@ def MASE(training_series, testing_series, prediction_series):
 def sMAPE(testing_series, prediction_series):
     """
 
-    Computes the Symmetric mean absolute percentage error forcast error for univariate time series prediction.
+    Computes the Symmetric mean absolute percentage error forcast error for univariate time series
+    prediction.
 
     Args:
         training_series: the series used to train the model, 1d numpy array
         testing_series: the test series to predict, 1d numpy array or float
-        prediction_series: the prediction of testing_series, 1d numpy array (same size as testing_series) or float
-        absolute: "squares" to use sum of squares and root the result, "absolute" to use absolute values.
+        prediction_series: the prediction of testing_series, 1d numpy array
+        (same size as testing_series) or float
+        absolute: "squares" to use sum of squares and root the result, "absolute" to
+        use absolute values.
     Returns: float of sMAPE
     """
     prediction_series = np.array(prediction_series, dtype=float)
@@ -56,8 +59,9 @@ def sMAPE(testing_series, prediction_series):
     if zero.size != 0:  # If there are indexes where the zeros align return zero, there is no error
         return 0
     else:
-        return 100 / len(testing_series) * np.sum(2 * np.abs(prediction_series
-                                                             - testing_series) / (np.abs(testing_series) + np.abs(prediction_series)))
+        return 100 / len(testing_series) \
+            * np.sum(2 * np.abs(prediction_series - testing_series)
+                     / (np.abs(testing_series) + np.abs(prediction_series)))
 
 
 def MAPE(testing_series, prediction_series):

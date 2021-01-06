@@ -18,12 +18,12 @@ class persistence:
         self.offset = offset
 
     def fit(self, X, y):
-        val=0
+        val = 0
         preds = np.repeat(X[:, [-1]], self.pred_length, axis=1)
         for i in range(X.shape[2]):
             pred, y_ = preds[:, :, i], y[:, :, i]
             val += mean_absolute_error(y_, pred)
-        print('training MAE: ', val/X.shape[2])
+        print('training MAE: ', val / X.shape[2])
 
     def predict(self, X):
         preds = np.repeat(X[:, [-1]], self.pred_length, axis=1)

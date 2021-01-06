@@ -3,12 +3,13 @@
 """Main module."""
 import json
 import os
+import pickle
 
-from pyteller.data import ingest_data, egest_data
 import pandas as pd
 from mlblocks import MLPipeline
+
+from pyteller.data import egest_data, ingest_data
 from pyteller.evaluation import METRICS_NORM as METRICS
-import pickle
 
 
 class Pyteller:
@@ -28,6 +29,9 @@ class Pyteller:
         if isinstance(pipeline, str) and os.path.isfile(pipeline):
             with open(pipeline) as json_file:
                 pipeline = json.load(json_file)
+
+        # Pipeline args are specified in all pyteller pipelines jsons and allow for
+        # shared hyperparamters
         if 'pipeline_arguments' in pipeline.keys():
             pipeline_args = pipeline['pipeline_arguments']
 
@@ -94,8 +98,6 @@ class Pyteller:
         self.entities = entities
         self.train_size = train_size
 
-
-
         train = ingest_data(self,
                             data=data,
                             timestamp_col=self.timestamp_col,
@@ -144,7 +146,7 @@ class Pyteller:
             freq=self.freq,
             entities=self.entities
         )
-        actual, prediction = egest_data(self, test, prediction)
+        actual, prediction = egest_data(test, prediction)
 
         return actual, prediction
 
@@ -194,14 +196,14 @@ class Pyteller:
                 for metric in metrics_ if metric != 'MASE'
             })
 
-            if detailed == True:
+            if detailed:
                 score['granularity'] = self.freq
                 score['prediction length'] = forecast.shape[0]
                 score['length of training data'] = len(train_data.get_group(entity))
                 score['length of testing data'] = len(test_data.get_group(entity))
             scores.append(score)
 
-        return pd.DataFrame(scores)
+        return pd.DataFrame(scores, index=self.entities).transpose()
 
     def save(self, path):
         """Save this object using pickle.
@@ -237,15 +239,3 @@ class Pyteller:
             #     raise ValueError('Serialized object is not a pyteller instance')
 
             return pyteller
-
-    def save(self, path):
-        """Save this object using pickle.
-
-        Args:
-            path (str):
-                Path to the file where the serialization of
-                this object will be stored.
-        """
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-        with open(path, 'wb') as pickle_file:
-            pickle.dump(self, pickle_file)

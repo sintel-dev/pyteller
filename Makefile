@@ -73,16 +73,15 @@ coverage: ## check code coverage quickly with the default Python
 
 .PHONY: docs
 docs: clean-docs ## generate Sphinx HTML documentation, including API docs
-	sphinx-apidoc --separate --no-toc -o docs/api/ pyteller
 	$(MAKE) -C docs html
 
 .PHONY: view-docs
-view-docs: docs ## view docs in browser
+view-docs: ## view the docs in a browser
 	$(BROWSER) docs/_build/html/index.html
 
 .PHONY: serve-docs
 serve-docs: view-docs ## compile the docs watching for changes
-	watchmedo shell-command -W -R -D -p '*.rst;*.md' -c '$(MAKE) -C docs html' .
+	watchmedo shell-command -W -R -D -p '*.rst;*.md' -c '$(MAKE) -C docs html' docs
 
 .PHONY: dist
 dist: clean ## builds source and wheel package

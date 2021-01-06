@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# pyteller documentation build configuration file, created by
+# Orion documentation build configuration file, created by
 # sphinx-quickstart on Fri Jun  9 13:47:02 2017.
 #
 # This file is execfile()d with the current directory set to its
@@ -18,7 +18,7 @@
 # relative to the documentation root, use os.path.abspath to make it
 # absolute, like shown here.
 
-import sphinx_rtd_theme # For read the docs theme
+# import sphinx_rtd_theme # For read the docs theme
 
 import pyteller
 
@@ -31,17 +31,25 @@ import pyteller
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = [
-    'm2r',
+    'm2r2',
+    'nbsphinx',
     'sphinx.ext.autodoc',
+    'sphinx.ext.autosummary',
     'sphinx.ext.githubpages',
     'sphinx.ext.viewcode',
     'sphinx.ext.napoleon',
-    'autodocsumm',
+    'IPython.sphinxext.ipython_console_highlighting',
+    'IPython.sphinxext.ipython_directive',
 ]
 
-autodoc_default_options = {
-    'autosummary': True,
-}
+ipython_execlines = [
+    "import pandas as pd",
+    "pd.set_option('display.width', 1000000)",
+    "pd.set_option('max_columns', 1000)",
+]
+
+autosummary_generate = True
+autodoc_typehints = "none"
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -53,13 +61,25 @@ source_suffix = ['.rst', '.md']
 # The master toctree document.
 master_doc = 'index'
 
+# Jupyter Notebooks
+nbsphinx_execute = 'never'
+nbsphinx_prolog = """
+.. raw:: html
+    <style>
+        .nbinput .prompt,
+        .nboutput .prompt {
+            display: none;
+        }
+    </style>
+"""
+
 # General information about the project.
 project = 'pyteller'
 slug = 'pyteller'
 title = project + ' Documentation',
-copyright = '2020, MIT Data To AI Lab'
+copyright = '2018, MIT Data To AI Lab'
 author = 'MIT Data To AI Lab'
-description = 'Time series forecasting using MLPrimitives'
+description = 'pyteller is a machine learning library for time series forecasting using MLPrimitives'
 user = 'signals-dev'
 
 # The version info for the project you're documenting, acts as replacement
@@ -94,9 +114,8 @@ todo_include_todos = False
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'sphinx_rtd_theme'
-# html_theme = "pydata_sphinx_theme"
-html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+html_theme = 'pydata_sphinx_theme'
+# html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 # Readthedocs additions
 html_context = {
@@ -110,25 +129,30 @@ html_context = {
 # Theme options are theme-specific and customize the look and feel of a
 # theme further.  For a list of options available for each theme, see the
 # documentation.
+# html_theme_options = {
+#     'collapse_navigation': False,
+#     'display_version': False,
+# }
+
 html_theme_options = {
-    'collapse_navigation': False,
-    'display_version': False,
+    "github_url": "https://github.com/signals-dev/pyteller",
+    "show_prev_next": True,
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-# html_static_path = ['_static']
+# html_static_path = ['images']
 
 # The name of an image file (relative to this directory) to use as a favicon of
 # the docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
 # pixels large.
-html_favicon = 'images/dai-logo-white.ico'
+html_favicon = 'images/pyteller_icon_only_icon.ico'
 
 # If given, this must be the name of an image file (path relative to the
 # configuration directory) that is the logo of the docs. It is placed at
 # the top of the sidebar; its width should therefore not exceed 200 pixels.
-html_logo = 'images/dai-logo-white-200.png'
+# html_logo = 'images/orion-logo-white-200.png'
 
 # -- Options for HTMLHelp output ---------------------------------------
 

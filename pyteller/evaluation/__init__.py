@@ -1,7 +1,7 @@
-from pyteller.evaluation.metrics import (
-    mean_absolute_error, mean_squared_error, MASE, sMAPE, MAPE, root_mean_square_error
-)
+from sklearn.metrics import mean_absolute_error
 
+from pyteller.evaluation.metrics import (
+    MAPE, MASE, mean_squared_error, root_mean_square_error, sMAPE)
 
 METRICS_NORM = {
     'MAE': mean_absolute_error,
