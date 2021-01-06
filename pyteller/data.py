@@ -1,8 +1,8 @@
-import os
 import logging
+import os
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 LOGGER = logging.getLogger(__name__)
 
@@ -72,14 +72,7 @@ def load_csv(path):
     return pd.DataFrame(data)
 
 
-def load_data(data,
-              train_size=.75,
-              timestamp_col=None,
-              entity_cols=None,
-              signals=None,
-              dynamic_variables=None,
-              static_variables=None,
-              column_dict=None):
+def load_data(data):
 
     if os.path.isfile(data):
         data = load_csv(data)
@@ -97,7 +90,7 @@ def ingest_data(self,
                 dynamic_variables=None,
                 static_variables=None,
                 ):
-    # User specified multiple targets, this should be specified as multiple entities, fix here
+    # Fix if the user specified multiple targets. They should be specified as multiple entities
     entities = signal if isinstance(signal, list) else entities
     signal = None if isinstance(signal, list) else signal
 
@@ -114,48 +107,51 @@ def ingest_data(self,
     for key in columns:
         df[key] = data[columns[key]]
 
-    if 'entity' in columns:  # Scenario 1: user specifies entity column and target variable column
+    # Scenario 1: (longform) user specifies entity column and target variable column
+    if 'entity' in columns:
         df['entity'] = df['entity'].astype(str)  # Make all entities strings
         all_entities = df.entity.unique()  # Find the unique values in the entity column
         all_entities = [x for x in list(all_entities) if x != 'nan']
-        self.entities = all_entities  # entities are the unique values in the specified entity column
+        self.entities = all_entities  # entities are the unique values in specified entity column
 
         # Make the long form into flatform by having entities as columns
-        df2 = df.groupby('timestamp')['signal'].apply(
-            lambda group_series: group_series.tolist()).reset_index()
-        df2[all_entities] = pd.DataFrame(df2.signal.tolist(), index=df2.index)
-        to_remove = list(['signal'])
+        df = df.pivot(index='timestamp', columns='entity')['signal'].reset_index()
 
-        if entities is not None:  # Scenario 1b User specifies a certain entity from the entity column
-            to_remove = to_remove + list(all_entities)
+        # Scenario 1b User specifies certain entities from entity column
+        if entities is not None:
             entities = [entities] if isinstance(entities, str) else entities
+            to_remove = list(all_entities)
             to_remove = list(set(to_remove) - set(entities))  # Don't remove it
-            # to_remove.remove(entities)
             self.entities = entities
 
-        df = df2.drop(to_remove, axis=1)
+            df = df.drop(to_remove, axis=1)
 
-    elif signal is not None:  # Scenario 2: user specfies one signal
+    # Scenario 2: (flatform) user specifies one signal
+    elif signal is not None:
         self.entities = [signal]
         df = df.rename(columns={'signal': signal})
+        if True in df.duplicated('timestamp'):
+            raise ValueError('Multiple observations per timestamp')
 
-    else:  # Scenario 3 user specifies multiple entitiies but there is no entity column
+    # Scenario 3: (flatform) user specifies multiple entities but there is no entity column
+    else:
         self.entities = entities
         for entity in entities:
             df[entity] = data[[entity]]
 
+    # Convert to epoch time
     if df['timestamp'].dtypes != 'float' and df['timestamp'].dtypes != 'int':
         df['timestamp'] = pd.to_datetime(df['timestamp']).values.astype(np.int64) // 1e9
     df = df.sort_values('timestamp')
     self.freq = df['timestamp'][1] - df['timestamp'][0]
-    if isinstance(self.entities,str):
-        self.target_column=[0]
+    if isinstance(self.entities, str):
+        self.target_column = [0]
     else:
         self.target_column = list(range(len(self.entities)))
     return df
 
 
-def egest_data(self, test, prediction):
+def egest_data(test, prediction):
     if prediction.index.dtype == 'float' or prediction.index.dtype == 'int':
         prediction.index = pd.to_datetime(prediction.index.values * 1e9)
     else:
@@ -168,5 +164,4 @@ def egest_data(self, test, prediction):
 
     actual = test.set_index('timestamp')
     actual = actual[actual.index.isin(prediction.index)]
-    # prediction.columns = [self.entities]
     return actual, prediction

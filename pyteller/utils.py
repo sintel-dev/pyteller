@@ -1,10 +1,11 @@
+import os
 from datetime import datetime
 
-import pandas as pd
-import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
-import os
+import matplotlib.pyplot as plt
+import pandas as pd
 from pandas.plotting import register_matplotlib_converters
+
 register_matplotlib_converters()
 
 
@@ -26,8 +27,8 @@ def plot(dfs, output_path, labels=None):
     """
     if isinstance(dfs, pd.DataFrame):
         dfs = [dfs]
-    months = mdates.MonthLocator()  # every month
-    days = mdates.DayLocator()  # every day
+    # months = mdates.MonthLocator()  # every month
+    # days = mdates.DayLocator()  # every day
     hours = mdates.HourLocator()  # every day
 
     month_fmt = mdates.DateFormatter('%H')

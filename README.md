@@ -22,22 +22,6 @@ Time series forecasting using MLPrimitives
 
 pyteller is a time series forecasting library built with the end user in mind.
 
-## Leaderboard
-
-In this repository we maintain an up-to-date leaderboard with the current scoring of the
-pipelines according to the benchmarking procedure explained in the [benchmark documentation](
-benchmark/).
-
-The benchmark is run on many datasets and we record the number of wins each pipeline has over the
-baseline pipeline. Results obtained during benchmarking as well as previous releases can be
-found within [benchmark/results](/results) folder as CSV files. Results can also
-be browsed in the following Google [sheet](https://docs.google.com/spreadsheets/d/1Fqqs2T84AgAjM0OOABMMXm_CX8nkcoQxwnsMAh8YspA/edit?usp=sharing).
-
-
-| Pipeline                  |  Percent Outperforms Persistence |
-|---------------------------|--------------------|
-|                       |                   |
-
 
 ## Table of Contents
 
@@ -61,9 +45,9 @@ The expected input to pyteller pipelines is a .csv file with data in one of the 
 #### Option 1: Single Entity (Academic Form)
 The user must specify the following:
 * `timestamp_col`: the **string** denoting which column contains the **pandas timestamp** objects or **python datetime** objects corresponding to the time at which the observation is made
-* `target_column`: an **integer** or **float** column with the observed target values at the indicated timestamps
+* `target_signal`: an **integer** or **float** column with the observed target values at the indicated timestamps
 
-This is an example of such table, where the values are the number of NYC taxi passengers at the corresponding timestamp.
+This is an example of such table, where the `timestamp_col` is 'timestamp' and the `target_signal` is 'value'
 
 |  timestamp |     value |
 |------------|-----------|
@@ -73,21 +57,34 @@ This is an example of such table, where the values are the number of NYC taxi pa
 |7/1/14 1:30|	4656|
 |7/1/14 2:00|	3820|
 |7/1/14 2:30|	2873|
-|7/1/14 3:00|	2369|
-|7/1/14 3:30|	2064|
-|7/1/14 4:00|	2221|
-|7/1/14 4:30|	2158|
-|7/1/14 5:00|	2515|
+|
 
-#### Option 2: Multiple Entity-Instances (Flatform)
+#### Option 2: Multiple Entity (Flat Form)
+The user must specify the following:
+* `timestamp_col`: the **string** denoting which column contains the **pandas timestamp** objects or **python datetime** objects corresponding to the time at which the observation is made
+* `entities`: the **list** denoting the columns the user wants to make forecasts for
+
+
+This is an example of such table, where the `timestamp_col` is 'timestamp' and the `entities` can be ['taxi 1','taxi 3']
+
+|  timestamp |     taxi 1 |     taxi 2 |    taxi 3 |
+|------------|-----------|-----------| -----------|
+| 7/1/14 1:00 |  6210 |  510 |  6230 |
+| 7/1/14 1:30 | 4656| 5666|656|
+| 7/1/14 2:00 | 3820 | 2420 | 3650 |
+|7/1/14 1:30|	4656|	4664| 380 |
+|7/1/14 2:00|	3820|	3520| 320 |
+|7/1/14 2:30|	2873|	1373| 3640 |
+
+
+#### Option 3: Multiple Entity (Long Form)
 The user must specify the following:
 * `timestamp_col`: the **string** denoting which column contains the **pandas timestamp** objects or **python datetime** objects corresponding to the time at which the observation is made
 * `entity_col`: the **string** denoting which column contains the entities you will seperately make forecasts for
-* `target`: the **string** denoting which columns contain the observed target values that you want to forecast for
-* `dynamic_variable`: the **string** denoting which columns contain other input time series that will help the forecast
-* `static_variable`: the **string** denoting which columns are a static varibles
+* `target_signal`: the **string** denoting which columns contain the observed target value that you want to forecast for
 
-This is an example of such table, where the `timestamp_col` is 'timestamp', the `entity_col` is 'region',  the `target` is 'demand,' and the  `dynamic_variable` are 'Temp' and 'Rain':
+
+This is an example of such table, where the `timestamp_col` is 'timestamp', the `entity_col` is 'region', and the `target_signal` is 'demand'.
 
 
 
@@ -101,51 +98,6 @@ This is an example of such table, where the `timestamp_col` is 'timestamp', the 
 | 9/27/20 21:25 |DEOK| 2880.2 | 75.92|	0|
 | 9/27/20 21:25| DOM| 11211.7 | 55.54|	0|
 |9/27/20 21:25|DPL| 2086.6| 75.02|	0.06|
-
-
-#### Option 3: Multiple Entity-Instances: Longform
-The user must specify the following:
-* `timestamp_col`: the **string** denoting which column contains the **pandas timestamp** objects or **python datetime** objects corresponding to the time at which the observation is made
-* `entity_col`: the **string** denoting which column contains the entities you will seperately make forecasts for
-* `variable_col`: the **string** denoting which column contains the names of the observed variables
-* `target`: the **string** denoting which variable names are the observed target values in the `variable_col` that you want to forecast for
-* `dynamic_variable`: the **string** denoting which variable names are other input time series in the `variable_col` that will help the forecast
-* `static_variable`: the **string** denoting which variable names are static varibles in the `variable_col`
-* `value_col`: the **string** denoting which column contains the values of the observations of the `variable_col`
-
-This is an example of such table, where the `timestamp_col` is 'timestamp', the `entity_col` is 'region', the `variable_col` is 'var_name', the `target` is 'demand,' the  `dynamic_variable` are 'Temp' and 'Rain', and the `value_col` is 'value':
-
-
-
- |  timestamp | region  |   var_name |   value |
-|------------|------------|-----------| -----------|
- |9/27/20 21:20 |  DAYTON|demand | 1841.6|
- |9/27/20 21:20 | DAYTON|Temp | 65.78|
- |9/27/20 21:20 | DAYTON|Temp | 0|
- |9/27/20 21:20 |DEOK| demand | 2892.5|
- |9/27/20 21:20  | DEOK|Temp |75.92|
- |9/27/20 21:20  |DEOK| Rain |0|
- |9/27/20 21:20 | DOM|demand| 11276|
- |9/27/20 21:20 | DOM| Temp | 55.29|
- |9/27/20 21:20 |DOM| Rain| 0|
-|9/27/20 21:20| DPL|demand| 2113.7|
- |9/27/20 21:20 | DPL| Temp | 75.02|
- |9/27/20 21:20 |DPL| Rain| 0.06|
- |9/27/20 21:25 |  DAYTON|demand | 1834.1|
- |9/27/20 21:25 | DAYTON|Temp | 65.72|
- |9/27/20 21:25 | DAYTON|Temp | 0|
- |9/27/20 21:25 |DEOK| demand | 2880.2|
- |9/27/20 21:25  | DEOK|Temp |75.92|
- |9/27/20 21:25  |DEOK| Rain |0|
- |9/27/20 21:25 | DOM|demand| 11211.7|
- |9/27/20 21:25 | DOM| Temp | 55.54|
- |9/27/20 21:25 |DOM| Rain| 0|
-|9/27/20 21:25| DPL|demand| 2086.6|
- |9/27/20 21:25 | DPL| Temp | 75.02|
- |9/27/20 21:25 |DPL| Rain| 0.06|
-
-
-
 
 
 ## Output
@@ -282,8 +234,6 @@ pyteller = Pyteller (
     pipeline='persistence',
     pred_length=3,
     offset=5,
-    goal=None,
-    goal_window=None
 )
 ```
 
@@ -293,20 +243,10 @@ The user now calls the `pyteller.fit` method to fit the data to the pipeline. Th
 pyteller.fit(
     data=current_data,
     timestamp_col='valid',
-    target_signals='tmpf',
-    static_variables=None,
-    entity_col='station',
-    train_size=.75)
+    target_signal='tmpf',
+    entity_col='station')
 ```
 
-
-The output of the fitting process are print statements of the loss on the training data for each entity:
-```python3
-training MAE for entity  4A6 :  0.6000000000000002
-training MAE for entity  8A0 :  1.1999999999999993
-The pipeline is fitted
-
-```
 
 ## 3. Save the trained model
 At this point, the user has a trained model that can be pickled by calling the `pyteller.save` method, inputting the desired output path:
@@ -330,26 +270,13 @@ forecast = pyteller.forecast(input_data)
 The output is a dataframe of all the predictions:
 
 ```python3
- timestamp     signal_tmpf    entity
- 2/4/16 18:15    42.800        8A0
- 2/4/16 18:35    42.800        8A0
- 2/4/16 18:55    42.800        8A0
- 2/4/16 18:15    46.400        4A6
- 2/4/16 18:35    46.400        4A6
- 2/4/16 18:55    46.400        4A6
+ timestamp        8A0            4A6
+ 2/4/16 18:15    42.800        44.800
+ 2/4/16 18:35    42.800        42.600
+ 2/4/16 18:55    44.800        43.000
 
-```
-and a print statement of a summary of the forecast:
-```python3
-Forecast Summary:
-	Signal predicted: ['tmpf']
-	Entities predicted: {'4A6': '2/4/16 18:15 to 2/4/16 18:55', '8A0': '2/4/16 18:15 to 2/4/16 18:55'}
-	Pipeline: : persistence
-	Offset: : 5
-	Prediction length: : 3
-	Prediction goal: : None
 
-```
+
 
 
 

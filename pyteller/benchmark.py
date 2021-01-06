@@ -1,13 +1,15 @@
-import os
-import json
 import ast
-from pyteller.evaluation import METRICS_NORM as METRICS
-from functools import partial
-import pandas as pd
+import json
 import logging
+import os
+from functools import partial
+
+import pandas as pd
+
 from pyteller.analysis import _load_pipeline
-from pyteller.data import load_signal
-from pyteller.core import Pyteller
+from pyteller.core import Pyteller, egest_data
+from pyteller.evaluation import METRICS_NORM as METRICS
+
 LOGGER = logging.getLogger(__name__)
 
 PIPELINE_DIR = os.path.join(os.path.dirname(__file__), 'pipelines', 'verified')
@@ -53,10 +55,10 @@ def _load_signal(dataset, columns, holdout):
     # TODO: make this a spread sheet in s3 bucket and make it so the user can input signal
     # meta_path = os.path.join(os.path.dirname(__file__), 'data', dataset + '.json')
     # with open(meta_path) as f:
-    #     columns = json.load(f)
-    #columns = META_DATA.loc[dataset].to_dict()
+    # columns = json.load(f)
+    # columns = META_DATA.loc[dataset].to_dict()
 
-    train, test = load_signal(dataset, column_dict=columns.to_dict())
+    train, test = egest_data(dataset, column_dict=columns.to_dict())
 
     return train, test
 
@@ -113,10 +115,7 @@ def _evaluate_pipeline(pipeline, pipeline_name, dataset, columns, hyperparameter
         with open(hyperparameter) as f:
             hyperparameter = json.load(f)
 
-    if distributed:
-        function = dask.delayed(_evaluate_signal)
-    else:
-        function = _evaluate_signal
+    function = _evaluate_signal
 
     scores = list()
 # TODO Fix
@@ -175,13 +174,7 @@ def _evaluate_datasets(pipelines, datasets, hyperparameters, metrics, distribute
             pipelines, dataset, columns, hyperparameters_, metrics, distributed, holdout, detrend)
 
         delayed.extend(result)
-
-    if distributed:
-        persisted = dask.persist(*delayed)
-        results = dask.compute(*persisted)
-
-    else:
-        results = delayed
+    results = delayed
 
     df = pd.concat(results)
     # return results[0]

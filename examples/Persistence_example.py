@@ -17,7 +17,7 @@ pyteller.fit(
     target_signal='tmpf',
     # static_variables=None,
     entity_col='station',
-    entities='8A0'
+    # entities='8A0'
     )
 
 input_data=load_data('pyteller/data/AL_Weather_input.csv')
