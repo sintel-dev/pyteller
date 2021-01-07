@@ -5,6 +5,7 @@
         "sklearn.impute.SimpleImputer",
         "mlprimitives.custom.preprocessing.Rangescaler",
         "pyteller.primitives.preprocessing.rolling_window_sequences",
+        "numpy.squeeze",
         "keras.Sequential.LSTMTimeSeriesRegressor",
         "mlprimitives.custom.preprocessing.RangeUnscaler",
         "pyteller.primitives.postprocessing.flatten"
@@ -28,6 +29,9 @@
         "mlprimitives.custom.preprocessing.RangeUnscaler#1": {
             "X": "y_hat"
         },
+        "numpy.squeeze#1": {
+            "X": "y"
+        },
         "pyteller.primitives.postprocessing.flatten#1": {
             "X": "y_hat",
             "index": "target_index",
@@ -36,7 +40,9 @@
     },
 
     "output_names": {
-
+        "numpy.squeeze#1": {
+            "X": "y"
+        },
         "keras.Sequential.LSTMTimeSeriesRegressor#1": {
             "y": "y_hat"
         },
