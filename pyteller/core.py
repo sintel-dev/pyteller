@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """Main module."""
+import logging
 import json
 import os
 import pickle
@@ -9,9 +10,9 @@ import pandas as pd
 import numpy as np
 from mlblocks import MLPipeline
 
-# from pyteller.data import egest_data, ingest_data
 from pyteller.metrics import METRICS
 
+LOGGER = logging.getLogger(__name__)
 
 class Pyteller:
     def _load_pipeline(self, pipeline, hyperparams=None):
@@ -65,26 +66,15 @@ class Pyteller:
             mlpipeline.set_hyperparameters(self._hyperparameters)
         return mlpipeline
 
-    def __init__(self,
-                 pipeline=None,
-                 hyperparameters=None,
-                 pred_length=None,
-                 offset=None):
+    def __init__(self, pipeline=None, hyperparameters=None, pred_length=None, offset=None):
         self._pipeline = pipeline
         self._hyperparameters = hyperparameters
         self.pred_length = pred_length
         self.offset = offset
         self._fitted = False
 
-    def fit(self,
-            data=None,
-            timestamp_col=None,
-            target_signal=None,
-            static_variables=None,
-            entity_col=None,
-            entities=None,
-            train_size=None
-            ):
+    def fit(self, data=None, timestamp_col=None, target_signal=None, static_variables=None,
+            entity_col=None, entities=None, train_size=None):
         """Fit the pipeline to the given data.
 
         Args:
@@ -116,7 +106,7 @@ class Pyteller:
                              )
 
         self._fitted = True
-        print('The pipeline is fitted')
+        LOGGER.info('The pipeline is fitted')
 
     def forecast(self, data=None):
         """Forecast input data on a trained model.
@@ -151,11 +141,7 @@ class Pyteller:
 
         return actual, prediction
 
-    def evaluate(self, forecast,
-                 train_data=None,
-                 test_data=None,
-                 detailed=False,
-                 metrics=METRICS):
+    def evaluate(self, forecast, train_data=None, test_data=None, detailed=False, metrics=METRICS):
         """Evaluate the performance against test set
 
         Args:
@@ -241,15 +227,9 @@ class Pyteller:
 
             return pyteller
 
-def ingest_data(self,
-                data,
-                timestamp_col=None,
-                entity_col=None,
-                entities=None,
-                signal=None,
-                dynamic_variables=None,
-                static_variables=None,
-                ):
+def ingest_data(self, data, timestamp_col=None, entity_col=None, entities=None, signal=None,
+                dynamic_variables=None, static_variables=None):
+
     # Fix if the user specified multiple targets. They should be specified as multiple entities
     entities = signal if isinstance(signal, list) else entities
     signal = None if isinstance(signal, list) else signal

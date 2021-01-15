@@ -1,3 +1,11 @@
+#Set up logging
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logging.getLogger().setLevel(level=logging.ERROR)
+logging.getLogger('pyteller').setLevel(level=logging.INFO)
+
+
 # Load the dataset from a dataset on the s3 bucket, or in this example the local file path
 from pyteller.data import load_data
 current_data = load_data('pyteller/data/AL_Weather_current.csv')

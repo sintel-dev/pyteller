@@ -7,7 +7,6 @@ from functools import partial
 from mlblocks import MLPipeline
 import pandas as pd
 
-from pyteller.analysis import _load_pipeline
 from pyteller.core import Pyteller, egest_data
 from pyteller.metrics import METRICS
 
