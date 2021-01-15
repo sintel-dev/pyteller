@@ -15,6 +15,22 @@ from pyteller.metrics import METRICS
 LOGGER = logging.getLogger(__name__)
 
 class Pyteller:
+
+    """Pyteller Class.
+    The Pyteller Class provides the time series forecasting functionalities
+    of pyteller and is responsible for the interaction with the underlying
+    MLBlocks pipelines.
+    Args:
+        pipeline (str, dict or MLPipeline):
+            Pipeline to use. It can be passed as:
+                * An ``str`` with a path to a JSON file.
+                * An ``str`` with the name of a registered pipeline.
+                * An ``MLPipeline`` instance.
+                * A ``dict`` with an ``MLPipeline`` specification.
+        hyperparameters (dict):
+            Additional hyperparameters to set to the Pipeline.
+    """
+
     def _load_pipeline(self, pipeline, hyperparams=None):
         if isinstance(pipeline, str) and os.path.isfile(pipeline):
             pipeline = MLPipeline.load(pipeline)
@@ -43,14 +59,17 @@ class Pyteller:
                     dict = pipeline['init_params'][i]
                 else:
                     dict = {}
+
                 dict[pred_length_primitives[i]] = self.pred_length
                 pipeline['init_params'][i] = dict
+
             offset_primitives = pipeline_args['offset']
             for i in offset_primitives:
                 if i in pipeline['init_params'].keys():
                     dict = pipeline['init_params'][i]
                 else:
                     dict = {}
+
                 dict[offset_primitives[i]] = self.offset
                 pipeline['init_params'][i] = dict
             target_col_primitives = pipeline_args['target_column']
@@ -59,11 +78,14 @@ class Pyteller:
                     dict = pipeline['init_params'][i]
                 else:
                     dict = {}
+
                 dict[target_col_primitives[i]] = self.target_column
                 pipeline['init_params'][i] = dict
+
         mlpipeline = MLPipeline(pipeline)
         if self._hyperparameters:
             mlpipeline.set_hyperparameters(self._hyperparameters)
+
         return mlpipeline
 
     def __init__(self, pipeline=None, hyperparameters=None, pred_length=None, offset=None):
@@ -171,6 +193,7 @@ class Pyteller:
             metrics = [metrics]
         for metric in metrics:
             metrics_[metric] = METRICS[metric]
+
         scores = list()
 
         if isinstance(self.entities, str):
@@ -188,6 +211,7 @@ class Pyteller:
                 score['prediction length'] = forecast.shape[0]
                 score['length of training data'] = len(train_data.get_group(entity))
                 score['length of testing data'] = len(test_data.get_group(entity))
+
             scores.append(score)
 
         return pd.DataFrame(scores, index=self.entities).transpose()
@@ -263,7 +287,6 @@ def ingest_data(self, data, timestamp_col=None, entity_col=None, entities=None, 
             to_remove = list(all_entities)
             to_remove = list(set(to_remove) - set(entities))  # Don't remove it
             self.entities = entities
-
             df = df.drop(to_remove, axis=1)
 
     # Scenario 2: (flatform) user specifies one signal
@@ -282,12 +305,14 @@ def ingest_data(self, data, timestamp_col=None, entity_col=None, entities=None, 
     # Convert to epoch time
     if df['timestamp'].dtypes != 'float' and df['timestamp'].dtypes != 'int':
         df['timestamp'] = pd.to_datetime(df['timestamp']).values.astype(np.int64) // 1e9
+
     df = df.sort_values('timestamp')
     self.freq = df['timestamp'][1] - df['timestamp'][0]
     if isinstance(self.entities, str):
         self.target_column = [0]
     else:
         self.target_column = list(range(len(self.entities)))
+        
     return df
 
 
