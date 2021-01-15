@@ -66,16 +66,10 @@ def download(name, test_size=None, data_path=DATA_PATH):
     return data
 
 
-def load_csv(path):
-    data = pd.read_csv(path)
-
-    return pd.DataFrame(data)
-
-
 def load_data(data):
 
     if os.path.isfile(data):
-        data = load_csv(data)
+        data = pd.read_csv(data)
     else:
         data = download(data)
     return data

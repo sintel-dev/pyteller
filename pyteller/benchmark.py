@@ -4,11 +4,12 @@ import logging
 import os
 from functools import partial
 
+from mlblocks import MLPipeline
 import pandas as pd
 
 from pyteller.analysis import _load_pipeline
 from pyteller.core import Pyteller, egest_data
-from pyteller.evaluation import METRICS_NORM as METRICS
+from pyteller.metrics import METRICS
 
 LOGGER = logging.getLogger(__name__)
 
@@ -258,6 +259,16 @@ def benchmark(pipelines=None, datasets=None, hyperparameters=None, metrics=METRI
 
     return _sort_leaderboard(results, rank, metrics)
 
+def _load_pipeline(pipeline, hyperparams=None):
+    if isinstance(pipeline, str) and os.path.isfile(pipeline):
+        pipeline = MLPipeline.load(pipeline)
+    else:
+        pipeline = MLPipeline(pipeline)
+
+    if hyperparams is not None:
+        pipeline.set_hyperparameters(hyperparams)
+
+    return pipeline
 
 def main():
     # output path
