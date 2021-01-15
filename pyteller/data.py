@@ -15,7 +15,7 @@ BUCKET = 'pyteller'
 S3_URL = 'https://{}.s3.amazonaws.com/{}'
 
 
-def download(name, test_size=None, data_path=DATA_PATH):
+def download(name, data_path=DATA_PATH):
     """Load the CSV with the given name from S3.
 
     If the CSV has never been loaded before, it will be downloaded
@@ -27,19 +27,12 @@ def download(name, test_size=None, data_path=DATA_PATH):
     Otherwise, if it has been downloaded and cached before, it will be directly
     loaded from the `pyteller/data` folder without contacting S3.
 
-    If a `test_size` value is given, the data will be split in two parts
-    without altering its order, making the second one proportionally as
-    big as the given value.
-
     Args:
         name (str): Name of the CSV to load.
-        test_size (float): Value between 0 and 1 indicating the proportional
-            size of the test split. If 0 or None (default), the data is not split.
 
     Returns:
-        If no test_size is given, a single pandas.DataFrame is returned containing all
-        the data. If test_size is given, a tuple containing one pandas.DataFrame for
-        the train split and another one for the test split is returned.
+        A single pandas.DataFrame is returned containing all
+        the data.
     """
 
     url = None
