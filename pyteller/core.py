@@ -10,7 +10,7 @@ import numpy as np
 from mlblocks import MLPipeline
 
 # from pyteller.data import egest_data, ingest_data
-from pyteller.evaluation import METRICS_NORM as METRICS
+from pyteller.metrics import METRICS
 
 
 class Pyteller:
