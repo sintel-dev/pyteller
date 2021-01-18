@@ -35,9 +35,7 @@ def plot(dfs, output_path=None, labels=['actual', 'predicted'], frequency=None):
     """
     if isinstance(dfs, pd.DataFrame):
         dfs = [dfs]
-    months = mdates.MonthLocator()  # every month
-    days = mdates.DayLocator()  # every day
-    hours = mdates.HourLocator()  # every day
+
     freq_dict = {
         'hour': '%H',
         "day": "%D",
