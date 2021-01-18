@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+import logging
 
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
@@ -16,22 +17,36 @@ def convert_date(timelist):
     return converted
 
 
-def plot(dfs, output_path, labels=None):
+def plot(dfs, output_path=None, labels=['actual','predicted'], frequency=None):
     """ Line plot for time series.
 
     This function plots time series
     Args:
-        dfs (list or `pd.DataFrame`): List of time series in `pd.DataFrame`.
+        dfs (list or `pd.DataFrame`):
+            List of time series in `pd.DataFrame`.
             Or a single dataframe. All dataframes must have the same shape.
+        output_path (string):
+            Optional. String of the path to save the figure
+        labels (list of strings):
+            Optional. List of strings for the legend entries. Default is ['actual','predicted']
+        frequency (string):
+            Optional. String of what frequency of tick marks for the x axis.
 
     """
     if isinstance(dfs, pd.DataFrame):
         dfs = [dfs]
-    # months = mdates.MonthLocator()  # every month
-    # days = mdates.DayLocator()  # every day
+    months = mdates.MonthLocator()  # every month
+    days = mdates.DayLocator()  # every day
     hours = mdates.HourLocator()  # every day
-
-    month_fmt = mdates.DateFormatter('%H')
+    freq_dict = {
+        'hour': '%H',
+        "day" :"%D",
+        "month" :"%M",
+    }
+    freq= freq_dict[frequency]
+    if frequency == None:
+        freq="%H"
+    tik_fmt = mdates.DateFormatter(freq)
 
     fig = plt.figure(figsize=(30, 6))
     ax = fig.add_subplot(111)
@@ -39,30 +54,22 @@ def plot(dfs, output_path, labels=None):
     for df in dfs:
         plt.plot(df.index, df.iloc[:, 0] / 100, linewidth=3)
 
-    plt.title('Normalized Demand', size=34)
+    plt.title('Predicted and Actual', size=34)
     plt.ylabel('', size=30)
     plt.xlabel('Hour', size=30)
     plt.xticks(size=26)
     plt.yticks(size=26)
-    # plt.xlim([time[0], time[-1]])
 
-    # format xticks
-    ax.xaxis.set_major_locator(hours)
-    ax.xaxis.set_major_formatter(month_fmt)
-    # ax.xaxis.set_minor_locator(days)
+    ax.xaxis.set_major_formatter(tik_fmt)
 
-    # format yticks
-    # ylabels = ['{:,.0f}'.format(x) + 'K' for x in ax.get_yticks() / 1000]
-    # ax.set_yticklabels(ylabels)
 
     if labels:
         plt.legend(labels=labels, loc=1, prop={'size': 26})
-    os.path.join('figs', output_path)
-    plt.savefig('figs/lstm.png')
+
+    if output_path:
+        os.path.join('figs', output_path)
+        plt.savefig('figs/lstm.png')
     plt.show()
-
-import logging
-
 
 def logging_setup(verbosity=1, logfile=None, logger_name=None):
     logger = logging.getLogger(logger_name)

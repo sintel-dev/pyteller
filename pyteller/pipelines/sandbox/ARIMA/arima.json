@@ -6,7 +6,7 @@
         "pyteller.primitives.preprocessing.rolling_window_sequences",
         "numpy.squeeze",
         "statsmodels.tsa.arima_model.Arima",
-         "pyteller.primitives.postprocessing.flatten"
+        "pyteller.primitives.postprocessing.flatten"
     ],
     "init_params": {
         "pyteller.primitives.preprocessing.rolling_window_sequences#1": {
