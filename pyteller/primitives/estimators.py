@@ -5,6 +5,7 @@ from sklearn.metrics import mean_absolute_error
 
 LOGGER = logging.getLogger(__name__)
 
+
 class persistence:
 
     """Persistence Estimator.
@@ -26,8 +27,7 @@ class persistence:
         for i in range(X.shape[2]):
             pred, y_ = preds[:, :, i], y[:, :, i]
             val += mean_absolute_error(y_, pred)
-        LOGGER.info('training MAE: %1f' % (val/ X.shape[2]))
-
+        LOGGER.info('training MAE: %1f' % (val / X.shape[2]))
 
     def predict(self, X):
         preds = np.repeat(X[:, [-1]], self.pred_length, axis=1)

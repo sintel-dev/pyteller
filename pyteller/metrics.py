@@ -1,5 +1,5 @@
 import numpy as np
-from sklearn.metrics import mean_squared_error, mean_absolute_error
+from sklearn.metrics import mean_absolute_error, mean_squared_error
 
 
 def root_mean_square_error(testing_series, prediction_series):
@@ -75,7 +75,6 @@ def under_pred(y, y_hat):
 
 def over_pred(y, y_hat):
     return np.sum(np.where(y <= y_hat, y_hat - y, 0))
-
 
 
 METRICS = {

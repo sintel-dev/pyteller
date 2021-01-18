@@ -1,6 +1,6 @@
+import logging
 import os
 from datetime import datetime
-import logging
 
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
@@ -17,7 +17,7 @@ def convert_date(timelist):
     return converted
 
 
-def plot(dfs, output_path=None, labels=['actual','predicted'], frequency=None):
+def plot(dfs, output_path=None, labels=['actual', 'predicted'], frequency=None):
     """ Line plot for time series.
 
     This function plots time series
@@ -40,12 +40,12 @@ def plot(dfs, output_path=None, labels=['actual','predicted'], frequency=None):
     hours = mdates.HourLocator()  # every day
     freq_dict = {
         'hour': '%H',
-        "day" :"%D",
-        "month" :"%M",
+        "day": "%D",
+        "month": "%M",
     }
-    freq= freq_dict[frequency]
-    if frequency == None:
-        freq="%H"
+    freq = freq_dict[frequency]
+    if frequency is None:
+        freq = "%H"
     tik_fmt = mdates.DateFormatter(freq)
 
     fig = plt.figure(figsize=(30, 6))
@@ -62,7 +62,6 @@ def plot(dfs, output_path=None, labels=['actual','predicted'], frequency=None):
 
     ax.xaxis.set_major_formatter(tik_fmt)
 
-
     if labels:
         plt.legend(labels=labels, loc=1, prop={'size': 26})
 
@@ -70,6 +69,7 @@ def plot(dfs, output_path=None, labels=['actual','predicted'], frequency=None):
         os.path.join('figs', output_path)
         plt.savefig('figs/lstm.png')
     plt.show()
+
 
 def logging_setup(verbosity=1, logfile=None, logger_name=None):
     logger = logging.getLogger(logger_name)

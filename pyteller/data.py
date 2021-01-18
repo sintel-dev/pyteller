@@ -1,7 +1,6 @@
 import logging
 import os
 
-import numpy as np
 import pandas as pd
 
 LOGGER = logging.getLogger(__name__)
@@ -66,5 +65,3 @@ def load_data(data):
     else:
         data = download(data)
     return data
-
-
