@@ -113,7 +113,7 @@ class Pyteller:
                 exactly tw o columns: timestamp and value.
         """
 
-        if ingested_data == False:
+        if ingested_data is False:
             train = ingest_data(self, data=data)
         else:
             train = data
@@ -142,7 +142,7 @@ class Pyteller:
                 A tuple containing the input data followed by the predictions which both contain
                 values only at the same timestamps
         """
-        if ingested_data == False:
+        if ingested_data is False:
             test = ingest_data(self, data=data)
         else:
             test = data
