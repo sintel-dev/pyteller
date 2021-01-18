@@ -4,8 +4,8 @@ import logging
 import os
 from functools import partial
 
-from mlblocks import MLPipeline
 import pandas as pd
+from mlblocks import MLPipeline
 
 from pyteller.core import Pyteller, egest_data
 from pyteller.metrics import METRICS
@@ -258,6 +258,7 @@ def benchmark(pipelines=None, datasets=None, hyperparameters=None, metrics=METRI
 
     return _sort_leaderboard(results, rank, metrics)
 
+
 def _load_pipeline(pipeline, hyperparams=None):
     if isinstance(pipeline, str) and os.path.isfile(pipeline):
         pipeline = MLPipeline.load(pipeline)
@@ -268,6 +269,7 @@ def _load_pipeline(pipeline, hyperparams=None):
         pipeline.set_hyperparameters(hyperparams)
 
     return pipeline
+
 
 def main():
     # output path

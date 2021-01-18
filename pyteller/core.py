@@ -1,18 +1,19 @@
 # -*- coding: utf-8 -*-
 
 """Main module."""
-import logging
 import json
+import logging
 import os
 import pickle
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 from mlblocks import MLPipeline
 
 from pyteller.metrics import METRICS
 
 LOGGER = logging.getLogger(__name__)
+
 
 class Pyteller:
 
@@ -111,7 +112,6 @@ class Pyteller:
                 Input data, passed as a ``pandas.DataFrame`` containing
                 exactly tw o columns: timestamp and value.
         """
-
 
         if ingested_data == False:
             train = ingest_data(self, data=data)
@@ -246,10 +246,11 @@ class Pyteller:
 
             return pyteller
 
+
 def ingest_data(self, data):
-    target_signal= self.target_signal
-    timestamp_col= self.timestamp_col
-    static_variables= self.static_variables
+    target_signal = self.target_signal
+    timestamp_col = self.timestamp_col
+    static_variables = self.static_variables
     entity_col = self.entity_cols
     entities = self.entities
 
