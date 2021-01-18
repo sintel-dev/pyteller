@@ -23,6 +23,7 @@ install_requires = [
     'scikit-learn>=0.20.1,<0.21',
     'tabulate>=0.8.3,<0.9',
     'Keras>=2.1.6,<2.4',
+    'h5py<=2.10.0'
 ]
 
 setup_requires = [
@@ -50,7 +51,7 @@ development_requires = [
     'ipython>=6.5,<7.5',
 
     # style check
-    'flake8>=3.7.7,<3.8',
+    'flake8>=3.7.7,<4',
     'isort>=4.3.4,<5',
 
     # fix style issues

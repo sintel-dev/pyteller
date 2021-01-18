@@ -88,37 +88,36 @@ class Pyteller:
 
         return mlpipeline
 
-    def __init__(self, pipeline=None, hyperparameters=None, pred_length=None, offset=None):
+    def __init__(self, timestamp_col, target_signal=None, static_variables=None,
+                 entity_col=None, entities=None, pipeline=None, hyperparameters=None,
+                 pred_length=None, offset=None):
+
         self._pipeline = pipeline
         self._hyperparameters = hyperparameters
         self.pred_length = pred_length
         self.offset = offset
         self._fitted = False
-
-    def fit(self, data=None, timestamp_col=None, target_signal=None, static_variables=None,
-            entity_col=None, entities=None, train_size=None):
-        """Fit the pipeline to the given data.
-
-        Args:
-            data (DataFrame):
-                Input data, passed as a ``pandas.DataFrame`` containing
-                exactly two columns: timestamp and value.
-        """
         self.target_signal = target_signal
         self.timestamp_col = timestamp_col
         self.static_variables = static_variables
         self.entity_cols = entity_col
         self.entities = entities
-        self.train_size = train_size
 
-        train = ingest_data(self,
-                            data=data,
-                            timestamp_col=self.timestamp_col,
-                            signal=self.target_signal,
-                            static_variables=self.static_variables,
-                            entity_col=self.entity_cols,
-                            entities=self.entities
-                            )
+    def fit(self, data, ingested_data=True):
+        """Fit the pipeline to the given data.
+
+        Args:
+            data (DataFrame):
+                Input data, passed as a ``pandas.DataFrame`` containing
+                exactly tw o columns: timestamp and value.
+        """
+
+
+        if ingested_data == False:
+            train = ingest_data(self, data=data)
+        else:
+            train = data
+
         self._mlpipeline = self._get_mlpipeline()
         self._mlpipeline.fit(X=train,
                              pred_length=self.pred_length,
@@ -130,7 +129,7 @@ class Pyteller:
         self._fitted = True
         LOGGER.info('The pipeline is fitted')
 
-    def forecast(self, data=None):
+    def forecast(self, data=None, ingested_data=True):
         """Forecast input data on a trained model.
 
         Args:
@@ -143,14 +142,10 @@ class Pyteller:
                 A tuple containing the input data followed by the predictions which both contain
                 values only at the same timestamps
         """
-        test = ingest_data(self,
-                           data=data,
-                           timestamp_col=self.timestamp_col,
-                           signal=self.target_signal,
-                           static_variables=self.static_variables,
-                           entity_col=self.entity_cols,
-                           entities=self.entities,
-                           )
+        if ingested_data == False:
+            test = ingest_data(self, data=data)
+        else:
+            test = data
 
         prediction = self._mlpipeline.predict(
             X=test,
@@ -251,18 +246,21 @@ class Pyteller:
 
             return pyteller
 
-def ingest_data(self, data, timestamp_col=None, entity_col=None, entities=None, signal=None,
-                dynamic_variables=None, static_variables=None):
+def ingest_data(self, data):
+    target_signal= self.target_signal
+    timestamp_col= self.timestamp_col
+    static_variables= self.static_variables
+    entity_col = self.entity_cols
+    entities = self.entities
 
     # Fix if the user specified multiple targets. They should be specified as multiple entities
-    entities = signal if isinstance(signal, list) else entities
-    signal = None if isinstance(signal, list) else signal
+    entities = target_signal if isinstance(target_signal, list) else entities
+    signal = None if isinstance(target_signal, list) else target_signal
 
     columns = {
         'signal': signal,
         'timestamp': timestamp_col,
         'entity': entity_col,
-        'dynamic_variable': dynamic_variables,
         'static_variable': static_variables
     }
     columns = {k: v for k, v in columns.items() if v is not None}
@@ -312,7 +310,7 @@ def ingest_data(self, data, timestamp_col=None, entity_col=None, entities=None, 
         self.target_column = [0]
     else:
         self.target_column = list(range(len(self.entities)))
-        
+
     return df
 
 
