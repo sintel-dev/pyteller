@@ -119,9 +119,9 @@ class Pyteller:
         outputs_spec = 'training'
 
         outputs = method(X=data, pred_length=self.pred_length, offset=self.offset,
-                         entities=self.entities, target_signal = self.target_signal,
-                         timestamp_col = self.timestamp_col,
-                         static_variables = self.static_variables, entity_col = self.entity_cols,
+                         entities=self.entities, target_signal=self.target_signal,
+                         timestamp_col=self.timestamp_col,
+                         static_variables=self.static_variables, entity_col=self.entity_cols,
                          target_column=None, output_=outputs_spec)
 
         if training_names:
@@ -158,15 +158,15 @@ class Pyteller:
             outputs_spec = 'visualization'
 
         outputs = method(X=data, pred_length=self.pred_length, offset=self.offset,
-                         entities=self.entities,target_signal = self.target_signal,
-                         timestamp_col = self.timestamp_col,
-                         static_variables = self.static_variables, entity_col = self.entity_cols,
+                         entities=self.entities, target_signal=self.target_signal,
+                         timestamp_col=self.timestamp_col,
+                         static_variables=self.static_variables, entity_col=self.entity_cols,
                          target_column=None, output_=outputs_spec)
 
         if visualization:
             if visualization_names:
                 visualization_outputs = outputs[-len(visualization_names):]
-                default_outputs = outputs[0:len(visualization_names)+1]
+                default_outputs = outputs[0:len(visualization_names) + 1]
                 names = visualization_names + default_names
                 outputs_ = visualization_outputs + default_outputs
                 visualization_dict = dict(zip(names, outputs_))
