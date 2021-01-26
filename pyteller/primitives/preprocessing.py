@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 
+
 def format_data(X, target_signal, timestamp_col, static_variables, entity_col, entities):
     # target_signal = self.target_signal
     # timestamp_col = self.timestamp_col
@@ -65,11 +66,10 @@ def format_data(X, target_signal, timestamp_col, static_variables, entity_col, e
         target_column = [0]
     else:
         target_column = list(range(len(entities_new)))
-    X=df
-    _X=X
-    entities=entities_new
+    X = df
+    _X = X
+    entities = entities_new
     return X, _X, freq, target_column, entities
-
 
 
 def get_index(X, time_column='timestamp'):

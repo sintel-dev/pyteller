@@ -6,7 +6,6 @@ import logging
 import os
 import pickle
 
-
 import pandas as pd
 from mlblocks import MLPipeline
 
@@ -31,6 +30,7 @@ class Pyteller:
         hyperparameters (dict):
             Additional hyperparameters to set to the Pipeline.
     """
+
     def _get_mlpipeline(self):
         pipeline = self._pipeline
         if isinstance(pipeline, str) and os.path.isfile(pipeline):
@@ -225,7 +225,6 @@ class Pyteller:
         with open(path, 'rb') as pickle_file:
             pyteller = pickle.load(pickle_file)
             return pyteller
-
 
     def evaluate(self, forecast, train_data=None, test_data=None, detailed=False, metrics=METRICS):
         """Evaluate the performance against test set
