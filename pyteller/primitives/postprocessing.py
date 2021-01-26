@@ -32,8 +32,29 @@ def flatten(X, pred_length, index, columns, freq):
     index = np.insert(index, 1, np.full((pred_length - 1, 1), freq), axis=1)
     index = np.cumsum(index, axis=1).flatten()
     if X.ndim == 3:
-        df = pd.DataFrame(data=X.reshape(-1, X.shape[-1]), index=index, columns=columns)
+        df = pd.DataFrame(data=X.reshape(-1, X.shape[-1]), index=index)
     else:
-        df = pd.DataFrame(data=X.flatten(), index=index, columns=columns)
+        df = pd.DataFrame(data=X.flatten(), index=index)
     df = df.groupby(df.index).mean()
+
     return df
+
+
+def reformat_data(X, _X):
+    forecast = X
+    test = _X
+    if forecast.index.dtype == 'float' or forecast.index.dtype == 'int':
+        forecast.index = pd.to_datetime(forecast.index.values * 1e9)
+    else:
+        forecast.index = pd.to_datetime(forecast.index)
+
+    if test['timestamp'].dtypes == 'float' or test['timestamp'].dtypes == 'int':
+        test['timestamp'] = pd.to_datetime(test['timestamp'] * 1e9)
+    else:
+        test['timestamp'] = pd.to_datetime(test['timestamp'])
+
+    actual = test.set_index('timestamp')
+    actual = actual[actual.index.isin(forecast.index)]
+    forecast.columns = actual.columns
+
+    return actual, forecast, _X

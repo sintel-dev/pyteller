@@ -1,0 +1,49 @@
+{
+    "name": "pyteller.primitives.postprocessing.reformat_data",
+    "contributors": [
+        "Skylar Eiskowitz <eiskowit@mit.edu>"
+    ],
+    "description": "Outputs correctly formatted data to view predictions",
+    "classifiers": {
+        "type": "postprocessor",
+        "subtype": "organize"
+    },
+    "modalities": [],
+    "primitive": "pyteller.primitives.postprocessing.reformat_data",
+    "produce": {
+        "args": [
+            {
+                "name": "X",
+                "type": "pandas.DataFrame"
+            },
+            {
+                "name": "_X",
+                "type": "Index or array-like"
+            }
+
+
+        ],
+        "output": [
+            {
+                "name": "actual",
+                "type": "pandas.DataFrame"
+            },
+            {
+                "name": "forecast",
+                "type": "pandas.DataFrame"
+            },
+            {
+                "name": "_X",
+                "type": "Index or array-like"
+            }
+        ]
+    },
+        "hyperparameters": {
+            "fixed": {
+
+            }
+
+        }
+    }
+
+

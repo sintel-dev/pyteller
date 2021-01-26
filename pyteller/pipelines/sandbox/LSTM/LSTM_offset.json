@@ -1,6 +1,7 @@
 
 {
     "primitives": [
+        "pyteller.primitives.preprocessing.format_data",
         "pyteller.primitives.preprocessing.get_index",
         "sklearn.impute.SimpleImputer",
         "mlprimitives.custom.preprocessing.Rangescaler",
@@ -8,7 +9,8 @@
         "numpy.squeeze",
         "keras.Sequential.LSTMTimeSeriesRegressor",
         "mlprimitives.custom.preprocessing.RangeUnscaler",
-        "pyteller.primitives.postprocessing.flatten"
+        "pyteller.primitives.postprocessing.flatten",
+        "pyteller.primitives.postprocessing.reformat_data"
 
     ],
 
@@ -26,16 +28,21 @@
         }
     },
     "input_names": {
-        "mlprimitives.custom.preprocessing.RangeUnscaler#1": {
-            "X": "y_hat"
-        },
         "numpy.squeeze#1": {
             "X": "y"
         },
+
+        "mlprimitives.custom.preprocessing.RangeUnscaler#1": {
+            "X": "y_hat"
+        },
+
         "pyteller.primitives.postprocessing.flatten#1": {
             "X": "y_hat",
             "index": "target_index",
             "columns": "entities"
+        },
+        "pyteller.primitives.postprocessing.reformat_data#1": {
+            "X": "y_hat"
         }
     },
 
@@ -55,16 +62,25 @@
            "X": "y_hat"
         }
     },
+
     "outputs": {
-    "default": [
-
-        {
-            "name": "y_hat",
-            "variable": "pyteller.primitives.postprocessing.flatten#1.y_hat"
-        }
-
-    ]
-},
+	    "default": [
+            {
+                "name": "forecast",
+                "variable": "pyteller.primitives.postprocessing.reformat_data#1.forecast"
+            },
+            {
+                "name": "actual",
+                "variable": "pyteller.primitives.postprocessing.reformat_data#1.actual"
+            }
+        ],
+        "training": [
+            {
+                "name": "train",
+                "variable": "pyteller.primitives.postprocessing.reformat_data#1._X"
+            }
+        ]
+    },
     "pipeline_arguments": {
         "pred_length": {
             "keras.Sequential.LSTMTimeSeriesRegressor#1": "dense_units",

@@ -1,12 +1,14 @@
 {
     "primitives": [
+        "pyteller.primitives.preprocessing.format_data",
         "pyteller.primitives.preprocessing.get_index",
         "sklearn.impute.SimpleImputer",
         "sklearn.preprocessing.MinMaxScaler",
         "pyteller.primitives.preprocessing.rolling_window_sequences",
         "numpy.squeeze",
         "statsmodels.tsa.arima_model.Arima",
-        "pyteller.primitives.postprocessing.flatten"
+        "pyteller.primitives.postprocessing.flatten",
+        "pyteller.primitives.postprocessing.reformat_data"
     ],
     "init_params": {
         "pyteller.primitives.preprocessing.rolling_window_sequences#1": {
@@ -21,13 +23,37 @@
             "X": "y",
             "index": "target_index",
             "columns": "entities"
+        },
+        "pyteller.primitives.postprocessing.reformat_data#1": {
+            "X": "y"
         }
     },
     "output_names": {
-        "statsmodels.tsa.arima_model.Arima#1": {
-            "y": "y_hat"
+        "pyteller.primitives.postprocessing.flatten#1": {
+            "X": "y"
         }
     },
+
+        "outputs": {
+	    "default": [
+            {
+                "name": "forecast",
+                "variable": "pyteller.primitives.postprocessing.reformat_data#1.forecast"
+            },
+            {
+                "name": "actual",
+                "variable": "pyteller.primitives.postprocessing.reformat_data#1.actual"
+            }
+        ],
+        "training": [
+            {
+                "name": "train",
+                "variable": "pyteller.primitives.postprocessing.reformat_data#1._X"
+            }
+        ]
+    },
+
+
 
     "pipeline_arguments": {
         "pred_length": {

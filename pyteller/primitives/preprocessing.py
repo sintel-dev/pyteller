@@ -1,6 +1,76 @@
 import numpy as np
 import pandas as pd
 
+def format_data(X, target_signal, timestamp_col, static_variables, entity_col, entities):
+    # target_signal = self.target_signal
+    # timestamp_col = self.timestamp_col
+    # static_variables = self.static_variables
+    # entity_col = self.entity_cols
+    # entities = self.entities
+
+    # Fix if the user specified multiple targets. They should be specified as multiple entities
+    entities = target_signal if isinstance(target_signal, list) else entities
+    signal = None if isinstance(target_signal, list) else target_signal
+
+    columns = {
+        'signal': signal,
+        'timestamp': timestamp_col,
+        'entity': entity_col,
+        'static_variable': static_variables
+    }
+    columns = {k: v for k, v in columns.items() if v is not None}
+
+    df = pd.DataFrame()
+    for key in columns:
+        df[key] = X[columns[key]]
+
+    # Scenario 1: (longform) user specifies entity column and target variable column
+    if 'entity' in columns:
+        df['entity'] = df['entity'].astype(str)  # Make all entities strings
+        all_entities = df.entity.unique()  # Find the unique values in the entity column
+        all_entities = [x for x in list(all_entities) if x != 'nan']
+        entities_new = all_entities  # entities are the unique values in specified entity column
+
+        # Make the long form into flatform by having entities as columns
+        df = df.pivot(index='timestamp', columns='entity')['signal'].reset_index()
+
+        # Scenario 1b User specifies certain entities from entity column
+        if entities is not None:
+            entities = [entities] if isinstance(entities, str) else entities
+            to_remove = list(all_entities)
+            to_remove = list(set(to_remove) - set(entities))  # Don't remove it
+            entities_new = entities
+            df = df.drop(to_remove, axis=1)
+
+    # Scenario 2: (flatform) user specifies one signal
+    elif signal is not None:
+        entities_new = [signal]
+        df = df.rename(columns={'signal': signal})
+        if True in df.duplicated('timestamp'):
+            raise ValueError('Multiple observations per timestamp')
+
+    # Scenario 3: (flatform) user specifies multiple entities but there is no entity column
+    else:
+        entities_new = entities
+        for entity in entities:
+            df[entity] = X[[entity]]
+
+    # Convert to epoch time
+    if df['timestamp'].dtypes != 'float' and df['timestamp'].dtypes != 'int':
+        df['timestamp'] = pd.to_datetime(df['timestamp']).values.astype(np.int64) // 1e9
+
+    df = df.sort_values('timestamp')
+    freq = df['timestamp'][1] - df['timestamp'][0]
+    if isinstance(entities_new, str):
+        target_column = [0]
+    else:
+        target_column = list(range(len(entities_new)))
+    X=df
+    _X=X
+    entities=entities_new
+    return X, _X, freq, target_column, entities
+
+
 
 def get_index(X, time_column='timestamp'):
     """Stores the index of an input time series in the context

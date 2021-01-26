@@ -1,11 +1,12 @@
 {
     "primitives": [
+        "pyteller.primitives.preprocessing.format_data",
         "pyteller.primitives.preprocessing.get_index",
         "sklearn.impute.SimpleImputer",
         "pyteller.primitives.preprocessing.rolling_window_sequences",
         "pyteller.primitives.estimators.persistence",
-         "pyteller.primitives.postprocessing.flatten"
-
+         "pyteller.primitives.postprocessing.flatten",
+        "pyteller.primitives.postprocessing.reformat_data"
     ],
 
 
@@ -24,7 +25,25 @@
         }
     },
 
+    "outputs": {
+	    "default": [
+            {
+                "name": "forecast",
+                "variable": "pyteller.primitives.postprocessing.reformat_data#1.forecast"
+            },
+            {
+                "name": "actual",
+                "variable": "pyteller.primitives.postprocessing.reformat_data#1.actual"
+            }
+        ],
 
+        "training": [
+            {
+                "name": "train",
+                "variable": "pyteller.primitives.postprocessing.reformat_data#1._X"
+            }
+        ]
+    },
 
     "pipeline_arguments": {
         "pred_length": {
@@ -44,3 +63,6 @@
     }
 
 }
+
+
+
