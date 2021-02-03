@@ -12,22 +12,16 @@ with open('HISTORY.md', encoding='utf-8') as history_file:
     history = history_file.read()
 
 install_requires = [
-    's3fs>=0.2.2,<0.5',
-    'baytune>=0.2.3,<=0.3',
-    'mlblocks>=0.3.0,<0.4',
-    'mlprimitives>=0.2.2,<0.3',
+    'baytune>=0.2.3,<0.3',
+    'mlblocks>=0.4.0,<0.5',
+    'mlprimitives>=0.3.0,<0.4',
     'mongoengine>=0.16.3,<0.17',
-    'numpy>=1.15.4,<1.17',
-    'pandas>=0.23.4,<0.25',
     'pymongo>=3.7.2,<4',
-    'scikit-learn>=0.20.1,<0.21',
     'tabulate>=0.8.3,<0.9',
-    'Keras>=2.1.6,<2.4',
-    'h5py<=2.10.0'
 ]
 
 setup_requires = [
-    'pytest-runner>=2.11.1'
+    'pytest-runner>=2.11.1',
 ]
 
 tests_require = [
@@ -51,7 +45,7 @@ development_requires = [
     'ipython>=6.5,<7.5',
 
     # style check
-    'flake8>=3.7.7,<4',
+    'flake8>=3.7.7,<3.8',
     'isort>=4.3.4,<5',
 
     # fix style issues
@@ -65,6 +59,9 @@ development_requires = [
     # Advanced testing
     'coverage>=4.5.1,<6',
     'tox>=2.9.1,<4',
+
+    # Documentation style
+    'pydocstyle==3.0.0,<4',
 ]
 
 setup(
@@ -110,3 +107,4 @@ setup(
     version='0.1.1.dev0',
     zip_safe=False,
 )
+
