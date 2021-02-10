@@ -3,10 +3,11 @@
         "pyteller.primitives.preprocessing.format_data",
         "pyteller.primitives.preprocessing.get_index",
         "sklearn.impute.SimpleImputer",
-        "sklearn.preprocessing.MinMaxScaler",
+        "mlprimitives.custom.preprocessing.Rangescaler",
         "pyteller.primitives.preprocessing.rolling_window_sequences",
         "numpy.squeeze",
         "statsmodels.tsa.arima_model.Arima",
+        "mlprimitives.custom.preprocessing.RangeUnscaler",
         "pyteller.primitives.postprocessing.flatten",
         "pyteller.primitives.postprocessing.reformat_data"
     ],
@@ -19,6 +20,12 @@
 
 
     "input_names": {
+
+
+        "mlprimitives.custom.preprocessing.RangeUnscaler#1": {
+            "X": "y"
+        },
+
         "pyteller.primitives.postprocessing.flatten#1": {
             "X": "y",
             "index": "target_index",
@@ -29,6 +36,11 @@
         }
     },
     "output_names": {
+
+        "mlprimitives.custom.preprocessing.RangeUnscaler#1": {
+            "X": "y"
+        },
+
         "pyteller.primitives.postprocessing.flatten#1": {
             "X": "y"
         }
