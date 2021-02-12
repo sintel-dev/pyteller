@@ -42,7 +42,8 @@ class Pyteller:
                 primitive_params = pipeline['init_params'][primitive]
 
             primitive_params[primitives[primitive]] = value
-            pipeline['init_params'][primitive].update(primitive_params)
+            pipeline['init_params'][primitive] = primitive_params
+            # pipeline['init_params'][primitive].update(primitive_params)
 
         return pipeline
 
@@ -83,6 +84,7 @@ class Pyteller:
         self.pred_length = pred_length
         self.offset = offset
 
+        self.pipeline=pipeline
         self._fitted = False
         self._hyperparameters = hyperparameters or {}
 
@@ -167,15 +169,12 @@ class Pyteller:
         default_dict = dict(zip(default_names, outputs))
         return default_dict
 
-    def evaluate(self, forecast, train_data, test_data, detailed=False, metrics=METRICS):
+    def evaluate(self, forecast, test_data, detailed=False, metrics=METRICS, train_data = None):
         """Evaluate the performance against test set
 
         Args:
             forecast (DataFrame):
                Forecasts, passed as a ``pandas.DataFrame`` containing
-                exactly two columns: timestamp and value.
-            train_data (DataFrame):
-               Training data used for some metrics, passed as a ``pandas.DataFrame`` containing
                 exactly two columns: timestamp and value.
             test_data (DataFrame):
                Testing data or the target data, passed as a ``pandas.DataFrame`` containing
@@ -185,6 +184,9 @@ class Pyteller:
             metrics (list):
                 List of metrics to used passed as a list of strings.
                 If not given, it defaults to all the pyteller metrics.
+            train_data (DataFrame):
+               Optional. Training data used for some metrics, passed as a ``pandas.DataFrame`` containing
+                exactly two columns: timestamp and value.
 
         Returns:
             DataFrame:
