@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 """Main module."""
-from copy import deepcopy
 import json
 import logging
 import os
 import pickle
+from copy import deepcopy
 
 import pandas as pd
 from mlblocks import MLPipeline
@@ -27,14 +27,15 @@ class Pyteller:
 
             Pipeline to use. It can be passed as:
 
-                * An ``str`` with a path to a JSON file.
-                * An ``str`` with the name of a registered pipeline.
+                * A ``str`` with a path to a JSON file.
+                * A ``str`` with the name of a registered pipeline.
                 * An ``MLPipeline`` instance.
                 * A ``dict`` with an ``MLPipeline`` specification.
 
         hyperparameters (dict):
             Additional hyperparameters to set to the Pipeline.
     """
+
     def _update_init_params(self, pipeline, primitives, value):
         for primitive in primitives:
             primitive_params = {}
@@ -84,7 +85,7 @@ class Pyteller:
         self.pred_length = pred_length
         self.offset = offset
 
-        self.pipeline=pipeline
+        self.pipeline = pipeline
         self._fitted = False
         self._hyperparameters = hyperparameters or {}
 
@@ -98,7 +99,7 @@ class Pyteller:
 
         return output_spec
 
-    def fit(self, data):
+    def fit(self, data=None, start_=None, output_=None, **kwargs):
         """Fit the pipeline to the given data.
 
         Args:
@@ -111,14 +112,19 @@ class Pyteller:
                 ``MLPipeline``
 
         """
+
+        if data is None:
+            data = kwargs['train'].pop('X')
+
+
         training_names = self._get_outputs_spec('training')
 
         outputs = self.pipeline.fit(X=data, pred_length=self.pred_length, offset=self.offset,
                                     entities=self.entities, target_signal=self.target_signal,
                                     timestamp_col=self.timestamp_col,
                                     static_variables=self.static_variables,
-                                    entity_col=self.entity_cols, target_column=None,
-                                    output_='training')
+                                    entity_col=self.entity_cols, target_column=None, start_=start_, #TODO Fix target column
+                                    output_=output_, **kwargs)
 
         self._fitted = True
         LOGGER.info('The pipeline is fitted')
@@ -169,7 +175,7 @@ class Pyteller:
         default_dict = dict(zip(default_names, outputs))
         return default_dict
 
-    def evaluate(self, forecast, test_data, detailed=False, metrics=METRICS, train_data = None):
+    def evaluate(self, forecast, test_data, detailed=False, metrics=METRICS, train_data=None):
         """Evaluate the performance against test set
 
         Args:
