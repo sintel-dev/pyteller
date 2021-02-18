@@ -6,7 +6,7 @@ from pyteller.utils import plot
 current_data = load_data('pyteller/data/AL_Weather_current.csv')
 
 # Specify pipeline and hyperparamters if any
-pipeline = 'pyteller/pipelines/sandbox/persistence/persistence.json'
+pipeline = 'pyteller/pipelines/sandbox/persistence/persistence_new_input.json'
 
 # Make instance of Pyteller, specifying where to make the prediction and the column names
 pyteller = Pyteller(

@@ -23,7 +23,9 @@ pyteller = Pyteller(
 # Fit the data to the pipeline.
 
 train = pyteller.fit(current_data, output_=0)
-pyteller.fit(**train, start_=1)
+# train = pyteller.fit(current_data, output_='training_data')
+# train = pyteller.fit(current_data, output_=0)
+pyteller.fit(**train)
 
 # Load the input_data
 input_data = load_data('pyteller/data/AL_Weather_input.csv')

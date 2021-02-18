@@ -73,11 +73,12 @@ class Pyteller:
 
         return pipeline
 
-    def __init__(self, pipeline, timestamp_col, target_signal=None,
+    def __init__(self, pipeline, timestamp_col, target_signal=None, target_signal_col=None,
                  static_variables=None, entity_col=None, entities=None,
                  hyperparameters=None, pred_length=None, offset=None):
 
         self.target_signal = target_signal
+        self.target_signal_column = target_signal_col
         self.timestamp_col = timestamp_col
         self.static_variables = static_variables
         self.entity_cols = entity_col
@@ -99,7 +100,7 @@ class Pyteller:
 
         return output_spec
 
-    def fit(self, data=None, start_=None, output_=None, **kwargs):
+    def fit(self, data=None, training_data=None, start_=None, output_=None, **kwargs):
         """Fit the pipeline to the given data.
 
         Args:
@@ -112,15 +113,22 @@ class Pyteller:
                 ``MLPipeline``
 
         """
+        if training_data:
+            # figure out the start_ step
+            start_ = 1
+            data = training_data
 
-        if data is None:
-            data = kwargs['train'].pop('X')
+        if kwargs:
+        # if data is None:
+            start_ = 1
+            data = kwargs[list(kwargs.keys())[0]].pop('X')
 
 
         training_names = self._get_outputs_spec('training')
 
         outputs = self.pipeline.fit(X=data, pred_length=self.pred_length, offset=self.offset,
                                     entities=self.entities, target_signal=self.target_signal,
+                                    target_signal_column = self.target_signal_column,
                                     timestamp_col=self.timestamp_col,
                                     static_variables=self.static_variables,
                                     entity_col=self.entity_cols, target_column=None, start_=start_, #TODO Fix target column
