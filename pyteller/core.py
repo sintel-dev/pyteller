@@ -74,7 +74,7 @@ class Pyteller:
 
     def __init__(self, pipeline, timestamp_col='timestamp', target_signal=None, target_signal_col=None,
                  static_variables=None, entity_col=None, entities=None,
-                  pred_length=None, offset=None, hyperparameters=None):
+                 pred_length=None, offset=None, hyperparameters=None):
 
         self.pipeline = pipeline
         self.timestamp_col = timestamp_col
@@ -121,20 +121,20 @@ class Pyteller:
 
         """
         if kwargs:
-            outputs = self.pipeline.fit(start_=start_,output_=output_,**kwargs)
+            outputs = self.pipeline.fit(start_=start_, output_=output_, **kwargs)
 
         else:
             outputs = self.pipeline.fit(X=data, pred_length=self.pred_length, offset=self.offset,
-                                    entities=self.entities, target_signal=self.target_signal,
-                                    target_column = self.target_signal_column,
-                                    timestamp_col=self.timestamp_col,
-                                    static_variables=self.static_variables,
-                                    entity_col=self.entity_cols, start_=start_,
-                                    output_=output_,**kwargs)
+                                        entities=self.entities, target_signal=self.target_signal,
+                                        target_column=self.target_signal_column,
+                                        timestamp_col=self.timestamp_col,
+                                        static_variables=self.static_variables,
+                                        entity_col=self.entity_cols, start_=start_,
+                                        output_=output_, **kwargs)
 
         self._fitted = True
         LOGGER.info('The pipeline is fitted')
-        if output_ or output_==0:
+        if output_ or output_ == 0:
             return outputs
 
     def forecast(self, data, visualization=False):
@@ -153,7 +153,7 @@ class Pyteller:
                 A dictionary containing the specified ``default`` and ``visualization`` output
                  from the ``MLPipeline``
         """
-        outputs_spec = ['default','visualization'] if visualization else 'default'
+        outputs_spec = ['default', 'visualization'] if visualization else 'default'
 
         default_names = self._get_outputs_spec('default')
         outputs = self.pipeline.predict(X=data, pred_length=self.pred_length, offset=self.offset,
