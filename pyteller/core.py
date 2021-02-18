@@ -72,8 +72,8 @@ class Pyteller:
 
         return pipeline
 
-    def __init__(self, pipeline, timestamp_col='timestamp', target_signal=None, target_signal_col=None,
-                 static_variables=None, entity_col=None, entities=None,
+    def __init__(self, pipeline, timestamp_col='timestamp', target_signal=None,
+                 target_signal_col=None, static_variables=None, entity_col=None, entities=None,
                  pred_length=None, offset=None, hyperparameters=None):
 
         self.pipeline = pipeline
