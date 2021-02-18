@@ -22,22 +22,19 @@ pyteller = Pyteller(
 
 # Fit the data to the pipeline.
 
-train = pyteller.fit(current_data, output_=0)
-# train = pyteller.fit(current_data, output_='training_data')
-# train = pyteller.fit(current_data, output_=0)
-pyteller.fit(**train)
+context = pyteller.fit(current_data, output_=0)
+train = context['X']
+pyteller.fit(start_=1, **context)
 
 # Load the input_data
 input_data = load_data('pyteller/data/AL_Weather_input.csv')
 
 # forecast and evaluate
-output = pyteller.forecast(data=input_data, visualization=False)
+output = pyteller.forecast(data=input_data, visualization=True)
 scores = pyteller.evaluate(
     test_data=output['actual'],
     forecast=output['forecast'],
-    metrics=[
-        'MAPE',
-        'sMAPE'])
+    metrics=['MAPE'])
 
 # plot
 plot([output['actual'].iloc[:, 0:1], output['forecast'].iloc[:, 0:1]], frequency='day')

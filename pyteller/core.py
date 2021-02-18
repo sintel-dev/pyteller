@@ -44,7 +44,6 @@ class Pyteller:
 
             primitive_params[primitives[primitive]] = value
             pipeline['init_params'][primitive] = primitive_params
-            # pipeline['init_params'][primitive].update(primitive_params)
 
         return pipeline
 
@@ -54,7 +53,7 @@ class Pyteller:
                 pipeline = json.load(json_file)
 
         elif isinstance(self.pipeline, MLPipeline):
-            pipeline = pipeline.to_dict()
+            pipeline = self.pipeline.to_dict()
 
         # Pipeline args are specified in all pyteller pipelines jsons and allow for
         # shared hyperparamters
@@ -73,20 +72,20 @@ class Pyteller:
 
         return pipeline
 
-    def __init__(self, pipeline, timestamp_col, target_signal=None, target_signal_col=None,
+    def __init__(self, pipeline, timestamp_col='timestamp', target_signal=None, target_signal_col=None,
                  static_variables=None, entity_col=None, entities=None,
-                 hyperparameters=None, pred_length=None, offset=None):
+                  pred_length=None, offset=None, hyperparameters=None):
 
+        self.pipeline = pipeline
+        self.timestamp_col = timestamp_col
         self.target_signal = target_signal
         self.target_signal_column = target_signal_col
-        self.timestamp_col = timestamp_col
         self.static_variables = static_variables
         self.entity_cols = entity_col
         self.entities = entities
         self.pred_length = pred_length
         self.offset = offset
 
-        self.pipeline = pipeline
         self._fitted = False
         self._hyperparameters = hyperparameters or {}
 
@@ -100,47 +99,43 @@ class Pyteller:
 
         return output_spec
 
-    def fit(self, data=None, training_data=None, start_=None, output_=None, **kwargs):
+    def fit(self, data=None, start_=None, output_=None, **kwargs):
         """Fit the pipeline to the given data.
 
         Args:
             data (DataFrame):
-                Input data, passed as a ``pandas.DataFrame`` containing
-                exactly two columns: timestamp and value.
+                Input data, passed as a ``pandas.DataFrame``
+            start_ (str or int or None):
+                Block index or block name to start processing from. The
+                value can either be an integer, which will be interpreted as a block index,
+                or the name of a block, including the conter number at the end.
+                If given, the execution of the pipeline will start on the specified block,
+                and all the blocks before that one will be skipped.
+            output_ (str or int or list or None):
+                Output specification, as required by ``get_outputs``. If ``None`` is given,
+                nothing will be returned.
         Returns:
             Dictionary:
                 Optional. A dictionary containing the specified ``training`` outputs from the
                 ``MLPipeline``
 
         """
-        if training_data:
-            # figure out the start_ step
-            start_ = 1
-            data = training_data
-
         if kwargs:
-        # if data is None:
-            start_ = 1
-            data = kwargs[list(kwargs.keys())[0]].pop('X')
+            outputs = self.pipeline.fit(start_=start_,output_=output_,**kwargs)
 
-
-        training_names = self._get_outputs_spec('training')
-
-        outputs = self.pipeline.fit(X=data, pred_length=self.pred_length, offset=self.offset,
+        else:
+            outputs = self.pipeline.fit(X=data, pred_length=self.pred_length, offset=self.offset,
                                     entities=self.entities, target_signal=self.target_signal,
-                                    target_signal_column = self.target_signal_column,
+                                    target_column = self.target_signal_column,
                                     timestamp_col=self.timestamp_col,
                                     static_variables=self.static_variables,
-                                    entity_col=self.entity_cols, target_column=None, start_=start_, #TODO Fix target column
-                                    output_=output_, **kwargs)
+                                    entity_col=self.entity_cols, start_=start_,
+                                    output_=output_,**kwargs)
 
         self._fitted = True
         LOGGER.info('The pipeline is fitted')
-        if training_names:
-            outputs_ = [outputs]
-            names = training_names
-            training_dict = dict(zip(names, outputs_))
-            return training_dict
+        if output_ or output_==0:
+            return outputs
 
     def forecast(self, data, visualization=False):
         """Forecast input data on a trained model.
@@ -158,7 +153,7 @@ class Pyteller:
                 A dictionary containing the specified ``default`` and ``visualization`` output
                  from the ``MLPipeline``
         """
-        outputs_spec = 'visualization' if visualization else 'default'
+        outputs_spec = ['default','visualization'] if visualization else 'default'
 
         default_names = self._get_outputs_spec('default')
         outputs = self.pipeline.predict(X=data, pred_length=self.pred_length, offset=self.offset,
@@ -183,7 +178,7 @@ class Pyteller:
         default_dict = dict(zip(default_names, outputs))
         return default_dict
 
-    def evaluate(self, forecast, test_data, detailed=False, metrics=METRICS, train_data=None):
+    def evaluate(self, forecast, test_data, detailed=False, metrics=METRICS):
         """Evaluate the performance against test set
 
         Args:
@@ -198,9 +193,6 @@ class Pyteller:
             metrics (list):
                 List of metrics to used passed as a list of strings.
                 If not given, it defaults to all the pyteller metrics.
-            train_data (DataFrame):
-               Optional. Training data used for some metrics, passed as a ``pandas.DataFrame`` containing
-                exactly two columns: timestamp and value.
 
         Returns:
             DataFrame:
@@ -232,7 +224,6 @@ class Pyteller:
             if detailed:
                 score['granularity'] = forecast.index[1] - forecast.index[0]
                 score['prediction length'] = forecast.shape[0]
-                score['length of training data'] = len(train_data.get_group(entity))
                 score['length of testing data'] = len(test_data.get_group(entity))
 
             scores.append(score)

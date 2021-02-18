@@ -15,10 +15,10 @@ install_requires = [
     'mlblocks>=0.4.0,<0.5',
     'mlprimitives>=0.3.0,<0.4',
     'pandas>=1,<2',
-    'mongoengine>=0.16.3,<0.17',
-    'pymongo>=3.7.2,<4',
     'numpy<1.19,>=1.17.1',
     'scikit-learn>=0.21',
+    'matplotlib<3.2.2,>=2.2.2'
+
 ]
 
 setup_requires = [

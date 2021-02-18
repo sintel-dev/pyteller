@@ -37,7 +37,7 @@
             }
         ],
 
-        "training": [
+        "visualization": [
             {
                 "name": "train",
                 "variable": "pyteller.primitives.postprocessing.reformat_data#1._X"

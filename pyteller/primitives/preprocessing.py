@@ -3,11 +3,6 @@ import pandas as pd
 
 
 def format_data(X, target_signal, timestamp_col, static_variables, entity_col, entities):
-    # target_signal = self.target_signal
-    # timestamp_col = self.timestamp_col
-    # static_variables = self.static_variables
-    # entity_col = self.entity_cols
-    # entities = self.entities
 
     # Fix if the user specified multiple targets. They should be specified as multiple entities
     entities = target_signal if isinstance(target_signal, list) else entities
@@ -170,69 +165,3 @@ def rolling_window_sequences(X, index, window_size, target_size, step_size, targ
         start = start + step_size
 
     return np.asarray((out_X)), np.asarray((out_y)), np.asarray(X_index), np.asarray(y_index)
-
-
-def format_data2(X, timestamp_col='timestamp', target_signal_column=None, target_signal=None,
-                 entity_col=None, entities=None):
-    """Format data into machine readible format.
-    Args:
-        X (pandas.DataFrame):
-            Array of input sequence.
-        timestamp_col (str or int):
-            Column denoting the timestamp column.
-        target_signal_column (str or int):
-            Column denoting the channel column.
-        target_signal (list):
-            Subset of channels to extract, If None, extract all channels.
-        entity_col (str or int):
-            Column denoting the entities column.
-        entities (list):
-            Subset of entities to extract. If None, extract all entities.
-    Returns:
-        pandas.DataFrame:
-            Formatted data into machine readible (timestamp, values).
-    Examples:
-        Input:
-            * multiple entity-instances, univariate
-                +-----------+------------+--------+
-                | entity_id | timestamp  |  value |
-                +-----------+------------+--------+
-                |   E1      | 1404165600 |  215   |
-                |   E2      | 1404165600 |  400   |
-                |   E1      | 1404166300 |  150   |
-                +-----------+------------+--------+
-            * multiple entity-instances, multivariate -- horizonal
-                +-----------+------------+------+------+------+
-                | entity_id | timestamp  |  v1  |  v2  |  v3  |
-                +-----------+------------+------+------+------+
-                |   E1      | 1404165600 |  15  |  37  |  48  |
-                |   E2      | 1404165600 |  20  |  30  |  20  |
-                |   E1      | 1404166300 |  34  |  97  |  23  |
-                +-----------+------------+------+------+------+
-            * multiple entity-instances, multivariate -- longform
-                +-----------+------------+------------+--------+
-                | entity_id | channel_id | timestamp  |  value |
-                +-----------+------------+------------+--------+
-                |   E1      |     C3     | 1404165600 |  215   |
-                |   E2      |     C1     | 1404165600 |  239   |
-                |   E1      |     C2     | 1404166300 |  134   |
-                +-----------+------------+------------+--------+
-        Output:
-            * A ``pandas.DataFrame`` with timestamp column and one or many value columns.
-    """
-    target_signal = target_signal or X.columns.drop(timestamp_col)
-    if isinstance(target_signal, str):
-        target_signal = [target_signal]
-    if isinstance(entities, str):
-        entities = [entities]
-    X = X.set_index(timestamp_col)
-    # check entities
-    if entity_col:
-        entities = entities or set(X[entity_col])
-        target_signal = [x for x in target_signal if x != entity_col]
-        X = X[X[entity_col].isin(entities)] # filter row based
-    if target_signal_column:
-        X = X.pivot(index=X.index, columns=target_signal_column)
-        X.columns = X.columns.droplevel()
-        X.columns.name = None
-    return X[target_signal].reset_index()
