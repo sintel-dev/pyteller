@@ -2,11 +2,15 @@
 from pyteller.core import Pyteller
 from pyteller.data import load_data
 from pyteller.utils import plot
+from mlblocks.discovery import find_pipelines
+possible_pipelines=find_pipelines()
+current_data = load_data('AL_Weather')
+# current_data = load_data('pyteller/data/AL_Weather_current.csv')
 
-current_data = load_data('pyteller/data/AL_Weather_current.csv')
 
-# Specify pipeline and hyperparamters if any
-pipeline = 'pyteller/pipelines/sandbox/persistence/persistence_step_through.json'
+
+pipeline='sandbox.persistence.persistence_step_through'
+# pipeline = 'pyteller/pipelines/sandbox/persistence/persistence_step_through.json'
 
 # Make instance of Pyteller, specifying where to make the prediction and the column names
 pyteller = Pyteller(

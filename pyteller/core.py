@@ -9,6 +9,7 @@ from copy import deepcopy
 
 import pandas as pd
 from mlblocks import MLPipeline
+from mlblocks import load_pipeline
 
 from pyteller.metrics import METRICS
 
@@ -48,15 +49,15 @@ class Pyteller:
         return pipeline
 
     def _build_pipeline(self):
+
         if isinstance(self.pipeline, str) and os.path.isfile(self.pipeline):
             with open(self.pipeline) as json_file:
                 pipeline = json.load(json_file)
+        else:
+            pipeline = load_pipeline(self.pipeline)
 
-        elif isinstance(self.pipeline, MLPipeline):
-            pipeline = self.pipeline.to_dict()
-
-        # Pipeline args are specified in all pyteller pipelines jsons and allow for
-        # shared hyperparamters
+        #Pipeline arguments are specified in all pyteller pipeline jsons and allow
+        # for shared hyperparamters
         if 'pipeline_arguments' in pipeline.keys():
             pipeline_args = deepcopy(pipeline['pipeline_arguments'])
 
@@ -67,6 +68,7 @@ class Pyteller:
             pipeline = self._update_init_params(pipeline, offset_primitives, self.offset)
 
         pipeline = MLPipeline(pipeline)
+
         if self._hyperparameters:
             pipeline.set_hyperparameters(deepcopy(self._hyperparameters))
 
