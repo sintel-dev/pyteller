@@ -8,8 +8,7 @@ import pickle
 from copy import deepcopy
 
 import pandas as pd
-from mlblocks import MLPipeline
-from mlblocks import load_pipeline
+from mlblocks import MLPipeline, load_pipeline
 
 from pyteller.metrics import METRICS
 from pyteller.utils import plot_forecast
@@ -57,7 +56,7 @@ class Pyteller:
         else:
             pipeline = load_pipeline(self.pipeline)
 
-        #Pipeline arguments are specified in all pyteller pipeline jsons and allow
+        # Pipeline arguments are specified in all pyteller pipeline jsons and allow
         # for shared hyperparamters
         if 'pipeline_arguments' in pipeline.keys():
             pipeline_args = deepcopy(pipeline['pipeline_arguments'])
@@ -170,22 +169,21 @@ class Pyteller:
 
         if visualization:
             visualization_names = self._get_outputs_spec('visualization')
-            visualization_dict = {}
             if visualization_names:
                 visualization_outputs = outputs[-len(visualization_names):]
                 default_outputs = outputs[:len(visualization_names) + 1]
                 names = visualization_names + default_names
                 outputs = visualization_outputs + default_outputs
-                output_dict=dict(zip(names, outputs))
+                output_dict = dict(zip(names, outputs))
 
         else:
-                output_dict=dict(zip(default_names, outputs))
+            output_dict = dict(zip(default_names, outputs))
 
         if plot:
-            plot_forecast([output_dict['actual'].iloc[:, 0:1], output_dict['forecast'].iloc[:, 0:1]], frequency='day')
+            plot_forecast([output_dict['actual'].iloc[:, 0:1],
+                           output_dict['forecast'].iloc[:, 0:1]], frequency='day')
 
         return output_dict
-
 
     def evaluate(self, forecast, test_data, detailed=False, metrics=METRICS):
         """Evaluate the performance against test set

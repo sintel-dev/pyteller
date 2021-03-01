@@ -31,5 +31,3 @@ scores = pyteller.evaluate(
     metrics=[
         'MAPE',
         'sMAPE'])
-
-

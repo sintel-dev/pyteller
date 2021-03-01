@@ -2,7 +2,6 @@
 from pyteller.core import Pyteller
 from pyteller.data import load_data
 
-
 current_data = load_data('pyteller/data/AL_Weather_current.csv')
 
 # Specify pipeline and hyperparamters if any
@@ -34,6 +33,3 @@ scores = pyteller.evaluate(
     metrics=[
         'MAPE',
         'sMAPE'])
-
-
-

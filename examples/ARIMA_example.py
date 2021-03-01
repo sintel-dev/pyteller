@@ -42,5 +42,4 @@ input_data = load_data('pyteller/data/AL_Weather_input.csv')
 # forecast and evaluate
 output = pyteller.forecast(data=input_data, visualization=False, plot=True)
 scores = pyteller.evaluate(test_data=output['actual'], forecast=output['forecast'],
-                           metrics=['MAPE','sMAPE'])
-
+                           metrics=['MAPE', 'sMAPE'])

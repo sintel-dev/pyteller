@@ -1,8 +1,10 @@
 # Load the dataset from a dataset on the s3 bucket, or in this example the local file path
+from mlblocks.discovery import find_pipelines
+
 from pyteller.core import Pyteller
 from pyteller.data import load_data
-from mlblocks.discovery import find_pipelines
-possible_pipelines=find_pipelines()
+
+possible_pipelines = find_pipelines()
 
 current_data = load_data('AL_Weather')
 # current_data = load_data('pyteller/data/AL_Weather_current.csv')
@@ -35,5 +37,3 @@ input_data = load_data('pyteller/data/AL_Weather_input.csv')
 output = pyteller.forecast(data=input_data, visualization=True, plot=True)
 scores = pyteller.evaluate(test_data=output['actual'], forecast=output['forecast'],
                            metrics=['MAPE'])
-
-
