@@ -12,6 +12,7 @@ from mlblocks import MLPipeline
 from mlblocks import load_pipeline
 
 from pyteller.metrics import METRICS
+from pyteller.utils import plot_forecast
 
 LOGGER = logging.getLogger(__name__)
 
@@ -118,7 +119,7 @@ class Pyteller:
                 nothing will be returned.
         Returns:
             Dictionary:
-                Optional. A dictionary containing the specified ``training`` outputs from the
+                Optional. A dictionary containing the specified outputs from the
                 ``MLPipeline``
 
         """
@@ -139,7 +140,7 @@ class Pyteller:
         if output_ or output_ == 0:
             return outputs
 
-    def forecast(self, data, visualization=False):
+    def forecast(self, data, visualization=False, plot=False):
         """Forecast input data on a trained model.
 
         Args:
@@ -150,6 +151,8 @@ class Pyteller:
                 If ``True``, also capture the ``visualization`` named
                 output from the ``MLPipeline`` and return it as a second
                 output.
+            plot (bool):
+                If ``True`` a plot is output
         Returns:
             Dictionary:
                 A dictionary containing the specified ``default`` and ``visualization`` output
@@ -173,12 +176,16 @@ class Pyteller:
                 default_outputs = outputs[:len(visualization_names) + 1]
                 names = visualization_names + default_names
                 outputs = visualization_outputs + default_outputs
-                visualization_dict = dict(zip(names, outputs))
+                output_dict=dict(zip(names, outputs))
 
-            return visualization_dict
+        else:
+                output_dict=dict(zip(default_names, outputs))
 
-        default_dict = dict(zip(default_names, outputs))
-        return default_dict
+        if plot:
+            plot_forecast([output_dict['actual'].iloc[:, 0:1], output_dict['forecast'].iloc[:, 0:1]], frequency='day')
+
+        return output_dict
+
 
     def evaluate(self, forecast, test_data, detailed=False, metrics=METRICS):
         """Evaluate the performance against test set

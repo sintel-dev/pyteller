@@ -29,6 +29,7 @@ tests_require = [
     'pytest>=3.4.2',
     'pytest-cov>=2.6.0',
     'rundoc>=0.4.3,<0.5',
+    'jupyter>=1.0.0,<2',
 ]
 
 development_requires = [

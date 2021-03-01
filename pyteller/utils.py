@@ -17,7 +17,7 @@ def convert_date(timelist):
     return converted
 
 
-def plot(dfs, output_path=None, labels=['actual', 'predicted'], frequency=None):
+def plot_forecast(dfs, output_path=None, labels=['actual', 'predicted'], frequency=None):
     """ Line plot for time series.
 
     This function plots time series
@@ -67,6 +67,7 @@ def plot(dfs, output_path=None, labels=['actual', 'predicted'], frequency=None):
         os.path.join('figs', output_path)
         plt.savefig('figs/lstm.png')
     plt.show()
+    return
 
 
 def logging_setup(verbosity=1, logfile=None, logger_name=None):
