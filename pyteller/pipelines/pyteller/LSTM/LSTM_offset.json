@@ -4,7 +4,7 @@
         "pyteller.primitives.preprocessing.format_data",
         "pyteller.primitives.preprocessing.get_index",
         "sklearn.impute.SimpleImputer",
-        "mlprimitives.custom.preprocessing.Rangescaler",
+        "mlprimitives.custom.preprocessing.RangeScaler",
         "pyteller.primitives.preprocessing.rolling_window_sequences",
         "numpy.squeeze",
         "keras.Sequential.LSTMTimeSeriesRegressor",

@@ -140,13 +140,13 @@ CURRENT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD 2>/dev/null)
 CHANGELOG_LINES := $(shell git diff HEAD..origin/stable HISTORY.md 2>&1 | wc -l)
 
 .PHONY: check-clean
- check-clean: ## Check if the directory has uncommitted changes
- ifneq ($(CLEAN_DIR),)
- 	$(error There are uncommitted changes)
- endif
+check-clean: ## Check if the directory has uncommitted changes
+ifneq ($(CLEAN_DIR),)
+	$(error There are uncommitted changes)
+endif
 
 .PHONY: check-master
-check-master: ## Check if we are in master branch
+check-master: check-clean ## Check if we are in master branch
 ifneq ($(CURRENT_BRANCH),master)
 	$(error Please make the release from master branch\n)
 endif

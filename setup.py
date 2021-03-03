@@ -44,7 +44,7 @@ development_requires = [
     'Sphinx>=3,<3.3',
     'pydata-sphinx-theme',
     'autodocsumm>=0.1.10,<1',
-    'ipython>=6.5,<7.5',
+    'ipython>=6.5',
 
     # style check
     'flake8>=3.8,<4',
@@ -63,7 +63,7 @@ development_requires = [
     'tox>=2.9.1,<4',
 
     # Documentation style
-    'pydocstyle>=2.6.0,<4',
+    'pydocstyle==3.0.0',
 ]
 
 setup(
@@ -101,7 +101,7 @@ setup(
     keywords='pyteller pyteller pyteller',
     name='pyteller',
     packages=find_packages(include=['pyteller', 'pyteller.*']),
-    python_requires='>=3.6,<3.8',
+    python_requires='>=3.6,<3.9',
     setup_requires=setup_requires,
     test_suite='tests',
     tests_require=tests_require,

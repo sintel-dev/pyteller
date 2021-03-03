@@ -59,7 +59,6 @@ def download(name, data_path=DATA_PATH):
 
 
 def load_data(data):
-
     if os.path.isfile(data):
         data = pd.read_csv(data)
     else:
