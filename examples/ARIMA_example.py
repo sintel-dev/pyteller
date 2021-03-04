@@ -44,3 +44,4 @@ output = pyteller.forecast(data=input_data, postprocessing=False, predictions_on
 scores = pyteller.evaluate(test_data=output['actual'],forecast=output['forecast'],
                            metrics=['MAPE','sMAPE'])
 
+pyteller.plot(output)
