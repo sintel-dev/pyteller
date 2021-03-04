@@ -57,9 +57,9 @@
                 "variable": "pyteller.primitives.postprocessing.reformat_data#1.actual"
             }
         ],
-        "training": [
+        "postprocessing": [
             {
-                "name": "train",
+                "name": "input",
                 "variable": "pyteller.primitives.postprocessing.reformat_data#1._X"
             }
         ]

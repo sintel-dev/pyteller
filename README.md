@@ -140,7 +140,7 @@ This is the list of pipelines available so far, which will grow over time:
 
 | name | location | description |
 |------|----------|-------------|
-| Persistence | [pyteller/pipelines/sandbox/persistence](../pipelines/sandbox/persistence) | uses the latest input to the model as the next output
+| Persistence | [pyteller/pipelines/pyteller/persistence](../pipelines/pyteller/persistence) | uses the latest input to the model as the next output
 
 
 # Install

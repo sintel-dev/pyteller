@@ -142,7 +142,8 @@ class Pyteller:
         if data is None:
             data = kwargs.pop('X')
 
-        kwargs.update(self._to_dict())
+        else:
+            kwargs.update(self._to_dict())
 
         out = self.pipeline.fit(
             X=data,
@@ -170,7 +171,7 @@ class Pyteller:
                 ``MLPipeline``.
         Returns:
             Dictionary:
-                A dictionary containing the specified ``default`` and ``visualization`` output
+                A dictionary containing the specified ``default`` and ``postprocessing`` output
                  from the ``MLPipeline``
         """
         if not self._fitted:

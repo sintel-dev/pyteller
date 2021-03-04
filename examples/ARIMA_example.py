@@ -12,7 +12,7 @@ logging.getLogger('pyteller').setLevel(level=logging.INFO)
 current_data = load_data('pyteller/data/AL_Weather_current.csv')
 
 
-pipeline = 'pyteller/pipelines/sandbox/ARIMA/arima.json'
+pipeline = 'pyteller/pipelines/pyteller/ARIMA/arima.json'
 
 hyperparameters = {
     "statsmodels.tsa.arima_model.Arima#1": {
@@ -40,6 +40,7 @@ train = pyteller.fit(current_data)
 input_data = load_data('pyteller/data/AL_Weather_input.csv')
 
 # forecast and evaluate
-output = pyteller.forecast(data=input_data, visualization=False, plot=True)
-scores = pyteller.evaluate(test_data=output['actual'], forecast=output['forecast'],
-                           metrics=['MAPE', 'sMAPE'])
+output = pyteller.forecast(data=input_data, postprocessing=False, predictions_only=False)
+scores = pyteller.evaluate(test_data=output['actual'],forecast=output['forecast'],
+                           metrics=['MAPE','sMAPE'])
+
