@@ -14,7 +14,6 @@ pyteller = Pyteller(
     offset=5,
     timestamp_col='valid',
     target_signal='tmpf',
-    # static_variables=None,
     entity_col='station',
     # entities='8A0',
 )

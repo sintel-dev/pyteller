@@ -33,6 +33,31 @@ class Pyteller:
                 * An ``MLPipeline`` instance.
                 * A ``dict`` with an ``MLPipeline`` specification.
 
+        timestamp_col (string):
+            Optional. A ``str`` specifying the name of the timestamp column of the input data
+
+        target_signal (string):
+            Optional. A ``str`` specifying the name of the column containing the target signal
+
+        static_variables (string):
+            Optional. A ``str`` specifying the name of the column of the input data containing static
+            variables
+
+        entities (string or list):
+            Optional. A ``str`` or ``list`` specifying the name(s) of the entities from the
+            entity_col the user wants to make forecasts for
+
+        entity_col (string):
+            A ``str`` specifying the name of the column of the input data containing the entity
+            names
+
+        pred_length (int):
+            Optional. An ``int`` specifying the number of timesteps to forecast ahead for
+
+        offset (int):
+            An ``int`` specifying the number of timesteps between the input and the target
+            sequence
+
         hyperparameters (dict):
             Additional hyperparameters to set to the Pipeline.
     """
@@ -68,10 +93,6 @@ class Pyteller:
             offset_primitives = pipeline_args.get('offset', {})
             pipeline = self._update_init_params(pipeline, offset_primitives, self.offset)
 
-            target_column_primitives = pipeline_args.get('target_column', {})
-            pipeline = self._update_init_params(
-                pipeline, target_column_primitives, self.target_signal_column)
-
         # Create the MLPipeline
         pipeline = MLPipeline(pipeline)
 
@@ -81,12 +102,11 @@ class Pyteller:
         return pipeline
 
     def __init__(self, pipeline, timestamp_col='timestamp', target_signal=None,
-                 target_signal_col=None, static_variables=None, entities=None,
-                 entity_col=None, pred_length=None, offset=None, hyperparameters=None):
+                 static_variables=None, entities=None, entity_col=None, pred_length=None,
+                 offset=None, hyperparameters=None):
 
         self.timestamp_col = timestamp_col
         self.target_signal = target_signal
-        self.target_signal_column = target_signal_col
         self.static_variables = static_variables
         self.entity_cols = entity_col
         self.entities = entities
@@ -111,7 +131,6 @@ class Pyteller:
             'offset': self.offset,
             'entities': self.entities,
             'target_signal': self.target_signal,
-            'target_column': self.target_signal_column,
             'timestamp_col': self.timestamp_col,
             'static_variables': self.static_variables,
             'entity_col': self.entity_cols,

@@ -89,7 +89,7 @@ def get_index(X, time_column='timestamp'):
     return np.asarray(X.values), np.asarray(X.index)
 
 
-def rolling_window_sequences(X, index, window_size, target_size, step_size, target_column=None,
+def rolling_window_sequences(X, index, window_size, target_size, step_size, target_column,
                              offset=0, drop=None, drop_windows=False):
     """Create rolling window sequences out of time series data.
 
