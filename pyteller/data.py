@@ -58,9 +58,18 @@ def download(name, data_path=DATA_PATH):
     return data
 
 
-def load_data(data):
+def load_data(data, test_size=0.2,):
     if os.path.isfile(data):
         data = pd.read_csv(data)
+        return data
     else:
         data = download(data)
-    return data
+
+    if test_size is None:
+        return data
+
+    test_length = round(len(data) * test_size)
+    train = data.iloc[:-test_length]
+    test = data.iloc[-test_length:]
+
+    return train, test

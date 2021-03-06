@@ -40,8 +40,8 @@ class Pyteller:
             Optional. A ``str`` specifying the name of the column containing the target signal
 
         static_variables (string):
-            Optional. A ``str`` specifying the name of the column of the input data containing static
-            variables
+            Optional. A ``str`` specifying the name of the column of the input data containing
+            static variables
 
         entities (string or list):
             Optional. A ``str`` or ``list`` specifying the name(s) of the entities from the

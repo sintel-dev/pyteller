@@ -6,7 +6,7 @@ from pyteller.data import load_data
 
 possible_pipelines = find_pipelines()
 
-current_data = load_data('AL_Weather')
+current_data, input_data = load_data('AL_Weather')
 # current_data = load_data('pyteller/data/AL_Weather_current.csv')
 
 # pipeline='pyteller.persistence.persistence_step_through'
@@ -31,10 +31,9 @@ train = context['X']
 pyteller.fit(start_=1, **context)
 
 # Load the input_data
-input_data = load_data('pyteller/data/AL_Weather_input.csv')
+# input_data = load_data('pyteller/data/AL_Weather_input.csv')
 
 # forecast and evaluate
 output = pyteller.forecast(data=input_data, postprocessing=False, predictions_only=False)
-scores = pyteller.evaluate(test_data=output['actual'],forecast=output['forecast'],
-                           metrics=['MAPE','sMAPE'])
-
+scores = pyteller.evaluate(test_data=output['actual'], forecast=output['forecast'],
+                           metrics=['MAPE', 'sMAPE'])

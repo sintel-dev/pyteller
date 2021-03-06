@@ -27,9 +27,8 @@ pyteller is a time series forecasting library built with the end user in mind.
 
 * [I. Data Format](#data-format)
    * [I.1 Input](#input)
-   * [I.2 Output](#output)
-   * [I.3 Datasets in the library](#datasets-in-the-library)
-* [II. pyteller Pipelines](#pyteller-pipelines)
+   * [I.2 Datasets in the library](#datasets-in-the-library)
+* [II. Pyteller Pipelines](#pyteller-pipelines)
    * [II.1 Current Available Pipelines](#current-available-pipelines)
 * [III. Install](#install)
 * [IV. Quick Start](#quick-start)
@@ -43,8 +42,8 @@ The expected input to pyteller pipelines is a .csv file with data in one of the 
 
 ### Targets Table
 #### Option 1: Single Entity (Academic Form)
-The user must specify the following:
-* `timestamp_col`: the **string** denoting which column contains the **pandas timestamp** objects or **python datetime** objects corresponding to the time at which the observation is made
+The user must specify the **string** denoting which column contains the:
+* `timestamp_col`:  column of **pandas timestamp** objects, **python datetime** objects, or **floats** corresponding to the time at which the observation is made
 * `target_signal`: an **integer** or **float** column with the observed target values at the indicated timestamps
 
 This is an example of such table, where the `timestamp_col` is 'timestamp' and the `target_signal` is 'value'
@@ -60,8 +59,8 @@ This is an example of such table, where the `timestamp_col` is 'timestamp' and t
 |
 
 #### Option 2: Multiple Entity (Flat Form)
-The user must specify the following:
-* `timestamp_col`: the **string** denoting which column contains the **pandas timestamp** objects or **python datetime** objects corresponding to the time at which the observation is made
+The user must specify the **string** denoting which column contains the:
+* `timestamp_col`:  column of **pandas timestamp** objects, **python datetime** objects, or **floats** corresponding to the time at which the observation is made
 * `entities`: the **list** denoting the columns the user wants to make forecasts for
 
 
@@ -79,9 +78,9 @@ This is an example of such table, where the `timestamp_col` is 'timestamp' and t
 
 #### Option 3: Multiple Entity (Long Form)
 The user must specify the following:
-* `timestamp_col`: the **string** denoting which column contains the **pandas timestamp** objects or **python datetime** objects corresponding to the time at which the observation is made
-* `entity_col`: the **string** denoting which column contains the entities you will seperately make forecasts for
-* `target_signal`: the **string** denoting which columns contain the observed target value that you want to forecast for
+* `timestamp_col`:  column of **pandas timestamp** objects, **python datetime** objects, or **floats** corresponding to the time at which the observation is made
+* `entity_col`: the column containing the entities you will seperately make forecasts for
+* `target_signal`: the columns containing the observed target value that you want to forecast for
 
 
 This is an example of such table, where the `timestamp_col` is 'timestamp', the `entity_col` is 'region', and the `target_signal` is 'demand'.
@@ -100,31 +99,27 @@ This is an example of such table, where the `timestamp_col` is 'timestamp', the 
 |9/27/20 21:25|DPL| 2086.6| 75.02|	0.06|
 
 
-## Output
-
-The output of the pyteller Pipelines is another table that contains the timestamp and the forecasting value(s), matching the format of the input targets table.
-
 ## Datasets in the library
 
 For development and evaluation of pipelines, we include the following datasets:
-#### NYC taxi data
+#### NYC taxi data: `taxi`
 * Found on the [nyc website](https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page), or the processed version maintained by Numenta [here](https://github.com/numenta/NAB/tree/master/data).
 * No modifications were made from the Numenta version
 
-#### Wind data
+#### Wind data: `Wind`
 * Found here on [kaggle](https://www.kaggle.com/sohier/30-years-of-european-wind-generation/metadata)
 * After downloading the FasTrak 5-Minute .txt files the .txt files for each day from 1/1/13-1/8/18 were compiled into one .csv file
 
 
-#### Weather data
+#### Weather data: `AL_Weather`
 * Maintained by Iowa State University's [IEM](https://mesonet.agron.iastate.edu/request/download.phtml?network=ILASOS)
 * The downloaded data was from the selected network of 8A0 Albertville and the selected date range was 1/1/16 0:15 - 2/16/16 0:55
 
-#### Traffic data
+#### Traffic data: `FasTrak`
 * Found on [Caltrans PeMS](http://pems.dot.ca.gov/?dnode=Clearinghouse)
 * No modifications were made from the Numenta version
 
-#### Energy data
+#### Energy data: `pjm_hourly_est`
 * Found on [kaggle](https://www.kaggle.com/robikscube/hourly-energy-consumption/metadata)
 * No modifications were made after downloading pjm_hourly_est.csv
 We also use PJM electricity demand data found [here](https://dataminer2.pjm.com/feed/inst_load).
@@ -141,6 +136,8 @@ This is the list of pipelines available so far, which will grow over time:
 | name | location | description |
 |------|----------|-------------|
 | Persistence | [pyteller/pipelines/pyteller/persistence](../pipelines/pyteller/persistence) | uses the latest input to the model as the next output
+| LSTM | [pyteller/pipelines/pyteller/LSTM](../pipelines/pyteller/LSTM) | RNN keras adapter
+| ARIMA | [pyteller/pipelines/pyteller/ARIMA](../pipelines/pyteller/ARIMA) | ARIMA statsmodels adapter
 
 
 # Install
@@ -208,11 +205,11 @@ getting started with **pyteller**.
 
 ## 1. Load the data
 
-In the first step we will load the **Alabama Weather** data into a dataframe from the demo datasets in the `data` folder. This represents all of the data up-to-date that will be used to train the model.
+In the first step we will load the **Alabama Weather** demo data.
 
 ```python3
 from pyteller.data import load_data
-current_data=load_data('../pyteller/data/AL_Weather_current.csv')
+current_data = load_data('AL_Weather')
 ```
 The output is a dataframe:
 
@@ -230,55 +227,54 @@ Once we have the data, create an instance of the `Pyteller` class, where the inp
 
 ```python3
 from pyteller.core import Pyteller
-pyteller = Pyteller (
-    pipeline='persistence',
-    pred_length=3,
+pyteller = Pyteller(
+    pipeline=pipeline,
+    pred_length=10,
     offset=5,
+    timestamp_col='valid',
+    target_signal='tmpf',
+    entity_col='station',
+    entities=['8A0']
 )
 ```
 
 ## 2. Fit the data
-The user now calls the `pyteller.fit` method to fit the data to the pipeline. The inputs are the loaded data and the column names. The user also specifies which signal or entities they want to predict for here.
+The user now calls the `pyteller.fit` method to fit the data to the pipeline.
 ```python3
-pyteller.fit(
-    data=current_data,
-    timestamp_col='valid',
-    target_signal='tmpf',
-    entity_col='station')
+pyteller.fit(current_data)
 ```
 
 
-## 3. Save the trained model
-At this point, the user has a trained model that can be pickled by calling the `pyteller.save` method, inputting the desired output path:
+ ## 3. Forecast
+To make a forecast, the user calls the `pyteller.forecast` method
 
 ```python3
-pyteller.save('../fit_models/persistence')
+output = pyteller.forecast(data=input_data)
+```
+The output is a dictionary which includes the `forecast` dataframe of all the predictions:
+
+```python3
+ timestamp        8A0
+ 2/4/16 18:15    42.800
+ 2/4/16 18:35    42.800
+ 2/4/16 18:55    44.800
 ```
 
-## 4. Load the new data
-Once the user gets new data that they want to use to make a prediction, they can load it in the same way they loaded the training data.
+ ## 4. Evaluate
+To see metrics of the forecast accuracy, the user calls the `pyteller.evaluate` method
 ```python3
-input_data=load_data('../pyteller/data/AL_Weather_input.csv')
- ```
+scores = pyteller.evaluate(test_data=output['actual'],forecast=output['forecast'],
+                           metrics=['MAE','sMAPE'])
 
- ## 5. Forecast
-To make a forecast, the user calls the `pyteller.forecast` method, which will output the forecasts for all signals and all entities.
-
-```python3
-forecast = pyteller.forecast(input_data)
 ```
-The output is a dataframe of all the predictions:
+The output is a dataframe of the scores:
 
 ```python3
- timestamp        8A0            4A6
- 2/4/16 18:15    42.800        44.800
- 2/4/16 18:35    42.800        42.600
- 2/4/16 18:55    44.800        43.000
-
-
-
-
-
+           8A0
+ MAE       4.5
+ sMAPE     8.9
+ MAPE      6.7
+```
 
 # What's next?
 

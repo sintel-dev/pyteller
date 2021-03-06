@@ -2,7 +2,7 @@
 from pyteller.core import Pyteller
 from pyteller.data import load_data
 
-current_data = load_data('pyteller/data/AL_Weather_current.csv')
+current_data, input_data = load_data('AL_Weather')
 
 # Specify pipeline and hyperparamters if any
 pipeline = 'pyteller/pipelines/pyteller/persistence/persistence.json'
@@ -15,18 +15,15 @@ pyteller = Pyteller(
     timestamp_col='valid',
     target_signal='tmpf',
     entity_col='station',
-    # entities='8A0',
+    entities='8A0',
 )
 
 # Fit the data to the pipeline.
-train = pyteller.fit(current_data)
-
-# Load the input_data
-input_data = load_data('pyteller/data/AL_Weather_input.csv')
+pyteller.fit(current_data)
 
 # forecast and evaluate
 output = pyteller.forecast(data=input_data, postprocessing=True, predictions_only=False)
-scores = pyteller.evaluate(test_data=output['actual'],forecast=output['forecast'],
-                           metrics=['MAPE','sMAPE'])
+scores = pyteller.evaluate(test_data=output['actual'], forecast=output['forecast'],
+                           metrics=['MAE', 'sMAPE'])
 
 pyteller.plot(output)

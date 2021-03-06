@@ -2,8 +2,7 @@
 from pyteller.core import Pyteller
 from pyteller.data import load_data
 
-current_data = load_data('pyteller/data/AL_Weather_current.csv')
-
+current_data, input_data = load_data('AL_Weather')
 
 pipeline = 'pyteller/pipelines/pyteller/LSTM/LSTM_offset.json'
 pyteller = Pyteller(
@@ -20,11 +19,9 @@ pyteller = Pyteller(
 # Fit the data to the pipeline.
 train = pyteller.fit(current_data)
 
-# Load the input_data
-input_data = load_data('pyteller/data/AL_Weather_input.csv')
 
 # forecast and evaluate
 output = pyteller.forecast(data=input_data, postprocessing=False, predictions_only=False)
-scores = pyteller.evaluate(test_data=output['actual'],forecast=output['forecast'],
-                           metrics=['MAPE','sMAPE'])
+scores = pyteller.evaluate(test_data=output['actual'], forecast=output['forecast'],
+                           metrics=['MAPE', 'sMAPE'])
 pyteller.plot(output)
