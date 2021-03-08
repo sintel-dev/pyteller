@@ -1,7 +1,0 @@
-pyteller.analysis module
-========================
-
-.. automodule:: pyteller.analysis
-   :members:
-   :undoc-members:
-   :show-inheritance:

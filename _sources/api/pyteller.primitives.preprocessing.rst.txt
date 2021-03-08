@@ -1,7 +1,0 @@
-pyteller.primitives.preprocessing module
-========================================
-
-.. automodule:: pyteller.primitives.preprocessing
-   :members:
-   :undoc-members:
-   :show-inheritance:

@@ -1,7 +1,0 @@
-pyteller.evaluation.metrics module
-==================================
-
-.. automodule:: pyteller.evaluation.metrics
-   :members:
-   :undoc-members:
-   :show-inheritance:

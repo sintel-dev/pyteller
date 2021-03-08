@@ -1,0 +1,319 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Data &#8212; pyteller 0.1.1.dev0 documentation</title>
+    
+  <link rel="stylesheet" href="../_static/css/index.f658d18f9b420779cfdf24aa0a7e2d77.css">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+  <link rel="stylesheet"
+    href="../_static/vendor/open-sans_all/1.44.1/index.css">
+  <link rel="stylesheet"
+    href="../_static/vendor/lato_latin-ext/1.44.1/index.css">
+
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+  <link rel="preload" as="script" href="../_static/js/index.d3f166471bb80abb5163.js">
+
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="shortcut icon" href="../_static/pyteller_icon_only_icon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Primitives and Pipelines" href="primitives_pipelines/index.html" />
+    <link rel="prev" title="User Guides" href="index.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main">
+<div class="container-xl">
+
+    <a class="navbar-brand" href="../index.html">
+    
+      <p class="title">pyteller</p>
+    
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-menu" aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="navbar-menu" class="col-lg-9 collapse navbar-collapse">
+      <ul id="navbar-main-elements" class="navbar-nav mr-auto">
+        
+        
+        <li class="nav-item ">
+            <a class="nav-link" href="../getting_started/index.html">Getting Started</a>
+        </li>
+        
+        <li class="nav-item active">
+            <a class="nav-link" href="index.html">User Guides</a>
+        </li>
+        
+        <li class="nav-item ">
+            <a class="nav-link" href="../api_reference/index.html">API Reference</a>
+        </li>
+        
+        <li class="nav-item ">
+            <a class="nav-link" href="../developer_guides/index.html">Developer Guides</a>
+        </li>
+        
+        <li class="nav-item ">
+            <a class="nav-link" href="../history.html">Release Notes</a>
+        </li>
+        
+        
+      </ul>
+
+
+      
+
+      <ul class="navbar-nav">
+        
+          <li class="nav-item">
+            <a class="nav-link" href="https://github.com/signals-dev/pyteller" target="_blank" rel="noopener">
+              <span><i class="fab fa-github-square"></i></span>
+            </a>
+          </li>
+        
+        
+      </ul>
+    </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+          <div class="col-12 col-md-3 bd-sidebar"><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form>
+<nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+
+    <div class="bd-toc-item active">
+    
+  
+    <ul class="nav bd-sidenav">
+        
+        
+        
+        
+          
+            
+                <li class="active">
+                    <a href="">Data</a>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="primitives_pipelines/index.html">Primitives and Pipelines</a>
+                </li>
+            
+          
+            
+                <li class="">
+                    <a href="evaluation_doc.html">Evaluation</a>
+                </li>
+            
+          
+        
+        
+        
+        
+        
+        
+        
+        
+      </ul>
+  
+  </nav>
+          </div>
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+              
+<div class="tocsection onthispage pt-5 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
+
+<nav id="bd-toc-nav">
+    <ul class="nav section-nav flex-column">
+    
+        <li class="nav-item toc-entry toc-h2">
+            <a href="#data-format" class="nav-link">Data Format</a><ul class="nav section-nav flex-column">
+                
+        <li class="nav-item toc-entry toc-h3">
+            <a href="#input" class="nav-link">Input</a>
+        </li>
+    
+        <li class="nav-item toc-entry toc-h3">
+            <a href="#output" class="nav-link">Output</a>
+        </li>
+    
+            </ul>
+        </li>
+    
+        <li class="nav-item toc-entry toc-h2">
+            <a href="#dataset-we-use-in-this-library" class="nav-link">Dataset we use in this library</a>
+        </li>
+    
+    </ul>
+</nav>
+
+
+              
+          </div>
+          
+
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+  <div class="section" id="data">
+<h1>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h1>
+<p>Pyteller takes time series signals in longform or flatform as well as indetifiers for which column names represent the <cite>timestamp column</cite>,
+<cite>target signal</cite>, <cite>entitiy column</cite>, and the <cite>entities</cite> you want to forecast.</p>
+<div class="section" id="data-format">
+<h2>Data Format<a class="headerlink" href="#data-format" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="input">
+<h3>Input<a class="headerlink" href="#input" title="Permalink to this headline">¶</a></h3>
+<p>Orion Pipelines work on time Series that are provided as a single table of telemetry
+observations with two columns:</p>
+<ul class="simple">
+<li><p><cite>timestamp_col</cite>: the STRING denoting which column contains the pandas timestamp objects or python datetime objects corresponding to the time at which the observation is made</p></li>
+<li><p><cite>target_signal</cite>: the STRING denoting the INTEGERS or FLOATS column with the observed target values at the indicated timestamps</p></li>
+<li><p><cite>entity_col</cite>: the STRING denoting which column contains the entities the observations are for</p></li>
+<li><p><cite>entities</cite>: the STRING denoting either which entities from <cite>entity_col</cite> to make forecsts for, or denoting which coumns are the target entities</p></li>
+</ul>
+<p>This is an example of such table, where the <cite>timestamp_col</cite> is ‘timestamp’, the <cite>entity_col</cite> is ‘region’,  the <cite>target</cite> is ‘demand,’</p>
+<table class="table">
+<colgroup>
+<col style="width: 45%" />
+<col style="width: 28%" />
+<col style="width: 28%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>timestamp</p></td>
+<td><p>region</p></td>
+<td><p>demand</p></td>
+</tr>
+<tr class="row-even"><td><p>9/27/20 21:20</p></td>
+<td><p>DAYTON</p></td>
+<td><p>1841.6</p></td>
+</tr>
+<tr class="row-odd"><td><p>9/27/20 21:20</p></td>
+<td><p>DEOK</p></td>
+<td><p>2892.5</p></td>
+</tr>
+<tr class="row-even"><td><p>9/27/20 21:25</p></td>
+<td><p>DAYTON</p></td>
+<td><p>1834.1</p></td>
+</tr>
+<tr class="row-odd"><td><p>9/27/20 21:25</p></td>
+<td><p>DEOK</p></td>
+<td><p>75.92</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="output">
+<h3>Output<a class="headerlink" href="#output" title="Permalink to this headline">¶</a></h3>
+<p>The output of pyteller is a table that contains the scores of the forecasts for each entity:</p>
+<p>An example of such a table is:</p>
+<table class="table">
+<colgroup>
+<col style="width: 35%" />
+<col style="width: 35%" />
+<col style="width: 29%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>Metric</p></td>
+<td><p>DAYTON</p></td>
+<td><p>DEOK</p></td>
+</tr>
+<tr class="row-even"><td><p>MAPE</p></td>
+<td><p>8.8</p></td>
+<td><p>102.3</p></td>
+</tr>
+<tr class="row-odd"><td><p>MAE</p></td>
+<td><p>9.8</p></td>
+<td><p>96.5</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="dataset-we-use-in-this-library">
+<h2>Dataset we use in this library<a class="headerlink" href="#dataset-we-use-in-this-library" title="Permalink to this headline">¶</a></h2>
+<p>For development and evaluation of pipelines, we include the following datasets:</p>
+<dl class="simple">
+<dt><strong>NYC taxi data</strong></dt><dd><p>Found on the <a class="reference external" href="https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page">nyc website</a>, or the processed version maintained by <a class="reference external" href="https://github.com/numenta/NAB/tree/master/data">Numenta</a>. No modifications were made from the Numenta version</p>
+</dd>
+<dt><strong>Wind data</strong></dt><dd><p>Found here on <a class="reference external" href="https://www.kaggle.com/sohier/30-years-of-european-wind-generation/metadata">here</a>. After downloading the FasTrak 5-Minute .txt files the .txt files for each day from 1/1/13-1/8/18 were compiled into one .csv file</p>
+</dd>
+<dt><strong>Weather data</strong></dt><dd><p>Maintained by Iowa State University’s <a class="reference external" href="https://mesonet.agron.iastate.edu/request/download.phtml?network=ILASOS">IEM</a>. The downloaded data was from the selected network of 8A0 Albertville and the selected date range was 1/1/16 0:15 - 2/16/16 0:55</p>
+</dd>
+<dt><strong>Traffic data</strong></dt><dd><p>Found on <a class="reference external" href="http://pems.dot.ca.gov/?dnode=Clearinghouse">Caltrans PeMS</a>. No modifications were made from the Numenta version</p>
+</dd>
+<dt><strong>Energy data</strong></dt><dd><p>Found on <a class="reference external" href="https://www.kaggle.com/robikscube/hourly-energy-consumption/metadata">kaggle</a>. No modifications were made after downloading pjm_hourly_est.csv</p>
+</dd>
+</dl>
+</div>
+</div>
+
+
+              </div>
+              
+              
+              <div class='prev-next-bottom'>
+                
+    <a class='left-prev' id="prev-link" href="index.html" title="previous page">User Guides</a>
+    <a class='right-next' id="next-link" href="primitives_pipelines/index.html" title="next page">Primitives and Pipelines</a>
+
+              </div>
+              
+          </main>
+          
+
+      </div>
+    </div>
+
+    
+  <script src="../_static/js/index.d3f166471bb80abb5163.js"></script>
+
+
+    <footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    <p>
+          &copy; Copyright 2018, MIT Data To AI Lab.<br/>
+        Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.2.1.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

@@ -1,7 +1,0 @@
-pyteller.utils module
-=====================
-
-.. automodule:: pyteller.utils
-   :members:
-   :undoc-members:
-   :show-inheritance:
