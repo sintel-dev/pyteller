@@ -17,15 +17,10 @@
             "step_size": 1
         }
     },
-
-
     "input_names": {
-
-
         "mlprimitives.custom.preprocessing.RangeUnscaler#1": {
             "X": "y"
         },
-
         "pyteller.primitives.postprocessing.flatten#1": {
             "X": "y",
             "index": "target_index",
@@ -36,7 +31,6 @@
         }
     },
     "output_names": {
-
         "mlprimitives.custom.preprocessing.RangeUnscaler#1": {
             "X": "y"
         },
@@ -45,8 +39,7 @@
             "X": "y"
         }
     },
-
-        "outputs": {
+    "outputs": {
 	    "default": [
             {
                 "name": "forecast",
@@ -64,22 +57,17 @@
             }
         ]
     },
-
-
-
     "pipeline_arguments": {
         "pred_length": {
             "pyteller.primitives.preprocessing.rolling_window_sequences#1": "target_size",
-            "pyteller.primitives.estimators.persistence#1": "pred_length",
+            "pyteller.primitives.estimators.Persistence#1": "pred_length",
             "pyteller.primitives.postprocessing.flatten#1": "pred_length",
             "statsmodels.tsa.arima_model.Arima#1": "steps"
-
         },
         "offset": {
             "pyteller.primitives.preprocessing.rolling_window_sequences#1": "offset",
-            "pyteller.primitives.estimators.persistence#1": "offset"
+            "pyteller.primitives.estimators.Persistence#1": "offset"
         },
-
         "target_column": {
             "pyteller.primitives.preprocessing.rolling_window_sequences#1": "target_column"
         }

@@ -28,7 +28,6 @@
                 "name": "freq",
                 "type": "int"
             }
-
         ],
         "output": [
             {
@@ -44,7 +43,6 @@
                     "default": 5
                 }
             }
-
         }
     }
 

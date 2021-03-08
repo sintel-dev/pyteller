@@ -8,8 +8,6 @@
          "pyteller.primitives.postprocessing.flatten",
         "pyteller.primitives.postprocessing.reformat_data"
     ],
-
-
     "init_params": {
         "pyteller.primitives.preprocessing.rolling_window_sequences#1": {
 
@@ -24,7 +22,6 @@
             "columns": "entities"
         }
     },
-
     "outputs": {
 	    "default": [
             {
@@ -44,24 +41,20 @@
             }
         ]
     },
-
     "pipeline_arguments": {
         "pred_length": {
             "pyteller.primitives.preprocessing.rolling_window_sequences#1": "target_size",
             "pyteller.primitives.estimators.persistence#1": "pred_length",
             "pyteller.primitives.postprocessing.flatten#1": "pred_length"
-
         },
         "offset": {
             "pyteller.primitives.preprocessing.rolling_window_sequences#1": "offset",
             "pyteller.primitives.estimators.persistence#1": "offset"
         },
-
         "target_column": {
             "pyteller.primitives.preprocessing.rolling_window_sequences#1": "target_column"
         }
     }
-
 }
 
 

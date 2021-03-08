@@ -68,7 +68,6 @@
                 "type": "int",
                 "default": 1
             },
-
             "offset": {
                 "type": "int",
                 "default": 0

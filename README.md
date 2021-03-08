@@ -56,7 +56,7 @@ This is an example of such table, where the `timestamp_col` is 'timestamp' and t
 |7/1/14 1:30|	4656|
 |7/1/14 2:00|	3820|
 |7/1/14 2:30|	2873|
-|
+
 
 #### Option 2: Multiple Entity (Flat Form)
 The user must specify the **string** denoting which column contains the:

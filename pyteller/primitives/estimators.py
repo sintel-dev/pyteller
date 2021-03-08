@@ -6,7 +6,7 @@ from sklearn.metrics import mean_absolute_error
 LOGGER = logging.getLogger(__name__)
 
 
-class persistence:
+class Persistence:
 
     """Persistence Estimator.
 
