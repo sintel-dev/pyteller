@@ -42,10 +42,10 @@ def format_data(X, target_signal, timestamp_col, static_variables, entity_col, e
     elif signal is not None:
         entities_new = [signal]
         df = df.rename(columns={'signal': signal})
-        if df['timestamp'].duplicated().any():
-            dup = df['timestamp'].duplicated()
-            duplicates = dup.index[dup == True].tolist()
-            df = df.drop(duplicates)
+        # if df['timestamp'].duplicated().any():
+        #     dup = df['timestamp'].duplicated()
+        #     duplicates = dup.index[dup == True].tolist()
+        #     df = df.drop(duplicates)
 
     # Scenario 3: (flatform) user specifies multiple entities but there is no entity column
     else:
