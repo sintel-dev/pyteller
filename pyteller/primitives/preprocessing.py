@@ -42,8 +42,11 @@ def format_data(X, target_signal, timestamp_col, static_variables, entity_col, e
     elif signal is not None:
         entities_new = [signal]
         df = df.rename(columns={'signal': signal})
-        if True in df.duplicated('timestamp'):
-            raise ValueError('Multiple observations per timestamp')
+        if df['timestamp'].duplicated().any():
+            dup = df['timestamp'].duplicated()
+            duplicates = dup.index[dup == True].tolist()
+            df = df.drop(duplicates)
+
 
     # Scenario 3: (flatform) user specifies multiple entities but there is no entity column
     else:
@@ -54,13 +57,14 @@ def format_data(X, target_signal, timestamp_col, static_variables, entity_col, e
     # Convert to epoch time
     if df['timestamp'].dtypes != 'float' and df['timestamp'].dtypes != 'int':
         df['timestamp'] = pd.to_datetime(df['timestamp']).values.astype(np.int64) // 1e9
-
+    # df = df.iloc[1:-1]
     df = df.sort_values('timestamp')
-    freq = df['timestamp'][1] - df['timestamp'][0]
+    freq = df['timestamp'].iloc[1] - df['timestamp'].iloc[0]
     if isinstance(entities_new, str):
         target_column = [0]
     else:
         target_column = list(range(len(entities_new)))
+
     X = df
     _X = X
     entities = entities_new

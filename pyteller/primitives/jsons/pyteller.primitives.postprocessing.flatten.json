@@ -1,5 +1,5 @@
 {
-    "name": "pyteller.primitives.post_process.Flatten",
+    "name": "pyteller.primitives.postprocessing.flatten",
     "contributors": [
         "Skylar Eiskowitz <eiskowit@mit.edu>"
     ],
@@ -21,11 +21,11 @@
                 "type": "Index or array-like"
             },
             {
-                "name": "columns",
-                "type": "Index or array-like"
+                "name": "freq",
+                "type": "int"
             },
             {
-                "name": "freq",
+                "name": "pred_length",
                 "type": "int"
             }
         ],
@@ -40,7 +40,7 @@
             "fixed": {
                 "pred_length": {
                     "type": "int",
-                    "default": 5
+                    "default": 1
                 }
             }
         }

@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 
-def flatten(X, pred_length, index, columns, freq):
+def flatten(X,index, freq, pred_length):
     """flattens predictions and averages duplicate predicted values
 
     The function takes in a an array and averages the predictions that are for the same timestep
