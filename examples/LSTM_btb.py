@@ -1,17 +1,20 @@
-from pyteller.core import Pyteller
 import numpy as np
-from pyteller.data import load_data
-from sklearn.metrics import mean_absolute_error
+from mlblocks import MLPipeline, load_pipeline
 from mlprimitives.datasets import Dataset
-from mlblocks import MLPipeline,load_pipeline
+from sklearn.metrics import mean_absolute_error
 
-#Choose pipeline
+from btb.tuning import GPTuner, Tunable
+from pyteller.core import Pyteller
+from pyteller.data import load_data
+
+# Choose pipeline
 pipeline_name = 'pyteller/pipelines/pyteller/LSTM/LSTM_offset.json'
 
-#Load data and  create a dataset instance
+# Load data and  create a dataset instance
 current_data, input_data = load_data('taxi')
-X,y=current_data,current_data
-dataset=Dataset('data',X,y,mean_absolute_error,'timeseries','forecast',shuffle=False)
+X, y = current_data, current_data
+dataset = Dataset('data', X, y, mean_absolute_error, 'timeseries', 'forecast', shuffle=False)
+
 
 def cross_validate(hyperparameters=None):
     scores = []
@@ -22,12 +25,14 @@ def cross_validate(hyperparameters=None):
         if hyperparameters:
             pipeline.set_hyperparameters(hyperparameters)
 
-        pyteller, all_output=run_pipeline(X_train,X_test,pipeline) #only take the X data, the y data is made within the pipeline
+        # only take the X data, the y data is made within the pipeline
+        pyteller, all_output = run_pipeline(X_train, X_test, pipeline)
         scores.append(pyteller.evaluate(test_data=all_output['actual'], forecast=all_output['forecast'],
                                         metrics=['sMAPE']).values[0][0])
     return np.mean(scores)
 
-def run_pipeline(X_train,X_test,pipeline):
+
+def run_pipeline(X_train, X_test, pipeline):
 
     pyteller = Pyteller(
         pipeline=pipeline,
@@ -41,15 +46,14 @@ def run_pipeline(X_train,X_test,pipeline):
     output = pyteller.forecast(data=X_test, postprocessing=False,
                                predictions_only=False)
 
-    return pyteller,output
+    return pyteller, output
+
 
 pipeline = MLPipeline(load_pipeline(pipeline_name))
 tunable_hyperparameters = pipeline.get_tunable_hyperparameters(flat=True)
 
-from btb.tuning import Tunable
 tunable = Tunable.from_dict(tunable_hyperparameters)
 
-from btb.tuning import GPTuner
 default_score = cross_validate()
 
 tuner = GPTuner(tunable)
@@ -72,7 +76,7 @@ for iteration in range(3):
 pipeline = MLPipeline(pipeline)
 pipeline.set_hyperparameters(best_proposal)
 
-pyteller,all_output = run_pipeline(current_data, input_data,pipeline)
+pyteller, all_output = run_pipeline(current_data, input_data, pipeline)
 
 scores = pyteller.evaluate(test_data=all_output['actual'], forecast=all_output['forecast'],
                            metrics=['MAPE', 'sMAPE'])

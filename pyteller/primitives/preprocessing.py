@@ -47,7 +47,6 @@ def format_data(X, target_signal, timestamp_col, static_variables, entity_col, e
             duplicates = dup.index[dup == True].tolist()
             df = df.drop(duplicates)
 
-
     # Scenario 3: (flatform) user specifies multiple entities but there is no entity column
     else:
         entities_new = entities
