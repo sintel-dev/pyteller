@@ -9,6 +9,7 @@ from copy import deepcopy
 import pandas as pd
 from mlblocks import MLPipeline, load_pipeline
 from sklearn.exceptions import NotFittedError
+from btb.session import BTBSession
 
 from pyteller.metrics import METRICS
 from pyteller.utils import plot_forecast
@@ -136,10 +137,75 @@ class Pyteller:
             'entity_col': self.entity_cols,
         }
 
-    def fit(self, data=None, start_=None, output_=None, **kwargs):
+
+    def k_fold_validation(self, hyperparameters, X, y, scoring=None):
+        """Score the pipeline through k-fold validation with the given scoring function.
+        Args:
+            hyperparameters (dict or None):
+                A dictionary of hyper-parameters for each primitive in the target pipeline.
+            X (pandas.DataFrame or ndarray):
+                Inputs to the pipeline.
+            y (pandas.Series or ndarray):
+                Target values.
+            scoring (str):
+                The name of the scoring function.
+        Returns:
+            np.float64:
+                The average score in the k-fold validation.
+        """
+        model_instance = MLPipeline(self._pipeline)
+        X = pd.DataFrame(X)
+        y = pd.Series(y)
+
+        if hyperparameters:
+            model_instance.set_hyperparameters(hyperparameters)
+
+        if self._problem_type == 'regression':
+            scorer = self.regression_metrics[scoring or 'R2 Score']
+        else:
+            scorer = self.classification_metrics[scoring or 'F1 Macro']
+
+        scores = []
+        kf = KFold(n_splits=10, random_state=None, shuffle=True)
+        for train_index, test_index in kf.split(X):
+            model_instance.fit(X.iloc[train_index], y.iloc[train_index])
+            y_pred = model_instance.predict(X.iloc[test_index])
+            scores.append(scorer(y.iloc[test_index], y_pred))
+
+        return np.mean(scores)
+
+    def tune(self, X, y, max_evals=10, scoring=None, verbose=False):
+        """ Tune the pipeline hyper-parameters and select the optimized model.
+        Args:
+            X (pandas.DataFrame or ndarray):
+                Inputs to the pipeline.
+            y (pandas.Series or ndarray):
+                Target values.
+            max_evals (int):
+                Maximum number of hyper-parameter optimization iterations.
+            scoring (str):
+                The name of the scoring function.
+            verbose (bool):
+                Whether to log information during processing.
+        """
+        tunables = {'0': self.pipeline.get_tunable_hyperparameters(flat=True)}
+
+        session = BTBSession(tunables, lambda _, hyparam: self.k_fold_validation(
+            hyparam, X=X, y=y, scoring=scoring), max_errors=max_evals, verbose=verbose)
+
+        best_proposal = session.run(max_evals)
+        self.pipeline.set_hyperparameters(best_proposal['config'])
+
+    def fit(self, data=None, tune=False, max_evals=10, scoring=None,  start_=None, verbose=False, output_=None, **kwargs):
         """Fit the pipeline to the given data.
 
         Args:
+            tune (bool):
+                Whether to optimize hyper-parameters of the pipelines.
+            max_evals (int):
+                Maximum number of hyper-parameter optimization iterations.
+            scoring (str):
+                The name of the scoring function used in the hyper-parameter optimization.
             data (DataFrame):
                 Input data, passed as a ``pandas.DataFrame``
             start_ (str or int or None):
@@ -163,6 +229,10 @@ class Pyteller:
 
         else:
             kwargs.update(self._to_dict())
+
+        if tune:
+            # tune and select pipeline
+            self.tune(data, data, max_evals=max_evals, scoring=scoring, verbose=verbose)
 
         out = self.pipeline.fit(
             X=data,
