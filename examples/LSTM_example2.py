@@ -10,10 +10,10 @@ pyteller = Pyteller(
     pipeline=pipeline,
     pred_length=5,
     offset=3,
-    timestamp_col='valid',
+    time_column='valid',
     target_signal='tmpf',
     # static_variables=None,
-    entity_col='station',
+    entity_column='station',
     entities='8A0',
 )
 
@@ -23,6 +23,6 @@ train = pyteller.fit(current_data,tune=True,scoring=mean_absolute_error)
 
 # forecast and evaluate
 output = pyteller.forecast(data=input_data, postprocessing=False, predictions_only=False)
-scores = pyteller.evaluate(test_data=output['actual'], forecast=output['forecast'],
+scores = pyteller.evaluate(test_data=output['actuals'], forecast=output['forecast'],
                            metrics=['MAPE', 'sMAPE'])
 pyteller.plot(output)

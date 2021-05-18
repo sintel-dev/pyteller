@@ -3,23 +3,55 @@
         "pyteller.primitives.preprocessing.format_data",
         "pyteller.primitives.preprocessing.get_index",
         "sklearn.impute.SimpleImputer",
+        "mlprimitives.custom.preprocessing.RangeScaler",
         "pyteller.primitives.preprocessing.rolling_window_sequences",
-        "pyteller.primitives.estimators.persistence",
-         "pyteller.primitives.postprocessing.flatten",
+        "numpy.squeeze",
+        "keras.Sequential.LSTMTimeSeriesRegressor",
+        "mlprimitives.custom.preprocessing.RangeUnscaler",
+        "pyteller.primitives.postprocessing.flatten",
         "pyteller.primitives.postprocessing.reformat_data"
     ],
-    "init_params": {
+"init_params": {
         "pyteller.primitives.preprocessing.rolling_window_sequences#1": {
-
+            "target_column": 0,
             "window_size": 18,
-            "step_size": 1
+            "step_size": 3
+        },
+        "keras.Sequential.LSTMTimeSeriesRegressor#1": {
+            "epochs": 1,
+            "verbose": 1
         }
     },
     "input_names": {
+        "numpy.squeeze#1": {
+            "X": "y"
+        },
+        "mlprimitives.custom.preprocessing.RangeUnscaler#1": {
+            "X": "y_hat"
+        },
         "pyteller.primitives.postprocessing.flatten#1": {
-            "X": "y",
+            "X": "y_hat",
             "index": "target_index",
             "columns": "entities"
+        },
+        "pyteller.primitives.postprocessing.reformat_data#1": {
+            "X": "y_hat"
+        }
+    },
+    "output_names": {
+        "numpy.squeeze#1": {
+            "X": "y"
+        },
+        "keras.Sequential.LSTMTimeSeriesRegressor#1": {
+            "y": "y_hat"
+        },
+
+        "mlprimitives.custom.preprocessing.RangeUnscaler#1": {
+            "X": "y_hat"
+        },
+
+         "pyteller.primitives.postprocessing.flatten#1": {
+           "X": "y_hat"
         }
     },
     "outputs": {
@@ -33,7 +65,6 @@
                 "variable": "pyteller.primitives.postprocessing.reformat_data#1.actuals"
             }
         ],
-
         "postprocessing": [
             {
                 "name": "input",
@@ -43,19 +74,16 @@
     },
     "pipeline_arguments": {
         "pred_length": {
+            "keras.Sequential.LSTMTimeSeriesRegressor#1": "dense_units",
             "pyteller.primitives.preprocessing.rolling_window_sequences#1": "target_size",
-            "pyteller.primitives.estimators.persistence#1": "pred_length",
             "pyteller.primitives.postprocessing.flatten#1": "pred_length"
+
         },
         "offset": {
-            "pyteller.primitives.preprocessing.rolling_window_sequences#1": "offset",
-            "pyteller.primitives.estimators.persistence#1": "offset"
+            "pyteller.primitives.preprocessing.rolling_window_sequences#1": "offset"
         },
         "target_column": {
             "pyteller.primitives.preprocessing.rolling_window_sequences#1": "target_column"
         }
     }
 }
-
-
-

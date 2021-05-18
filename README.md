@@ -43,10 +43,10 @@ The expected input to pyteller pipelines is a .csv file with data in one of the 
 ### Targets Table
 #### Option 1: Single Entity (Academic Form)
 The user must specify the **string** denoting which column contains the:
-* `timestamp_col`:  column of **pandas timestamp** objects, **python datetime** objects, or **floats** corresponding to the time at which the observation is made
+* `time_column`:  column of **pandas timestamp** objects, **python datetime** objects, or **floats** corresponding to the time at which the observation is made
 * `target_signal`: an **integer** or **float** column with the observed target values at the indicated timestamps
 
-This is an example of such table, where the `timestamp_col` is 'timestamp' and the `target_signal` is 'value'
+This is an example of such table, where the `time_column` is 'timestamp' and the `target_signal` is 'value'
 
 |  timestamp |     value |
 |------------|-----------|
@@ -60,11 +60,11 @@ This is an example of such table, where the `timestamp_col` is 'timestamp' and t
 
 #### Option 2: Multiple Entity (Flat Form)
 The user must specify the **string** denoting which column contains the:
-* `timestamp_col`:  column of **pandas timestamp** objects, **python datetime** objects, or **floats** corresponding to the time at which the observation is made
+* `time_column`:  column of **pandas timestamp** objects, **python datetime** objects, or **floats** corresponding to the time at which the observation is made
 * `entities`: the **list** denoting the columns the user wants to make forecasts for
 
 
-This is an example of such table, where the `timestamp_col` is 'timestamp' and the `entities` can be ['taxi 1','taxi 3']
+This is an example of such table, where the `time_column` is 'timestamp' and the `entities` can be ['taxi 1','taxi 3']
 
 |  timestamp |     taxi 1 |     taxi 2 |    taxi 3 |
 |------------|-----------|-----------| -----------|
@@ -78,12 +78,12 @@ This is an example of such table, where the `timestamp_col` is 'timestamp' and t
 
 #### Option 3: Multiple Entity (Long Form)
 The user must specify the following:
-* `timestamp_col`:  column of **pandas timestamp** objects, **python datetime** objects, or **floats** corresponding to the time at which the observation is made
-* `entity_col`: the column containing the entities you will seperately make forecasts for
+* `time_column`:  column of **pandas timestamp** objects, **python datetime** objects, or **floats** corresponding to the time at which the observation is made
+* `entity_column`: the column containing the entities you will seperately make forecasts for
 * `target_signal`: the columns containing the observed target value that you want to forecast for
 
 
-This is an example of such table, where the `timestamp_col` is 'timestamp', the `entity_col` is 'region', and the `target_signal` is 'demand'.
+This is an example of such table, where the `time_column` is 'timestamp', the `entity_column` is 'region', and the `target_signal` is 'demand'.
 
 
 
@@ -231,9 +231,9 @@ pyteller = Pyteller(
     pipeline=pipeline,
     pred_length=10,
     offset=5,
-    timestamp_col='valid',
+    time_column='valid',
     target_signal='tmpf',
-    entity_col='station',
+    entity_column='station',
     entities=['8A0']
 )
 ```
@@ -263,7 +263,7 @@ The output is a dictionary which includes the `forecast` dataframe of all the pr
  ## 4. Evaluate
 To see metrics of the forecast accuracy, the user calls the `pyteller.evaluate` method
 ```python3
-scores = pyteller.evaluate(test_data=output['actual'],forecast=output['forecast'],
+scores = pyteller.evaluate(test_data=output['actuals'],forecast=output['forecast'],
                            metrics=['MAE','sMAPE'])
 
 ```

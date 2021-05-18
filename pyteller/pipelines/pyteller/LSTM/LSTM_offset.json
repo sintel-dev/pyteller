@@ -4,18 +4,17 @@
         "pyteller.primitives.preprocessing.get_index",
         "sklearn.impute.SimpleImputer",
         "mlprimitives.custom.preprocessing.RangeScaler",
-        "pyteller.primitives.preprocessing.rolling_window_sequences",
-        "numpy.squeeze",
+        "mlprimitives.custom.timeseries_preprocessing.rolling_window_sequences",
         "keras.Sequential.LSTMTimeSeriesRegressor",
         "mlprimitives.custom.preprocessing.RangeUnscaler",
         "pyteller.primitives.postprocessing.flatten",
         "pyteller.primitives.postprocessing.reformat_data"
     ],
 "init_params": {
-        "pyteller.primitives.preprocessing.rolling_window_sequences#1": {
+        "mlprimitives.custom.timeseries_preprocessing.rolling_window_sequences#1": {
             "target_column": 0,
-            "window_size": 18,
-            "step_size": 3
+            "window_size": 180,
+            "step_size": 1
         },
         "keras.Sequential.LSTMTimeSeriesRegressor#1": {
             "epochs": 1,
@@ -23,67 +22,59 @@
         }
     },
     "input_names": {
-        "numpy.squeeze#1": {
+
+        "mlprimitives.custom.preprocessing.RangeUnscaler#1": {
             "X": "y"
         },
-        "mlprimitives.custom.preprocessing.RangeUnscaler#1": {
-            "X": "y_hat"
-        },
         "pyteller.primitives.postprocessing.flatten#1": {
-            "X": "y_hat",
+            "X": "y",
             "index": "target_index",
             "columns": "entities"
         },
         "pyteller.primitives.postprocessing.reformat_data#1": {
-            "X": "y_hat"
+            "X": "y"
         }
     },
+
     "output_names": {
-        "numpy.squeeze#1": {
-            "X": "y"
-        },
-        "keras.Sequential.LSTMTimeSeriesRegressor#1": {
-            "y": "y_hat"
-        },
 
         "mlprimitives.custom.preprocessing.RangeUnscaler#1": {
-            "X": "y_hat"
+            "X": "y"
         },
 
-         "pyteller.primitives.postprocessing.flatten#1": {
-           "X": "y_hat"
+        "pyteller.primitives.postprocessing.flatten#1": {
+            "X": "y"
         }
     },
+
     "outputs": {
 	    "default": [
             {
-                "name": "forecast",
-                "variable": "pyteller.primitives.postprocessing.reformat_data#1.forecast"
+                "name": "forecasts",
+                "variable": "pyteller.primitives.postprocessing.reformat_data#1.forecasts"
             },
             {
-                "name": "actual",
-                "variable": "pyteller.primitives.postprocessing.reformat_data#1.actual"
+                "name": "actuals",
+                "variable": "pyteller.primitives.postprocessing.reformat_data#1.actuals"
             }
         ],
         "postprocessing": [
             {
                 "name": "input",
-                "variable": "pyteller.primitives.postprocessing.reformat_data#1._X"
+                "variable": "mlprimitives.custom.timeseries_preprocessing.rolling_window_sequences#1.X"
             }
         ]
     },
+
     "pipeline_arguments": {
         "pred_length": {
             "keras.Sequential.LSTMTimeSeriesRegressor#1": "dense_units",
-            "pyteller.primitives.preprocessing.rolling_window_sequences#1": "target_size",
+            "mlprimitives.custom.timeseries_preprocessing.rolling_window_sequences#1": "target_size",
             "pyteller.primitives.postprocessing.flatten#1": "pred_length"
 
         },
         "offset": {
-            "pyteller.primitives.preprocessing.rolling_window_sequences#1": "offset"
-        },
-        "target_column": {
-            "pyteller.primitives.preprocessing.rolling_window_sequences#1": "target_column"
+            "mlprimitives.custom.timeseries_preprocessing.rolling_window_sequences#1": "offset"
         }
     }
 }

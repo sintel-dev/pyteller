@@ -3,16 +3,16 @@
         "pyteller.primitives.preprocessing.format_data",
         "pyteller.primitives.preprocessing.get_index",
         "sklearn.impute.SimpleImputer",
-        "pyteller.primitives.preprocessing.rolling_window_sequences",
+        "mlprimitives.custom.timeseries_preprocessing.rolling_window_sequences",
         "pyteller.primitives.estimators.persistence",
          "pyteller.primitives.postprocessing.flatten",
         "pyteller.primitives.postprocessing.reformat_data"
     ],
     "init_params": {
-        "pyteller.primitives.preprocessing.rolling_window_sequences#1": {
-
+        "mlprimitives.custom.timeseries_preprocessing.rolling_window_sequences#1": {
+            "target_column": 0,
             "window_size": 18,
-            "step_size": 1
+            "step_size": 5
         }
     },
     "input_names": {
@@ -20,41 +20,40 @@
             "X": "y",
             "index": "target_index",
             "columns": "entities"
+        },
+        "pyteller.primitives.postprocessing.reformat_data#1": {
+            "X": "y"
         }
     },
+
+    "output_names": {
+
+        "pyteller.primitives.postprocessing.flatten#1": {
+            "X": "y"
+        }
+    },
+
     "outputs": {
 	    "default": [
             {
-                "name": "forecast",
-                "variable": "pyteller.primitives.postprocessing.reformat_data#1.forecast"
+                "name": "forecasts",
+                "variable": "pyteller.primitives.postprocessing.reformat_data#1.forecasts"
             },
             {
-                "name": "actual",
-                "variable": "pyteller.primitives.postprocessing.reformat_data#1.actual"
-            }
-        ],
-        "postprocessing": [
-            {
-                "name": "input",
-                "variable": "pyteller.primitives.postprocessing.reformat_data#1._X"
+                "name": "actuals",
+                "variable": "pyteller.primitives.postprocessing.reformat_data#1.actuals"
             }
         ]
     },
+
     "pipeline_arguments": {
         "pred_length": {
-            "pyteller.primitives.preprocessing.rolling_window_sequences#1": "target_size",
-            "pyteller.primitives.estimators.persistence#1": "pred_length",
-            "pyteller.primitives.postprocessing.flatten#1": "pred_length"
+            "mlprimitives.custom.timeseries_preprocessing.rolling_window_sequences#1": "target_size",
+            "pyteller.primitives.postprocessing.flatten#1": "pred_length",
+            "pyteller.primitives.estimators.persistence#1": "pred_length"
         },
         "offset": {
-            "pyteller.primitives.preprocessing.rolling_window_sequences#1": "offset",
-            "pyteller.primitives.estimators.persistence#1": "offset"
-        },
-        "target_column": {
-            "pyteller.primitives.preprocessing.rolling_window_sequences#1": "target_column"
+            "mlprimitives.custom.timeseries_preprocessing.rolling_window_sequences#1": "offset"
         }
     }
 }
-
-
-

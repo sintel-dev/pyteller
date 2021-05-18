@@ -8,20 +8,23 @@ pipeline = 'pyteller/pipelines/pyteller/LSTM/LSTM_offset.json'
 pyteller = Pyteller(
     pipeline=pipeline,
     pred_length=5,
-    offset=3,
-    timestamp_col='valid',
-    target_signal='tmpf',
-    # static_variables=None,
-    entity_col='station',
-    entities='8A0',
+    offset=0,
+    time_column='valid',
+    targets='tmpf',
+    # targets=['tmpf','dwpf'],
+    # target_column='station',
+    entity_column='station',
+    entities='8A0'
 )
 
 # Fit the data to the pipeline.
-train = pyteller.fit(current_data)
+train = pyteller.fit(current_data, tune=False)
 
 
 # forecast and evaluate
+
 output = pyteller.forecast(data=input_data, postprocessing=False, predictions_only=False)
-scores = pyteller.evaluate(test_data=output['actual'], forecast=output['forecast'],
+
+scores = pyteller.evaluate(actuals=output['actuals'], forecasts=output['forecasts'],
                            metrics=['MAPE', 'sMAPE'])
 pyteller.plot(output)

@@ -10,20 +10,20 @@ pipeline = 'pyteller/pipelines/pyteller/persistence/persistence.json'
 # Make instance of Pyteller, specifying where to make the prediction and the column names
 pyteller = Pyteller(
     pipeline=pipeline,
-    pred_length=10,
-    offset=5,
-    timestamp_col='valid',
-    target_signal='tmpf',
-    entity_col='station',
+    pred_length=5,
+    offset=0,
+    time_column='valid',
+    targets='tmpf',
+    entity_column='station',
     entities='8A0',
 )
 
 # Fit the data to the pipeline.
-pyteller.fit(current_data)
+train = pyteller.fit(current_data,tune=False)
+
 
 # forecast and evaluate
-output = pyteller.forecast(data=input_data, postprocessing=True, predictions_only=False)
-scores = pyteller.evaluate(test_data=output['actual'], forecast=output['forecast'],
-                           metrics=['MAE', 'sMAPE'])
-
+output = pyteller.forecast(data=input_data, postprocessing=False, predictions_only=False)
+scores = pyteller.evaluate(actuals=output['actuals'], forecasts=output['forecasts'],
+                           metrics=['MAPE', 'sMAPE'])
 pyteller.plot(output)

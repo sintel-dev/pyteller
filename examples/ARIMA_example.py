@@ -16,29 +16,28 @@ pipeline = 'pyteller/pipelines/pyteller/ARIMA/arima.json'
 
 hyperparameters = {
     "statsmodels.tsa.arima_model.Arima#1": {
-        "p": 1,
+        "p": 2,
         "d": 1,
-        "q": 0
+        "q": 2
     }
 }
 
 pyteller = Pyteller(
     pipeline=pipeline,
-    hyperparameters=hyperparameters,
     pred_length=5,
     offset=3,
-    timestamp_col='valid',
-    target_signal='tmpf',
-    entity_col='station',
+    time_column='valid',
+    targets='tmpf',
+    entity_column='station',
     entities='8A0',
 )
 
 # Fit the data to the pipeline.
-train = pyteller.fit(current_data)
+train = pyteller.fit(current_data.iloc[0:1000])
 
 # forecast and evaluate
 output = pyteller.forecast(data=input_data, postprocessing=False, predictions_only=False)
-scores = pyteller.evaluate(test_data=output['actual'], forecast=output['forecast'],
+scores = pyteller.evaluate(actuals=output['actuals'], forecasts=output['forecasts'],
                            metrics=['MAPE', 'sMAPE'])
 
 pyteller.plot(output)

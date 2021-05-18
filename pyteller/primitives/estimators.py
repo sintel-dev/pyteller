@@ -25,8 +25,7 @@ class Persistence:
         val = 0
         preds = np.repeat(X[:, [-1]], self.pred_length, axis=1)
         for i in range(X.shape[2]):
-            pred, y_ = preds[:, :, i], y[:, :, i]
-            val += mean_absolute_error(y_, pred)
+            val += mean_absolute_error(y, preds[:, :, i])
         LOGGER.info('training MAE: %1f' % (val / X.shape[2]))
 
     def predict(self, X):

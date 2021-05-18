@@ -21,10 +21,6 @@
                 "type": "Index or array-like"
             },
             {
-                "name": "freq",
-                "type": "int"
-            },
-            {
                 "name": "pred_length",
                 "type": "int"
             }
@@ -33,6 +29,10 @@
             {
                 "name": "X",
                 "type": "pandas.DataFrame"
+            },
+            {
+                "name": "index",
+                "type": "Index or array-like"
             }
         ]
     },

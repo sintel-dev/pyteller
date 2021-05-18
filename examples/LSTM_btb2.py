@@ -28,7 +28,7 @@ def cross_validate(hyperparameters=None):
 
         # only take the X data, the y data is made within the pipeline
         pyteller, all_output = run_pipeline(X_train, X_test, pipeline)
-        scores.append(pyteller.evaluate(test_data=all_output['actual'],
+        scores.append(pyteller.evaluate(test_data=all_output['actuals'],
                                         forecast=all_output['forecast'],
                                         metrics=['sMAPE']).values[0][0])
     return np.mean(scores)
@@ -40,7 +40,7 @@ def run_pipeline(X_train, X_test, pipeline):
         pipeline=pipeline,
         pred_length=5,
         offset=2,
-        timestamp_col='timestamp',
+        time_column='timestamp',
         target_signal='value'
     )
 
@@ -80,5 +80,5 @@ pipeline.set_hyperparameters(best_proposal)
 
 pyteller, all_output = run_pipeline(current_data, input_data, pipeline)
 
-scores = pyteller.evaluate(test_data=all_output['actual'], forecast=all_output['forecast'],
+scores = pyteller.evaluate(test_data=all_output['actuals'], forecast=all_output['forecast'],
                            metrics=['MAPE', 'sMAPE'])

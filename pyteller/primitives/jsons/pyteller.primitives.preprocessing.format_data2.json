@@ -17,15 +17,15 @@
                 "type": "ndarray"
             },
             {
-                "name": "target_column",
-                "type": "string"
-            },
-            {
-                "name": "targets",
+                "name": "target_signal",
                 "type": "string"
             },
             {
                 "name": "time_column",
+                "type": "string"
+            },
+            {
+                "name": "static_variables",
                 "type": "string"
             },
            {
@@ -43,8 +43,20 @@
                 "type": "ndarray"
             },
             {
-                "name": "actuals",
+                "name": "_X",
                 "type": "ndarray"
+            },
+            {
+                "name": "freq",
+                "type": "float"
+            },
+            {
+                "name": "target_column",
+                "type": "float"
+            },
+            {
+                "name": "entities_new",
+                "type": "float"
             }
         ]
     },

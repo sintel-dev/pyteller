@@ -17,7 +17,7 @@ def convert_date(timelist):
     return converted
 
 
-def plot_forecast(dfs, output_path=None, labels=['actual', 'predicted'], frequency=None):
+def plot_forecast(dfs, output_path=None, labels=['actuals', 'predicted'], frequency=None):
     """ Line plot for time series.
 
     This function plots time series
@@ -28,7 +28,7 @@ def plot_forecast(dfs, output_path=None, labels=['actual', 'predicted'], frequen
         output_path (string):
             Optional. String of the path to save the figure
         labels (list of strings):
-            Optional. List of strings for the legend entries. Default is ['actual','predicted']
+            Optional. List of strings for the legend entries. Default is ['actuals','predicted']
         frequency (string):
             Optional. String of what frequency of tick marks for the x axis.
 
@@ -50,11 +50,11 @@ def plot_forecast(dfs, output_path=None, labels=['actual', 'predicted'], frequen
     ax = fig.add_subplot(111)
 
     for df in dfs:
-        plt.plot(df.index, df.iloc[:, 0] / 100, linewidth=3)
+        plt.plot(df.index, df.iloc[:, 0], linewidth=3)
 
-    plt.title('Predicted and Actual', size=34)
+    plt.title('Predicted and actuals', size=34)
     plt.ylabel('', size=30)
-    plt.xlabel('Hour', size=30)
+    plt.xlabel('Time', size=30)
     plt.xticks(size=26)
     plt.yticks(size=26)
 

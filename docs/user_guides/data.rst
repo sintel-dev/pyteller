@@ -17,12 +17,12 @@ Input
 Orion Pipelines work on time Series that are provided as a single table of telemetry
 observations with two columns:
 
-* `timestamp_col`: the STRING denoting which column contains the pandas timestamp objects or python datetime objects corresponding to the time at which the observation is made
+* `time_column`: the STRING denoting which column contains the pandas timestamp objects or python datetime objects corresponding to the time at which the observation is made
 * `target_signal`: the STRING denoting the INTEGERS or FLOATS column with the observed target values at the indicated timestamps
-* `entity_col`: the STRING denoting which column contains the entities the observations are for
-* `entities`: the STRING denoting either which entities from `entity_col` to make forecsts for, or denoting which coumns are the target entities
+* `entity_column`: the STRING denoting which column contains the entities the observations are for
+* `entities`: the STRING denoting either which entities from `entity_column` to make forecsts for, or denoting which coumns are the target entities
 
-This is an example of such table, where the `timestamp_col` is 'timestamp', the `entity_col` is 'region',  the `target` is 'demand,'
+This is an example of such table, where the `time_column` is 'timestamp', the `entity_column` is 'region',  the `target` is 'demand,'
 
 
 

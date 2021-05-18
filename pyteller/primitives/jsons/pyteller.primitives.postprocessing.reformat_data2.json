@@ -17,16 +17,8 @@
                 "type": "pandas.DataFrame"
             },
             {
-                "name": "index",
+                "name": "_X",
                 "type": "Index or array-like"
-            },
-            {
-                "name": "actuals",
-                "type": "Index or array-like"
-            },
-            {
-                "name": "time_column",
-                "type": "string"
             }
         ],
         "output": [
@@ -35,8 +27,12 @@
                 "type": "pandas.DataFrame"
             },
             {
-                "name": "forecasts",
+                "name": "forecast",
                 "type": "pandas.DataFrame"
+            },
+            {
+                "name": "_X",
+                "type": "Index or array-like"
             }
         ]
     },

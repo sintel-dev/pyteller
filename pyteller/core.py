@@ -10,6 +10,11 @@ import pandas as pd
 from mlblocks import MLPipeline, load_pipeline
 from sklearn.exceptions import NotFittedError
 from btb.session import BTBSession
+from sklearn.model_selection import cross_val_score
+from mlprimitives.datasets import Dataset
+from sklearn.metrics import mean_absolute_error
+import numpy as np
+from btb.tuning import GPTuner, Tunable
 
 from pyteller.metrics import METRICS
 from pyteller.utils import plot_forecast
@@ -34,10 +39,10 @@ class Pyteller:
                 * An ``MLPipeline`` instance.
                 * A ``dict`` with an ``MLPipeline`` specification.
 
-        timestamp_col (string):
+        time_column (string):
             Optional. A ``str`` specifying the name of the timestamp column of the input data
 
-        target_signal (string):
+        target_column (string):
             Optional. A ``str`` specifying the name of the column containing the target signal
 
         static_variables (string):
@@ -46,9 +51,9 @@ class Pyteller:
 
         entities (string or list):
             Optional. A ``str`` or ``list`` specifying the name(s) of the entities from the
-            entity_col the user wants to make forecasts for
+            entity_column the user wants to make forecasts for
 
-        entity_col (string):
+        entity_column (string):
             A ``str`` specifying the name of the column of the input data containing the entity
             names
 
@@ -102,14 +107,15 @@ class Pyteller:
 
         return pipeline
 
-    def __init__(self, pipeline, timestamp_col='timestamp', target_signal=None,
-                 static_variables=None, entities=None, entity_col=None, pred_length=None,
+    def __init__(self, pipeline, time_column='timestamp', target_column=None, targets=None,
+                 static_variables=None, entities=None, entity_column=None, pred_length=None,
                  offset=None, hyperparameters=None):
 
-        self.timestamp_col = timestamp_col
-        self.target_signal = target_signal
+        self.time_column = time_column
+        self.target_column = target_column
+        self.targets=targets
         self.static_variables = static_variables
-        self.entity_cols = entity_col
+        self.entity_column = entity_column
         self.entities = entities
         self.pred_length = pred_length
         self.offset = offset
@@ -131,10 +137,11 @@ class Pyteller:
             'pred_length': self.pred_length,
             'offset': self.offset,
             'entities': self.entities,
-            'target_signal': self.target_signal,
-            'timestamp_col': self.timestamp_col,
+            'targets' : self.targets,
+            'target_column': self.target_column,
+            'time_column': self.time_column,
             'static_variables': self.static_variables,
-            'entity_col': self.entity_cols,
+            'entity_column': self.entity_column,
         }
 
 
@@ -174,6 +181,24 @@ class Pyteller:
 
         return np.mean(scores)
 
+    def scoring_function(self, X, hyperparameters=None):
+        # choose the model
+        # model_instance = MLPipeline(self.pipeline)
+        dataset = Dataset('data', X, X, mean_absolute_error, 'timeseries', 'forecast',
+                          shuffle=False)
+
+        # instantiate the model
+        if hyperparameters:
+            # model_instance.set_hyperparameters(hyperparameters)
+            self.pipeline.set_hyperparameters(hyperparameters)
+        scores = []
+        for X_train, X_test, y_train, y_test in dataset.get_splits(3):
+            self.fit(X_train)
+            output=self.forecast(X_test)
+            scores.append(self.evaluate(actuals=output['actuals'],
+                                            forecasts=output['forecasts'],
+                                            metrics=['MAE']).values[0][0])
+        return np.mean(scores)
     def tune(self, X, y, max_evals=10, scoring=None, verbose=False):
         """ Tune the pipeline hyper-parameters and select the optimized model.
         Args:
@@ -188,13 +213,34 @@ class Pyteller:
             verbose (bool):
                 Whether to log information during processing.
         """
-        tunables = {'0': self.pipeline.get_tunable_hyperparameters(flat=True)}
 
-        session = BTBSession(tunables, lambda _, hyparam: self.k_fold_validation(
-            hyparam, X=X, y=y, scoring=scoring), max_errors=max_evals, verbose=verbose)
+        from sklearn.metrics import make_scorer, f1_score
+        from sklearn.model_selection import cross_val_score
 
-        best_proposal = session.run(max_evals)
-        self.pipeline.set_hyperparameters(best_proposal['config'])
+
+
+        tunables = self.pipeline.get_tunable_hyperparameters(flat=True)
+        tunable = Tunable.from_dict(tunables)
+        default_score = self.scoring_function(X)
+        tuner = GPTuner(tunable)
+        defaults = tunable.get_defaults()
+        tuner.record(defaults, default_score)
+        best_score = default_score
+        best_proposal = defaults
+
+        for iteration in range(max_evals):
+            print("scoring pipeline {}".format(iteration + 1))
+            proposal = tuner.propose()
+            score = self.scoring_function(X,proposal)
+            tuner.record(proposal, score)
+
+            if score < best_score:
+                print("New best found: {}".format(score))
+                best_score = score
+                best_proposal = proposal
+        self.pipeline.set_hyperparameters(best_proposal)
+
+
 
     def fit(self, data=None, tune=False, max_evals=10, scoring=None,  start_=None, verbose=False, output_=None, **kwargs):
         """Fit the pipeline to the given data.
@@ -258,6 +304,10 @@ class Pyteller:
             postprocessing (bool):
                 If ``True``, also return the ``input`` data as output from the
                 ``MLPipeline``.
+
+            predictions_only (bool):
+                If ``True``, only return forecasts as an output from the ``MLPipeline``.
+
         Returns:
             Dictionary:
                 A dictionary containing the specified ``default`` and ``postprocessing`` output
@@ -271,38 +321,38 @@ class Pyteller:
         default_names = self._get_outputs_spec('default')
         kwargs.update(self._to_dict())
 
-        outputs = self.pipeline.predict(X=data, output_=output_spec, **kwargs)
+        outputs = self.pipeline.predict(X=data, output_=output_spec, debug=True, **kwargs)
 
         if postprocessing:
             postprocessing = self._get_outputs_spec('postprocessing')
-            postprocessing_outputs = outputs[-len(postprocessing):]
-            default_outputs = outputs[:len(postprocessing) + 1]
+            postprocessing_outputs = outputs[0][-len(postprocessing):]
+            default_outputs = outputs[0][:len(postprocessing) + 1]
             names = postprocessing + default_names
             outputs = postprocessing_outputs + default_outputs
             output_dict = dict(zip(names, outputs))
 
         else:
-            output_dict = dict(zip(default_names, outputs))
+            output_dict = dict(zip(default_names, outputs[0]))
 
         if predictions_only:
-            return output_dict['forecast']
+            return output_dict['forecasts']
 
         return output_dict
 
     @staticmethod
     def plot(forecast_output, frequency='day'):
-        actual = forecast_output['actual'].iloc[:, 0:1]
-        forecast = forecast_output['forecast'].iloc[:, 0:1]
-        return plot_forecast([actual, forecast], frequency=frequency)
+        actuals = forecast_output['actuals'].iloc[:, 0:1]
+        forecasts = forecast_output['forecasts'].iloc[:, 0:1]
+        return plot_forecast([actuals, forecasts], frequency=frequency)
 
-    def evaluate(self, forecast, test_data, detailed=False, metrics=METRICS):
+    def evaluate(self, actuals, forecasts, detailed=False, metrics=METRICS):
         """Evaluate the performance against test set
 
         Args:
-            forecast (DataFrame):
+            forecasts (DataFrame):
                Forecasts, passed as a ``pandas.DataFrame`` containing
                 exactly two columns: timestamp and value.
-            test_data (DataFrame):
+            actuals (DataFrame):
                Testing data or the target data, passed as a ``pandas.DataFrame`` containing
                 exactly two columns: timestamp and value.
             detailed (bool):
@@ -315,6 +365,8 @@ class Pyteller:
             DataFrame:
                 ``pandas.DataFrame`` with columns as entities and the metric name as index.
         """
+        forecasts = forecasts[forecasts.index.isin(actuals.index)]
+
         if isinstance(metrics, str):
             metrics = [metrics]
 
@@ -326,7 +378,7 @@ class Pyteller:
             }
 
         scores = list()
-        entities = forecast.columns
+        entities = forecasts.columns
 
         if isinstance(entities, str):
             entities = [entities]
@@ -334,14 +386,14 @@ class Pyteller:
         for entity in entities:
             score = {}
             score.update({
-                name: metric(test_data[entity].values, forecast[entity].values)
+                name: metric(actuals[entity].values, forecasts[entity].values)
                 for name, metric in metrics.items() if name != 'MASE'
             })
 
             if detailed:
-                score['granularity'] = forecast.index[1] - forecast.index[0]
-                score['prediction length'] = forecast.shape[0]
-                score['length of testing data'] = len(test_data.get_group(entity))
+                score['granularity'] = forecasts.index[1] - forecasts.index[0]
+                score['prediction length'] = forecasts.shape[0]
+                score['length of testing data'] = len(actuals.get_group(entity))
 
             scores.append(score)
 
