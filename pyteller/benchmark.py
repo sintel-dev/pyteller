@@ -3,11 +3,16 @@ import json
 import logging
 import os
 from functools import partial
+from copy import deepcopy
+from pathlib import Path
+import uuid
 
+import numpy as np
 import pandas as pd
 from mlblocks import MLPipeline
+from pyteller.progress import TqdmLogger, progress
 
-from pyteller.core import Pyteller, egest_data
+from pyteller.core import Pyteller
 from pyteller.metrics import METRICS
 
 LOGGER = logging.getLogger(__name__)
@@ -58,7 +63,7 @@ def _load_signal(dataset, columns, holdout):
     # columns = json.load(f)
     # columns = META_DATA.loc[dataset].to_dict()
 
-    train, test = egest_data(dataset, column_dict=columns.to_dict())
+    # train, test = egest_data(dataset, column_dict=columns.to_dict())
 
     return train, test
 
@@ -181,8 +186,84 @@ def _evaluate_datasets(pipelines, datasets, hyperparameters, metrics, distribute
     return df
 
 
+def _load_pipeline(pipeline, hyperparams=None):
+    if isinstance(pipeline, str) and os.path.isfile(pipeline):
+        pipeline = MLPipeline.load(pipeline)
+    else:
+        pipeline = MLPipeline(pipeline)
+
+    if hyperparams is not None:
+        pipeline.set_hyperparameters(hyperparams)
+
+    return pipeline
+
+
+def _get_pipeline_hyperparameter(hyperparameters, dataset_name, pipeline_name):
+    hyperparameters_ = deepcopy(hyperparameters)
+
+def _run_job(args):
+    # Reset random seed
+    np.random.seed()
+
+    (pipeline, pipeline_name, dataset, signal, hyperparameter, metrics, test_split, detrend,
+        iteration, cache_dir, pipeline_dir, run_id) = args
+
+    pipeline_path = pipeline_dir
+    if pipeline_dir:
+        base_path = str(pipeline_dir / f'{pipeline_name}_{signal}_{dataset}_{iteration}')
+        pipeline_path = base_path + '_pipeline.pkl'
+
+    LOGGER.info('Evaluating pipeline %s on signal %s dataset %s (test split: %s); iteration %s',
+                pipeline_name, signal, dataset, test_split, iteration)
+
+    output = _evaluate_signal(
+        pipeline,
+        signal,
+        hyperparameter,
+        metrics,
+        test_split,
+        detrend,
+        pipeline_path
+    )
+    scores = pd.DataFrame.from_records([output], columns=output.keys())
+
+    scores.insert(0, 'dataset', dataset)
+    scores.insert(1, 'pipeline', pipeline_name)
+    scores.insert(2, 'signal', signal)
+    scores.insert(3, 'iteration', iteration)
+    scores['run_id'] = run_id
+
+    if cache_dir:
+        base_path = str(cache_dir / f'{pipeline_name}_{signal}_{dataset}_{iteration}_{run_id}')
+        scores.to_csv(base_path + '_scores.csv', index=False)
+
+    return scores
+
+
+def _run_on_dask(jobs, verbose):
+    """Run the tasks in parallel using dask."""
+    try:
+        import dask
+    except ImportError as ie:
+        ie.msg += (
+            '\n\nIt seems like `dask` is not installed.\n'
+            'Please install `dask` and `distributed` using:\n'
+            '\n    pip install dask distributed'
+        )
+        raise
+
+    scorer = dask.delayed(_run_job)
+    persisted = dask.persist(*[scorer(args) for args in jobs])
+    if verbose:
+        try:
+            progress(persisted)
+        except ValueError:
+            pass
+
+    return dask.compute(*persisted)
+
 def benchmark(pipelines=None, datasets=None, hyperparameters=None, metrics=METRICS, rank='MAPE',
-              distributed=False, holdout=False, detrend=False, output_path=None):
+              cache_dir=None,  pipeline_dir=None, distributed=False, output_path=None, workers=workers,):
     """Evaluate pipelines on the given datasets and evaluate the performance.
     The pipelines are used to analyze the given signals and later on the
     detected anomalies are scored against the known anomalies using the
@@ -219,19 +300,20 @@ def benchmark(pipelines=None, datasets=None, hyperparameters=None, metrics=METRI
             by the indicated metric.
     """
     pipelines = pipelines or VERIFIED_PIPELINES
-    datasets = datasets or META_DATA  # BENCHMARK_DATA
+    datasets = datasets or BENCHMARK_DATA
+    run_id = os.getenv('RUN_ID') or str(uuid.uuid4())[:10]
 
     if isinstance(pipelines, list):
         pipelines = {pipeline: pipeline for pipeline in pipelines}
 
-    if isinstance(datasets, dict):
-        drop_these = [x for x in list(META_DATA.index) if x not in list(datasets.keys())]
-        datasets2 = META_DATA.drop(drop_these)
-        for index, value in datasets2['signals'].items():
-            if ',' in value:
-                keep_signals = ','.join(datasets[index])
-                datasets2.loc[index]['signals'] = keep_signals
-        datasets = datasets2
+    # if isinstance(datasets, dict):
+    #     drop_these = [x for x in list(META_DATA.index) if x not in list(datasets.keys())]
+    #     datasets2 = META_DATA.drop(drop_these)
+    #     for index, value in datasets2['signals'].items():
+    #         if ',' in value:
+    #             keep_signals = ','.join(datasets[index])
+    #             datasets2.loc[index]['signals'] = keep_signals
+    #     datasets = datasets2
 
     if isinstance(hyperparameters, list):
         hyperparameters = {pipeline: hyperparameter for pipeline, hyperparameter in
@@ -249,30 +331,60 @@ def benchmark(pipelines=None, datasets=None, hyperparameters=None, metrics=METRI
 
         metrics = metrics_
 
-    results = _evaluate_datasets(
-        pipelines, datasets, hyperparameters, metrics, distributed, holdout, detrend)
+    if cache_dir:
+        cache_dir = Path(cache_dir)
+        os.makedirs(cache_dir, exist_ok=True)
 
+    if pipeline_dir:
+        pipeline_dir = Path(pipeline_dir)
+        os.makedirs(pipeline_dir, exist_ok=True)
+
+    jobs = list()
+    for dataset, signals in datasets.items():
+        print(dataset, signals)
+        for pipeline_name, pipeline in pipelines.items():
+            hyperparameter = _get_pipeline_hyperparameter(hyperparameters, dataset, pipeline_name)
+            for signal in signals:
+                args = (
+                    pipeline,
+                    pipeline_name,
+                    dataset,
+                    signal,
+                    hyperparameter,
+                    metrics,
+                    cache_dir,
+                    pipeline_dir,
+                    run_id,
+                )
+                jobs.append(args)
+
+    if workers == 'dask':
+        scores = _run_on_dask(jobs, show_progress)
+    else:
+        if workers in (0, 1):
+            scores = map(_run_job, jobs)
+        else:
+            pool = concurrent.futures.ProcessPoolExecutor(workers)
+            scores = pool.map(_run_job, jobs)
+
+        scores = tqdm.tqdm(scores, total=len(jobs), file=TqdmLogger())
+        if show_progress:
+            scores = tqdm.tqdm(scores, total=len(jobs))
+
+    scores = pd.concat(scores)
     if output_path:
         LOGGER.info('Saving benchmark report to %s', output_path)
-        results.to_csv(output_path)
+        scores.to_csv(output_path, index=False)
 
-    return _sort_leaderboard(results, rank, metrics)
-
-
-def _load_pipeline(pipeline, hyperparams=None):
-    if isinstance(pipeline, str) and os.path.isfile(pipeline):
-        pipeline = MLPipeline.load(pipeline)
-    else:
-        pipeline = MLPipeline(pipeline)
-
-    if hyperparams is not None:
-        pipeline.set_hyperparameters(hyperparams)
-
-    return pipeline
+    return _sort_leaderboard(scores, rank, metrics)
 
 
-def main():
+
+
+def main(workers=1):
     # output path
+    pipeline_dir = 'save_pipelines'
+    cache_dir = 'cache'
     version = "results.csv"
     output_path = os.path.join(BENCHMARK_PATH, 'results', version)
 
@@ -300,4 +412,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    results= main()

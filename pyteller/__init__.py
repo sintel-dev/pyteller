@@ -8,7 +8,7 @@ __version__ = '0.1.1.dev0'
 
 import os
 
-from mlblocks import find_pipelines
+from mlblocks.discovery import find_pipelines
 
 from pyteller.core import Pyteller
 
