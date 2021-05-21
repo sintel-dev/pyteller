@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-def flatten(X, index, pred_length):
+def flatten(X, index, pred_length, freq):
     """flattens predictions and averages duplicate predicted values
 
     The function takes in a an array and averages the predictions that are for the same timestep
@@ -24,16 +24,30 @@ def flatten(X, index, pred_length):
             * first index value of each target sequence.
     """
     # freq = index[1] - index[0]
-    index_epoch = pd.to_datetime(index).astype(np.int64) // 1e9
-    freq = (index_epoch[1] - index_epoch[0])/pred_length
-    index = np.reshape(index_epoch, [index_epoch.size, 1])
-    index = np.insert(index, 1, np.full((pred_length - 1, 1), freq), axis=1)
+    # index_epoch = pd.to_datetime(index).astype(np.int64) // 1e9
+    # freq = (index_epoch[1] - index_epoch[0])/pred_length
+    # index = np.reshape(index_epoch, [index_epoch.size, 1])
+    # index = np.insert(index, 1, np.full((pred_length - 1, 1), freq), axis=1)
+    # index = np.cumsum(index, axis=1).flatten()
+    # df = pd.DataFrame(data=X.flatten(), index=index)
+    # df = df.groupby(df.index).mean()
+    # df.index = pd.to_datetime(df.index.values * 1e9)
+    # return df.values, df.index
+
+
+    if index.dtype == int: #if the index was made with make_index=True
+        freq = 1
+    else:
+        index = pd.to_datetime(index).astype(np.int64) // 1e9
+        # freq = (index[1] - index[0])/pred_length
+    index = np.reshape(index, [index.size, 1])
+    index = np.insert(index, 1, np.full((pred_length - 1, 1), freq,dtype=float), axis=1)
     index = np.cumsum(index, axis=1).flatten()
     df = pd.DataFrame(data=X.flatten(), index=index)
     df = df.groupby(df.index).mean()
-    df.index = pd.to_datetime(df.index.values * 1e9)
+    if index.dtype != int:
+        df.index = pd.to_datetime(df.index.values * 1e9)
     return df.values, df.index
-
 
 def flatten2(X, index, freq, pred_length):
     """flattens predictions and averages duplicate predicted values
@@ -85,7 +99,7 @@ def reformat_data(X, index, actuals, time_column):
     # else:
     #     actuals[time_column] = pd.to_datetime(actuals[time_column])
 
-    actuals = actuals.set_index(time_column)
+    actuals = actuals.set_index(time_column.lower())
     forecasts = pd.DataFrame(data=X, index=index)
     actuals = actuals[actuals.index.isin(forecasts.index)]
     forecasts.columns = actuals.columns

@@ -5,6 +5,11 @@ from pyteller.data import load_data
 current_data, input_data = load_data('AL_Weather')
 
 pipeline = 'pyteller/pipelines/pyteller/LSTM/LSTM_offset.json'
+hyperparameters = {
+    'pyteller.primitives.preprocessing.format_data#1': {
+        'make_index': False
+    }
+}
 pyteller = Pyteller(
     pipeline=pipeline,
     pred_length=5,
@@ -14,7 +19,8 @@ pyteller = Pyteller(
     # targets=['tmpf','dwpf'],
     # target_column='station',
     entity_column='station',
-    entities='8A0'
+    entities='8A0',
+    hyperparameters=hyperparameters
 )
 
 # Fit the data to the pipeline.
@@ -27,4 +33,4 @@ output = pyteller.forecast(data=input_data, postprocessing=False, predictions_on
 
 scores = pyteller.evaluate(actuals=output['actuals'], forecasts=output['forecasts'],
                            metrics=['MAPE', 'sMAPE'])
-pyteller.plot(output)
+# pyteller.plot(output)

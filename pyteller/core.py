@@ -107,11 +107,11 @@ class Pyteller:
 
         return pipeline
 
-    def __init__(self, pipeline, time_column='timestamp', target_column=None, targets=None,
+    def __init__(self, pipeline, time_column=None, target_column=None, targets=None,
                  static_variables=None, entities=None, entity_column=None, pred_length=None,
                  offset=None, hyperparameters=None):
 
-        self.time_column = time_column
+        self.time_column = time_column or 'timestamp'
         self.target_column = target_column
         self.targets=targets
         self.static_variables = static_variables
@@ -270,10 +270,13 @@ class Pyteller:
                 ``MLPipeline``
 
         """
+
         if data is None:
             data = kwargs.pop('X')
 
         else:
+            # if self.time_column == None:
+            #     self.time_column = data.columns[0]
             kwargs.update(self._to_dict())
 
         if tune:

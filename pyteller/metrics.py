@@ -5,34 +5,48 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error
 def root_mean_square_error(testing_series, prediction_series):
     return mean_squared_error(testing_series, prediction_series, squared=False)
 
+#
+# def MASE(training_series, y_true, y_pred):
+#     """
+#     # Source: https://github.com/CamDavidsonPilon/Python-Numerics/blob/master/TimeSeries/MASE.py
+#     Computes Mean absolute scaled error forecast error
+#
+#     See "Another look at measures of forecast accuracy", Rob J Hyndman
+#
+#     Args:
+#         training_series (numpy.ndarray):
+#             the series used to train the model
+#         y_true (numpy.ndarray):
+#             ``numpy.ndarray`` of the known values for the given predictions
+#         y_pred: (numpy.ndarray):
+#             ``numpy.ndarray`` of the generated predictions
+#
+#     Returns:
+#         float of MASE
+#     """
+#     n = training_series.shape[0]
+#     d = np.abs(np.diff(np.array(training_series, dtype=float))).sum() / (n - 1)
+#
+#     errors = np.abs(
+#         np.array(y_true, dtype=float) - np.array(y_pred, dtype=float)).mean()
+#     if np.isnan(d) or errors == 0 or d == 0:
+#         return 0
+#     else:
+#         return errors.mean() / d
 
-def MASE(training_series, y_true, y_pred):
+def _naive_forecasting(actual, seasonality = 1):
+    """ Naive forecasting method which just repeats previous samples """
+    return actual[:-seasonality]
+
+
+def MASE(actual: np.ndarray, predicted: np.ndarray, seasonality: int = 1):
     """
-    # Source: https://github.com/CamDavidsonPilon/Python-Numerics/blob/master/TimeSeries/MASE.py
-    Computes Mean absolute scaled error forecast error
-
-    See "Another look at measures of forecast accuracy", Rob J Hyndman
-
-    Args:
-        training_series (numpy.ndarray):
-            the series used to train the model
-        y_true (numpy.ndarray):
-            ``numpy.ndarray`` of the known values for the given predictions
-        y_pred: (numpy.ndarray):
-            ``numpy.ndarray`` of the generated predictions
-
-    Returns:
-        float of MASE
+    Mean Absolute Scaled Error
+    Baseline (benchmark) is computed with naive forecasting (shifted by @seasonality)
     """
-    n = training_series.shape[0]
-    d = np.abs(np.diff(np.array(training_series, dtype=float))).sum() / (n - 1)
-
-    errors = np.abs(
-        np.array(y_true, dtype=float) - np.array(y_pred, dtype=float)).mean()
-    if np.isnan(d) or errors == 0 or d == 0:
-        return 0
-    else:
-        return errors.mean() / d
+    return mean_absolute_error(actual, predicted) / mean_absolute_error(actual[seasonality:],
+                                                                 _naive_forecasting(actual,
+                                                                                    seasonality))
 
 
 def sMAPE(testing_series, prediction_series):

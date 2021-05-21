@@ -29,6 +29,10 @@
             {
                 "name": "index",
                 "type": "ndarray"
+            },
+            {
+                "name": "freq",
+                "type": "float"
             }
         ]
     },

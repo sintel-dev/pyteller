@@ -13,8 +13,8 @@
 "init_params": {
         "mlprimitives.custom.timeseries_preprocessing.rolling_window_sequences#1": {
             "target_column": 0,
-            "window_size": 180,
-            "step_size": 1
+            "window_size": 5,
+            "step_size": 2
         },
         "keras.Sequential.LSTMTimeSeriesRegressor#1": {
             "epochs": 1,

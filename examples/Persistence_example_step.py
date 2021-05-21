@@ -1,5 +1,5 @@
 # Load the dataset from a dataset on the s3 bucket, or in this example the local file path
-from mlblocks.discovery import find_pipelines
+from mlblocks.discovery import find_pipelines,load_pipeline
 
 from pyteller.core import Pyteller
 from pyteller.data import load_data

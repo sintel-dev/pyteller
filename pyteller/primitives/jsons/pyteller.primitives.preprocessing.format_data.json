@@ -49,5 +49,11 @@
         ]
     },
     "hyperparameters": {
+        "fixed": {
+            "make_index": {
+                "type": "Boolean",
+                "default": false
+            }
+        }
     }
 }
