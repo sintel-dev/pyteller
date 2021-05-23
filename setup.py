@@ -17,7 +17,6 @@ install_requires = [
     'pandas>=1,<2',
     'numpy<1.19,>=1.17.1',
     'scikit-learn>=0.21',
-    'matplotlib>=2.2.2'
     'baytune>=0.4.0,<0.5',
 
 ]
