@@ -214,6 +214,7 @@ def benchmark(pipelines=None, datasets=None, pred_length=12, hyperparameters=Non
               cache_dir=None, output_path=None, pipeline_dir=None):
 
     """Evaluate pipelines on the given datasets and evaluate the performance.
+
     The pipelines are used to analyze the given signals and later on the
     detected anomalies are scored against the known anomalies using the
     indicated metrics.
