@@ -213,7 +213,7 @@ def benchmark(pipelines=None, datasets=None, pred_length=12, hyperparameters=Non
               metrics=METRICS, rank='MAPE', iterations=1, workers=1, show_progress=False,
               cache_dir=None, output_path=None, pipeline_dir=None):
 
-    """Evaluate pipelines on the given datasets and evaluate the performance.
+    """Run pipelines on the multiple datasets and evaluate the performance.
 
     The pipelines are used to analyze the given signals and later on the
     detected anomalies are scored against the known anomalies using the
@@ -221,6 +221,7 @@ def benchmark(pipelines=None, datasets=None, pred_length=12, hyperparameters=Non
 
     Finally, the scores obtained with each metric are averaged accross all the signals,
     ranked by the indicated metric and returned on a ``pandas.DataFrame``.
+
     Args:
         pipelines (dict or list): dictionary with pipeline names as keys and their
             JSON paths as values. If a list is given, it should be of JSON paths,
@@ -246,11 +247,13 @@ def benchmark(pipelines=None, datasets=None, pred_length=12, hyperparameters=Non
         detrend (bool): Whether to use ``scipy.detrend``. If not given, use ``False``.
         output_path (str): Location to save the intermediatry results. If not given,
             intermediatry results will not be saved.
+
     Returns:
         pandas.DataFrame: Table containing the average of the scores obtained with
             each scoring function accross all the signals for each pipeline, ranked
             by the indicated metric.
     """
+
     pipelines = pipelines or VERIFIED_PIPELINES
     datasets = datasets or BENCHMARK_DATA
     #For testing

@@ -1,6 +1,9 @@
-# -*- coding: utf-8 -*-
+"""Pyteller Core module.
 
-"""Main module."""
+This module defines the Pyteller Class, which is responsible for the
+main forecasting detection functionality, as well as the interaction
+with the underlying MLBlocks pipelines.
+"""
 import logging
 import os
 import pickle
@@ -67,6 +70,7 @@ class Pyteller:
         hyperparameters (dict):
             Additional hyperparameters to set to the Pipeline.
     """
+
     @staticmethod
     def _update_init_params(pipeline, primitives, value):
         for primitive in primitives:
