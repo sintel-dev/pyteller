@@ -6,11 +6,10 @@
    </p>
 
    <p align="left">
-   <img width=20% src="images/Pyteller-icon-only.png" />
+   <img width=20% src="images/Pyteller_icon.png" />
    </p>
 
-|Development Status| |PyPi Shield| |Circle CI| |Travis CI Shield|
-|Downloads| |Binder|
+<img src="images/Pyteller_icon.png">
 
 pyteller
 =====
