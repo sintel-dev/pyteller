@@ -6,7 +6,7 @@
    </p>
 
    <p align="left">
-   <img width=20% src="https://github.com/signals-dev/pyteller/blob/1_14_fixes2/docs/images/Pyteller-icon-top.png" alt=“pyteller” />
+   <img width=20% src="images/Pyteller-icon-only.png" />
    </p>
 
 |Development Status| |PyPi Shield| |Circle CI| |Travis CI Shield|
