@@ -11,13 +11,13 @@ pyteller
 .. autosummary::
    :toctree: api/
 
-   core
-   core.fit
-   core.forecast
-   core.evaluate
-   core.plot
-   core.save
-   core.load
+   core.Pyteller
+   core.Pyteller.fit
+   core.Pyteller.forecast
+   core.Pyteller.evaluate
+   core.Pyteller.plot
+   core.Pyteller.save
+   core.Pyteller.load
 
 
 Benchmark
