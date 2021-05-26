@@ -16,14 +16,21 @@ Pyteller takes time series signals in multiple formats, and the user simply need
 This is an example of a table, where there are multiple entities and only one target signal is to be forecasted for.
 
 
++---------+-------------+------+------+-------+------+
 | station | valid       | tmpf | dwpf | relh  | drct |
-| ------- | ----------- | ---- | ---- | ----- | ---- |
++---------+-------------+------+------+-------+------+
 | 8A0     | 1/1/16 0:15 | 41   | 39.2 | 93.24 | 350  |
++---------+-------------+------+------+-------+------+
 | 4A6     | 1/1/16 0:15 | 41   | 32   | 70.08 | 360  |
++---------+-------------+------+------+-------+------+
 | 8A0     | 1/1/16 0:35 | 39.2 | 37.4 | 93.19 | 360  |
++---------+-------------+------+------+-------+------+
 | 4A6     | 1/1/16 0:35 | 41   | 32   | 70.08 | 360  |
++---------+-------------+------+------+-------+------+
 | 8A0     | 1/1/16 0:55 | 37.4 | 37.4 | 100   | 360  |
++---------+-------------+------+------+-------+------+
 | 4A6     | 1/1/16 0:55 | 39.2 | 32   | 75.16 | 350  |
++---------+-------------+------+------+-------+------+
 
 The `time_column`, `entity_column`, `entities`, and `targets` would be specified.
 The `target_column` does not need to be specified becuase there is not a column that denotes the variable name of the target.

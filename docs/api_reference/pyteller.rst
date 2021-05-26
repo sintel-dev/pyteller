@@ -13,15 +13,17 @@ pyteller
 
    pyteller
    pyteller.fit
-   pyteller.detect
+   pyteller.forecast
    pyteller.evaluate
+   pyteller.plot
    pyteller.save
    pyteller.load
 
-Functional API
-~~~~~~~~~~~~~~
+
+Benchmark
+~~~~~~~~~
 
 .. autosummary::
    :toctree: api/
 
-soon
+   benchmark.benchmark
