@@ -3,13 +3,13 @@
 pyteller
 =====
 
-.. currentmodule:: core
+.. currentmodule:: pyteller
 
 pyteller
 ~~~~~
 
 .. autosummary::
-   :toctree: api/
+   :toctree: core/
 
    Pyteller
    Pyteller.fit
