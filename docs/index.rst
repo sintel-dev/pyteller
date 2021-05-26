@@ -5,9 +5,15 @@
    <i>An open source project from Data to AI Lab at MIT.</i>
    </p>
 
+
    <p align="left">
    <img width=20% src="images/Pyteller_icon.png" />
    </p>
+
+   <p align="left">
+   <img width=20% src="/images/Pyteller_icon.png" />
+   </p>
+
 
 <img src="images/Pyteller_icon.png">
 
