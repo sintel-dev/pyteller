@@ -20,7 +20,7 @@
 
 # import sphinx_rtd_theme # For read the docs theme
 
-import Pyteller
+import pyteller
 
 # -- General configuration ---------------------------------------------
 
