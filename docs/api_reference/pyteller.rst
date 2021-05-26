@@ -23,6 +23,8 @@ pyteller
 Benchmark
 ~~~~~~~~~
 
+.. currentmodule:: pyteller
+
 .. autosummary::
    :toctree: api/
 
