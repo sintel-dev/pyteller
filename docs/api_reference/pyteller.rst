@@ -3,7 +3,7 @@
 pyteller
 =====
 
-.. currentmodule:: pyteller
+.. currentmodule:: Pyteller
 
 pyteller
 ~~~~~

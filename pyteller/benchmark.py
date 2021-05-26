@@ -218,6 +218,7 @@ def benchmark(pipelines=None, datasets=None, pred_length=12, hyperparameters=Non
     The pipelines are used to analyze the given signals and later on the
     detected anomalies are scored against the known anomalies using the
     indicated metrics.
+
     Finally, the scores obtained with each metric are averaged accross all the signals,
     ranked by the indicated metric and returned on a ``pandas.DataFrame``.
     Args:
