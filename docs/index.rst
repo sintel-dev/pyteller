@@ -15,8 +15,6 @@
    </p>
 
 
-<img src="images/Pyteller_icon.png">
-
 pyteller
 =====
 
