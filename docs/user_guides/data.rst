@@ -1,62 +1,35 @@
 .. highlight:: shell
 
 ====
-Data
+Data Format
 ====
 
-Pyteller takes time series signals in longform or flatform as well as indetifiers for which column names represent the `timestamp column`,
-`target signal`, `entitiy column`, and the `entities` you want to forecast.
+Pyteller takes time series signals in multiple formats, and the user simply needs to specify the column names corresponding to any of the following:
+
+* `time_column`: Column denoting the timestamp column.
+* `target_column`: Column denoting the target column.
+* `targets`: List of the subset of targets to extract.
+* `entity_column`: Column denoting the entities column.
+* `entities`: Subset of entities to extract.
 
 
-Data Format
------------
-
-Input
-~~~~~
-
-Orion Pipelines work on time Series that are provided as a single table of telemetry
-observations with two columns:
-
-* `time_column`: the STRING denoting which column contains the pandas timestamp objects or python datetime objects corresponding to the time at which the observation is made
-* `target_signal`: the STRING denoting the INTEGERS or FLOATS column with the observed target values at the indicated timestamps
-* `entity_column`: the STRING denoting which column contains the entities the observations are for
-* `entities`: the STRING denoting either which entities from `entity_column` to make forecsts for, or denoting which coumns are the target entities
-
-This is an example of such table, where the `time_column` is 'timestamp', the `entity_column` is 'region',  the `target` is 'demand,'
+This is an example of a table, where there are multiple entities and only one target signal is to be forecasted for.
 
 
+| station | valid       | tmpf | dwpf | relh  | drct |
+| ------- | ----------- | ---- | ---- | ----- | ---- |
+| 8A0     | 1/1/16 0:15 | 41   | 39.2 | 93.24 | 350  |
+| 4A6     | 1/1/16 0:15 | 41   | 32   | 70.08 | 360  |
+| 8A0     | 1/1/16 0:35 | 39.2 | 37.4 | 93.19 | 360  |
+| 4A6     | 1/1/16 0:35 | 41   | 32   | 70.08 | 360  |
+| 8A0     | 1/1/16 0:55 | 37.4 | 37.4 | 100   | 360  |
+| 4A6     | 1/1/16 0:55 | 39.2 | 32   | 75.16 | 350  |
+
+The `time_column`, `entity_column`, `entities`, and `targets` would be specified.
+The `target_column` does not need to be specified becuase there is not a column that denotes the variable name of the target.
 
 
-+------------------+-----------+-----------+
-|  timestamp       |  region   |   demand  |
-+------------------+-----------+-----------+
-| 9/27/20 21:20    |   DAYTON  |    1841.6 |
-+------------------+-----------+-----------+
-| 9/27/20 21:20    |   DEOK    |    2892.5 |
-+------------------+-----------+-----------+
-| 9/27/20 21:25    |   DAYTON  |    1834.1 |
-+------------------+-----------+-----------+
-| 9/27/20 21:25    |   DEOK    |    75.92  |
-+------------------+-----------+-----------+
-
-
-Output
-~~~~~~
-
-The output of pyteller is a table that contains the scores of the forecasts for each entity:
-
-
-An example of such a table is:
-
-+------------+------------+----------+
-|     Metric |     DAYTON |     DEOK |
-+------------+------------+----------+
-| MAPE       | 8.8        | 102.3    |
-+------------+------------+----------+
-| MAE        | 9.8        | 96.5     |
-+------------+------------+----------+
-
-Dataset we use in this library
+Demo Dataset we use in this library
 ------------------------------
 
 
@@ -65,22 +38,14 @@ For development and evaluation of pipelines, we include the following datasets:
 **NYC taxi data**
     Found on the `nyc website`_, or the processed version maintained by `Numenta`_. No modifications were made from the Numenta version
 
-**Wind data**
-    Found here on `here`_. After downloading the FasTrak 5-Minute .txt files the .txt files for each day from 1/1/13-1/8/18 were compiled into one .csv file
-
-
 **Weather data**
     Maintained by Iowa State University's `IEM`_. The downloaded data was from the selected network of 8A0 Albertville and the selected date range was 1/1/16 0:15 - 2/16/16 0:55
 
-**Traffic data**
-    Found on `Caltrans PeMS`_. No modifications were made from the Numenta version
 
 **Energy data**
     Found on `kaggle`_. No modifications were made after downloading pjm_hourly_est.csv
 
 .. _nyc website: https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page
 .. _Numenta: https://github.com/numenta/NAB/tree/master/data
-.. _here: https://www.kaggle.com/sohier/30-years-of-european-wind-generation/metadata
 .. _IEM: https://mesonet.agron.iastate.edu/request/download.phtml?network=ILASOS
-.. _Caltrans PeMS: http://pems.dot.ca.gov/?dnode=Clearinghouse
 .. _kaggle: https://www.kaggle.com/robikscube/hourly-energy-consumption/metadata

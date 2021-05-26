@@ -3,8 +3,8 @@
 Quickstart
 ==========
 
-In the following steps we will show a short guide about how to run one of the **pyteller Pipelines**
-on one of the signals from the **Demo Dataset**.
+In the following steps we will show a short guide about how to run one of the **pyteller pipelines**
+on one of the signals from the demo datasets.
 
 1. Load the data
 ----------------
@@ -46,7 +46,7 @@ In this example we use the `lstm` pipeline and set the training epochs as 5.
         offset=0,
         hyperparameters=hyperparameters
     )
-    
+
     pyteller.fit(current_data)
 
 3. Forecast

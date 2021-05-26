@@ -46,7 +46,7 @@ Depending on the format of the data, the user should specify the **string** deno
 * `target_column`: Column denoting the target column.
 * `targets`: List of the subset of targets to extract.
 * `entity_column`: Column denoting the entities column.
-* `entity_column`: Subset of entities to extract.
+* `entities`: Subset of entities to extract.
 
 Here is an example of loading the [Alabama Weather](pyteller/data/ALWeather.csv) demo data which has multiple entities in long form:
 
