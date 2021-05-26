@@ -9,7 +9,7 @@ pyteller
 ~~~~~
 
 .. autosummary::
-   :toctree: api/
+   :toctree: core/
 
    Pyteller
    Pyteller.fit
