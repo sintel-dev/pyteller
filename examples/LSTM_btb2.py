@@ -9,7 +9,7 @@ from pyteller.core import Pyteller
 from pyteller.data import load_data
 
 # Choose pipeline
-pipeline_name = 'pyteller/pipelines/pyteller/LSTM/LSTM_offset.json'
+pipeline_name = 'pyteller/pipelines/pyteller/LSTM/LSTM.json'
 
 # Load data and  create a dataset instance
 current_data, input_data = load_data('taxi')

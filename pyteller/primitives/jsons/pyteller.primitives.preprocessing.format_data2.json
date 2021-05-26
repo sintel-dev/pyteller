@@ -24,10 +24,6 @@
                 "name": "time_column",
                 "type": "string"
             },
-            {
-                "name": "static_variables",
-                "type": "string"
-            },
            {
                 "name": "entity_column",
                 "type": "string"

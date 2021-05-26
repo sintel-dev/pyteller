@@ -6,26 +6,24 @@ a pipeline forecasts.
 
 ## Releases
 
-In every release, we run the pyteller benchmark and maintain an up to-date [leaderboard](../README.md#leaderboard).
+In every release, we run the pyteller benchmark and maintain an up to-date [leaderboard](../README.md###leaderboard).
 Results obtained during the benchmarking process and in previous benchmarks can be found
-within [benchmark/results](results) folder as CSV files and in the following Google [sheet](https://docs.google.com/spreadsheets/d/1Fqqs2T84AgAjM0OOABMMXm_CX8nkcoQxwnsMAh8YspA/edit?usp=sharing).
+within [benchmark/results](results) folder as CSV files and, you can find it in the [details Google Sheets document](https://docs.google.com/spreadsheets/d/1EQd2x4BPSYEs6KLLUKrxzY3e8TuysnYnaSYAsBiPwCA/edit?usp=sharing).
+We summarize the results in the [leaderboard](benchmark/leaderboard.md) table.
 
 ## Evaluating the Pipelines
 
-Using the [Evaluation sub-package](../pyteller/evaluation), we compute various metrics of the forecast.
-The metrics are broken up between the unnormalized metrics (e.g. MAE, RMSE) and normalized metrics (e.g. MAPE, MASE)
-
-In order to benchmark the pipelines across many datasets, only normalized metrics are used. In our terminology, one dataset may have many *signals* that are forecasted for.
+Using the [Evaluation sub-package](../pyteller/evaluation). In our terminology, one dataset may have many *signals* that are forecasted for.
 
 A leaderboard entry for one *pipeline* across the many datasets is created using the following steps:
 
 1. Split each dataset into train and test data
 2. Use the pipeline to forecast on the default settings on the testing data
-3. Evaluate the normalized metrics for each entity and each signal on the test dataset
+3. Evaluate the normalized metrics for each signal in the test dataset
 4. For each metric, average the scores of all the entities in the signal and all the signals in a dataset
 5. For each metric, average the scores of all the datasets
 
-Finally, repeat this process for all pipelines, and rank the pipelines by sorting them by one of the computed metrics
+Finally, repeat this process for all pipelines, and rank the pipelines by sorting them by the specified metrics to rank by.
 
 ## Benchmark function
 This function expects the following inputs:

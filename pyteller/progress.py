@@ -1,5 +1,6 @@
-#TODO  add reference
-# """Progress bars for Orion benchmark compatible with logging and dask."""
+# Progress bars for Orion benchmark compatible with logging and dask. Taken from Orion library:
+# https://github.com/signals-dev/Orion/blob/4bf012e66053952ef1df45e90761ebeff0cec118/orion/progress.py
+
 
 import io
 import logging

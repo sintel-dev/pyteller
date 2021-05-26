@@ -45,6 +45,10 @@
                 "pred_length": {
                     "type": "int",
                     "default": 1
+                },
+                "type": {
+                    "type": "string",
+                    "default": "horizon"
                 }
             }
         }

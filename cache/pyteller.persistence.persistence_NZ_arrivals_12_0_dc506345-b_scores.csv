@@ -1,0 +1,2 @@
+dataset,pipeline,signal,prediction length,iteration,MAE,MSE,RMSE,MASE,sMAPE,MAPE,status,elapsed,run_id
+arrivals,pyteller.persistence.persistence,NZ,12,0,0,0,0,0,0,0,ERROR,11.971881,dc506345-b

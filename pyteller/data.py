@@ -2,6 +2,7 @@ import logging
 import os
 
 import pandas as pd
+from sklearn.model_selection import KFold, StratifiedKFold, train_test_split
 
 LOGGER = logging.getLogger(__name__)
 
@@ -58,18 +59,76 @@ def download(name, data_path=DATA_PATH):
     return data
 
 
-def load_data(data, test_size=0.2,):
+def load_data(data, lookback=None,pred_length=None, test_size=0.2):
     if os.path.isfile(data):
         data = pd.read_csv(data)
-        return data
+
     else:
         data = download(data)
 
     if test_size is None:
         return data
 
-    test_length = round(len(data) * test_size)
+    if lookback and pred_length != None:
+        test_length = lookback+pred_length
+    else:
+        test_length = round(len(data) * test_size)
+
     train = data.iloc[:-test_length]
     test = data.iloc[-test_length:]
 
     return train, test
+
+def _get_split(data, index):
+    if hasattr(data, 'iloc'):
+        return data.iloc[index]
+    else:
+        return data[index]
+
+def get_splits(data, n_splits=1, random_state=None):
+    """Return splits of this dataset ready for Cross Validation.
+
+    If n_splits is 1, a tuple containing the X for train and test
+    and the y for train and test is returned.
+    Otherwise, if n_splits is bigger than 1, a list of such tuples
+    is returned, one for each split.
+
+    Args:
+        n_splits (int): Number of times that the data needs to be splitted.
+        data (array-like): Numpy array or pandas DataFrame containing all the data of
+            this dataset, excluding the labels or target values.
+
+    Returns:
+        tuple or list:
+            if n_splits is 1, a tuple containing the X for train and test
+            and the y for train and test is returned.
+            Otherwise, if n_splits is bigger than 1, a list of such tuples
+            is returned, one for each split.
+    """
+    if n_splits == 1:
+
+        return train_test_split(
+            data,
+            shuffle=False,
+            stratify=False,
+            random_state=random_state
+        )
+
+    else:
+        cv_class =  KFold
+        cv = cv_class(n_splits=n_splits, shuffle=False, random_state=None)
+
+        splits = list()
+        for train, test in cv.split(data):
+            X_train = _get_split(data, train)
+            X_test = _get_split(data, test)
+            splits.append((X_train, X_test))
+
+        # for train, test in cv.split(self.data, self.target):
+        #     X_train = self._get_split(self.data, train)
+        #     y_train = self._get_split(self.target, train)
+        #     X_test = self._get_split(self.data, test)
+        #     y_test = self._get_split(self.target, test)
+        #     splits.append((X_train, X_test, y_train, y_test))
+
+        return splits

@@ -14,7 +14,7 @@
 
     "init_params": {
         "mlprimitives.custom.timeseries_preprocessing.rolling_window_sequences#1": {
-            "window_size": 180,
+            "window_size": 20,
             "target_column": 0
         }
     },

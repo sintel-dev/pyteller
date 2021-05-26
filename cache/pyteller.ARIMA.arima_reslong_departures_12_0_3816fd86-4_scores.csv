@@ -1,0 +1,2 @@
+dataset,pipeline,signal,prediction length,iteration,MAE,MSE,RMSE,MASE,sMAPE,MAPE,status,elapsed,run_id
+departures,pyteller.ARIMA.arima,reslong,12,0,1.238503198407894,1.829433908807539,1.352565676337951,1.1496654162436148,20.34642671850571,21.542887753861557,OK,89.652391,3816fd86-4

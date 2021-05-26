@@ -30,7 +30,7 @@ if run_super==False:
     BENCHMARK_DATA = pd.read_csv(S3_URL.format(
         BUCKET, 'datasets.csv'), index_col=0, header=None).applymap(ast.literal_eval).to_dict()[1]
 else:
-    BENCHMARK_DATA = pd.read_csv('pyteller_benchmark/datasets.csv', index_col=0, header=None).applymap(ast.literal_eval).to_dict()[1]
+    BENCHMARK_DATA = pd.read_csv('pyteller_benchmark/datasets.csv', index_col=0, header=None).iloc[:,0:1].applymap(ast.literal_eval).to_dict()[1]
 
 META_DATA = pd.read_csv(S3_URL.format(
     BUCKET, 'data_s3.csv'), index_col=0, header=0)
@@ -62,127 +62,6 @@ def _sort_leaderboard(df, rank, metrics):
     return df.set_index('pipeline').reset_index()
 
 
-
-
-#
-# def _evaluate_signal(pipeline, name, dataset, columns, hyperparameter, metrics,
-#                      holdout=True, detrend=False):
-#     train, test = _load_signal(dataset, columns, holdout)
-#     pipeline = _load_pipeline(pipeline, hyperparameter)
-#     pyteller = Pyteller(
-#         pipeline=pipeline,
-#         pred_length=3
-#     )
-#
-#     forecast = pyteller.forecast(test)
-#     # pred_window = (test['timestamp'] >= forecast['timestamp'].iloc[0]) & (
-#     #         test['timestamp'] <= forecast['timestamp'].iloc[-1])
-#     # actuals=test.loc[pred_window]
-#     # scores = {}
-#     # if 'MASE' in metrics:
-#     #     scores['MASE'] = metrics['MASE'](train['target'],forecast['target'],actuals['target'])
-#     #
-#     # scores.update( {
-#     #     name: scorer(forecast['target'],actuals['target'])
-#     #     for name, scorer in metrics.items() if name != 'MASE'
-#     # })
-#
-#     scores = pyteller.evaluate(train_data=train, test_data=test, forecast=forecast, detailed=True)
-#     scores['pipeline'] = name
-#     # scores['holdout'] = holdout
-#     scores['dataset'] = dataset
-#     # scores['signal'] = signal
-#     # scores['prediction length'] = forecast.shape[0]
-#     # scores['length of training data'] = len(train)
-#     # scores['length of testing data'] = len(test)
-#
-#     return scores
-
-
-def _evaluate_pipeline(pipeline, pipeline_name, dataset, columns, hyperparameters, metrics,
-                       distributed, holdout, detrend):
-    if holdout is None:
-        holdout = (True, False)
-    elif not isinstance(holdout, tuple):
-        holdout = (holdout, )
-
-    # if hyperparameter is None:
-    #     file_path = os.path.join(
-    #         PIPELINE_DIR, pipeline_name, pipeline_name + '_' + dataset.lower() + '.json')
-    #     if os.path.exists(file_path):
-    #         hyperparameter = file_path
-
-    if isinstance(hyperparameters, str) and os.path.exists(hyperparameters):
-        LOGGER.info("Loading hyperparameter %s", hyperparameters)
-        with open(hyperparameters) as f:
-            hyperparameter = json.load(f)
-
-    function = _evaluate_signal
-
-    scores = list()
-# TODO Fix
-    if isinstance(columns, str):
-        for holdout_ in holdout:
-            score = function(pipeline, pipeline_name, dataset, columns, hyperparameters,
-                             metrics, holdout_, detrend)
-            scores.append(score)
-    else:
-
-        for holdout_ in holdout:
-            score = function(pipeline, pipeline_name, dataset, columns, hyperparameter,
-                             metrics, holdout_, detrend)
-
-        scores.append(score)
-
-    return scores
-
-
-def _evaluate_pipelines(pipelines, dataset, columns, hyperparameters, metrics, distributed,
-                        holdout, detrend):
-
-    scores = list()
-    for name, pipeline in pipelines.items():
-        hyperparameter = _get_parameter(hyperparameters, name)
-        score = _evaluate_pipeline(pipeline, name, dataset, columns, hyperparameter,
-                                   metrics, distributed, holdout, detrend)
-        scores.extend(score)
-
-    return scores
-
-
-def _get_parameter(parameters, name):
-    if isinstance(parameters, dict) and name in parameters.keys():
-        return parameters[name]
-
-    return None
-
-
-def _evaluate_datasets(pipelines, datasets, hyperparameters, metrics, distributed, holdout,
-                       detrend):
-    delayed = []
-
-    # for dataset, signals in datasets.items():
-    for dataset, columns in datasets.iterrows():
-        LOGGER.info("Starting dataset {} with {} signals..".format(
-            dataset, len(columns)))
-
-        # dataset configuration
-        hyperparameters_ = _get_parameter(hyperparameters, dataset)
-        parameters = _get_parameter(BENCHMARK_PARAMS, dataset)
-        if parameters is not None:
-            detrend, holdout = parameters.values()
-
-        result = _evaluate_pipelines(
-            pipelines, dataset, columns, hyperparameters_, metrics, distributed, holdout, detrend)
-
-        delayed.extend(result)
-    results = delayed
-
-    df = pd.concat(results)
-    # return results[0]
-    return df
-
-
 def _load_pipeline(pipeline, hyperparams=None):
     if isinstance(pipeline, str) and os.path.isfile(pipeline):
         pipeline = MLPipeline.load(pipeline)
@@ -198,13 +77,23 @@ def _load_pipeline(pipeline, hyperparams=None):
 def _get_pipeline_hyperparameter(hyperparameters, dataset_name, pipeline_name):
     hyperparameters_ = deepcopy(hyperparameters)
 
+    if hyperparameters:
+        hyperparameters_ = hyperparameters_.get(dataset_name) or hyperparameters_
+        hyperparameters_ = hyperparameters_.get(pipeline_name) or hyperparameters_
+
+    if hyperparameters_ is None and dataset_name and pipeline_name:
+        file_path = os.path.join(
+            PIPELINE_DIR, pipeline_name, pipeline_name + '_' + dataset_name.lower() + '.json')
+        if os.path.exists(file_path):
+            hyperparameters_ = file_path
+
+    if isinstance(hyperparameters_, str) and os.path.exists(hyperparameters_):
+        with open(hyperparameters_) as f:
+            hyperparameters_ = json.load(f)
+
+    return hyperparameters_
+
 def _load_dataset(dataset):
-    # meta_path = os.path.join(os.path.dirname(__file__), 'data', dataset + '.json')
-    # with open(meta_path) as f:
-    # columns = json.load(f)
-    # columns = META_DATA.loc[dataset].to_dict()
-    #
-    # train, test = egest_data(dataset, column_dict=columns.to_dict())
 
     if run_super== True:
         dataset='pyteller_benchmark/' + dataset + '.csv'
@@ -215,8 +104,7 @@ def _load_dataset(dataset):
     return train, test
 
 
-def _evaluate_signal(pipeline_name, dataset, signal, hyperparameters, metrics):
-
+def _evaluate_signal(pipeline_name, dataset, signal, pred_length, hyperparameters, metrics):
     train, test = _load_dataset(dataset)
     try:
         LOGGER.info("Scoring pipeline %s on signal %s",
@@ -225,7 +113,7 @@ def _evaluate_signal(pipeline_name, dataset, signal, hyperparameters, metrics):
         pipeline = load_pipeline(pipeline_name)
         pyteller = Pyteller(
             pipeline=pipeline,
-            pred_length=12,
+            pred_length=pred_length,
             offset=0,
             targets=signal,
             hyperparameters=hyperparameters
@@ -257,15 +145,6 @@ def _evaluate_signal(pipeline_name, dataset, signal, hyperparameters, metrics):
     scores['elapsed'] = elapsed.total_seconds()
 
 
-
-
-    # scores['pipeline'] = name
-    # scores['holdout'] = holdout
-    # scores['dataset'] = dataset
-    # scores['signal'] = signal
-    # scores['prediction length'] = forecast.shape[0]
-    # scores['length of training data'] = len(train)
-    # scores['length of testing data'] = len(test)
 #
     return scores
 
@@ -273,7 +152,7 @@ def _run_job(args):
     # Reset random seed
     np.random.seed()
 
-    (pipeline, pipeline_name, dataset, signal, hyperparameter, metrics,
+    (pipeline, pipeline_name, dataset, signal, pred_length, hyperparameter, metrics,
         iteration, cache_dir, pipeline_dir, run_id) = args
 
     pipeline_path = pipeline_dir
@@ -288,6 +167,7 @@ def _run_job(args):
         pipeline,
         dataset,
         signal,
+        pred_length,
         hyperparameter,
         metrics
     )
@@ -296,11 +176,12 @@ def _run_job(args):
     scores.insert(0, 'dataset', dataset)
     scores.insert(1, 'pipeline', pipeline_name)
     scores.insert(2, 'signal', signal)
-    scores.insert(3, 'iteration', iteration)
+    scores.insert(3, 'prediction length', pred_length)
+    scores.insert(4, 'iteration', iteration)
     scores['run_id'] = run_id
 
     if cache_dir:
-        base_path = str(cache_dir / f'{pipeline_name}_{signal}_{dataset}_{iteration}_{run_id}')
+        base_path = str(cache_dir / f'{pipeline_name}_{signal}_{dataset}_{pred_length}_{iteration}_{run_id}')
         scores.to_csv(base_path + '_scores.csv', index=False)
 
     return scores
@@ -328,8 +209,8 @@ def _run_on_dask(jobs, verbose):
 
     return dask.compute(*persisted)
 
-def benchmark(pipelines=None, datasets=None, hyperparameters=None, metrics=METRICS, rank='MAPE',
-             iterations=1, workers=1, show_progress=False,
+def benchmark(pipelines=None, datasets=None, pred_length=12, hyperparameters=None,
+              metrics=METRICS, rank='MAPE', iterations=1, workers=1, show_progress=False,
               cache_dir=None, output_path=None, pipeline_dir=None):
 
     """Evaluate pipelines on the given datasets and evaluate the performance.
@@ -346,6 +227,7 @@ def benchmark(pipelines=None, datasets=None, hyperparameters=None, metrics=METRI
         datasets (dict or list): dictionary of dataset name as keys and list of signals as
             values. If a list is given then it will be under a generic name ``dataset``.
             If not given, all benchmark datasets will be used used.
+        pred_length (int or list): The forecasting horizon that will be used in the benchmark.
         hyperparameters (dict or list): dictionary with pipeline names as keys
             and their hyperparameter JSON paths or dictionaries as values. If a list is
             given, it should be of corresponding order to pipelines.
@@ -371,7 +253,7 @@ def benchmark(pipelines=None, datasets=None, hyperparameters=None, metrics=METRI
     datasets = datasets or BENCHMARK_DATA
     #For testing
     import itertools
-    datasets = dict(itertools.islice(datasets.items(), 1))
+    datasets = dict(itertools.islice(datasets.items(), 6))
 
     run_id = os.getenv('RUN_ID') or str(uuid.uuid4())[:10]
 
@@ -404,9 +286,11 @@ def benchmark(pipelines=None, datasets=None, hyperparameters=None, metrics=METRI
 
     jobs = list()
     for dataset, signals in datasets.items():
-        print(dataset, signals)
+        if isinstance(signals,str):
+            signals = [signals]
         for pipeline_name, pipeline in pipelines.items():
-            # hyperparameter = _get_pipeline_hyperparameter(hyperparameters, dataset, pipeline_name)
+            hyperparameter = _get_pipeline_hyperparameter(hyperparameters, dataset, pipeline_name)
+
             for signal in signals:
                 for iteration in range(iterations):
                     args = (
@@ -414,7 +298,8 @@ def benchmark(pipelines=None, datasets=None, hyperparameters=None, metrics=METRI
                         pipeline_name,
                         dataset,
                         signal,
-                        hyperparameters,
+                        pred_length,
+                        hyperparameter,
                         metrics,
                         iteration,
                         cache_dir,
@@ -461,19 +346,29 @@ def main(workers=1):
     pipelines= find_pipelines('pyteller')
 
     hyperparameters = {
-        'pyteller.primitives.preprocessing.format_data#1': {
+        'pyteller.ARIMA.arima':{
+            'pyteller.primitives.preprocessing.format_data#1': {
             'make_index': True
         }
+        },
+        'pyteller.LSTM.LSTM': {
+            'pyteller.primitives.preprocessing.format_data#1': {
+                'make_index': True
+            }
+        },
+        'pyteller.persistence.persistence': {
+            'pyteller.primitives.preprocessing.format_data#1': {
+                'make_index': True
+            }
+        }
     }
-    # results = benchmark(
-        # pipelines=pipelines, hyperparameters=hyperparameters, metrics=metrics, output_path=output_path,show_progress=True,workers='dask')
-        # pipelines=pipelines, hyperparameters=hyperparameters, metrics=metrics, output_path=output_path,show_progress=True)
-
     results = benchmark(pipelines=pipelines, hyperparameters=hyperparameters,metrics=metrics,
         output_path=output_path, workers='dask', show_progress=True,
          pipeline_dir=pipeline_dir, cache_dir=cache_dir)
 
-
+    # results = benchmark(pipelines=pipelines, hyperparameters=hyperparameters,metrics=metrics,
+    #     output_path=output_path, workers=1, show_progress=True,
+    #      pipeline_dir=pipeline_dir, cache_dir=cache_dir)
 
 
 if __name__ == "__main__":

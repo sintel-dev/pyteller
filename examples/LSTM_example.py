@@ -4,15 +4,27 @@ from pyteller.data import load_data
 
 current_data, input_data = load_data('AL_Weather')
 
-pipeline = 'pyteller/pipelines/pyteller/LSTM/LSTM_offset.json'
+current_data.head()
+pipeline = 'pyteller/pipelines/pyteller/LSTM/LSTM.json'
+# hyperparameters = {
+#     'pyteller.primitives.preprocessing.format_data#1': {
+#         'make_index': False
+#     },
+#     'pyteller.primitives.postprocessing.flatten#1': {
+#         'type': 'horizon'
+#     }
+# }
+
 hyperparameters = {
-    'pyteller.primitives.preprocessing.format_data#1': {
-        'make_index': False
+    'keras.Sequential.LSTMTimeSeriesRegressor#1': {
+        'epochs': 20
     }
 }
+
+
 pyteller = Pyteller(
     pipeline=pipeline,
-    pred_length=5,
+    pred_length=40,
     offset=0,
     time_column='valid',
     targets='tmpf',
@@ -24,7 +36,7 @@ pyteller = Pyteller(
 )
 
 # Fit the data to the pipeline.
-train = pyteller.fit(current_data, tune=False)
+pyteller.fit(current_data, tune=False)
 
 
 # forecast and evaluate
@@ -33,4 +45,4 @@ output = pyteller.forecast(data=input_data, postprocessing=False, predictions_on
 
 scores = pyteller.evaluate(actuals=output['actuals'], forecasts=output['forecasts'],
                            metrics=['MAPE', 'sMAPE'])
-# pyteller.plot(output)
+pyteller.plot(output)

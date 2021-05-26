@@ -5,7 +5,7 @@ from sklearn.metrics import mean_absolute_error
 
 current_data, input_data = load_data('AL_Weather')
 
-pipeline = 'pyteller/pipelines/pyteller/LSTM/LSTM_offset.json'
+pipeline = 'pyteller/pipelines/pyteller/LSTM/LSTM.json'
 pyteller = Pyteller(
     pipeline=pipeline,
     pred_length=5,

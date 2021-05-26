@@ -17,6 +17,7 @@ import numpy as np
 from btb.tuning import GPTuner, Tunable
 
 from pyteller.metrics import METRICS
+from pyteller.data import get_splits
 from pyteller.utils import plot_forecast
 
 LOGGER = logging.getLogger(__name__)
@@ -45,24 +46,23 @@ class Pyteller:
         target_column (string):
             Optional. A ``str`` specifying the name of the column containing the target signal
 
-        static_variables (string):
-            Optional. A ``str`` specifying the name of the column of the input data containing
-            static variables
+        targets (list):
+            Subset of targets to extract, If None, extract all targets.
+
+        entity_column (string):
+            Optional. A ``str`` specifying the name of the column of the input data containing the entity
+            names
 
         entities (string or list):
             Optional. A ``str`` or ``list`` specifying the name(s) of the entities from the
             entity_column the user wants to make forecasts for
 
-        entity_column (string):
-            A ``str`` specifying the name of the column of the input data containing the entity
-            names
-
         pred_length (int):
             Optional. An ``int`` specifying the number of timesteps to forecast ahead for
 
         offset (int):
-            An ``int`` specifying the number of timesteps between the input and the target
-            sequence
+            Optional. An ``int`` specifying the number of timesteps between the input and the
+            target sequence
 
         hyperparameters (dict):
             Additional hyperparameters to set to the Pipeline.
@@ -99,6 +99,11 @@ class Pyteller:
             offset_primitives = pipeline_args.get('offset', {})
             pipeline = self._update_init_params(pipeline, offset_primitives, self.offset)
 
+        if 'tunable' in pipeline.keys():
+            self.tunable = MLPipeline._flatten_dict((pipeline['tunable']))
+        else:
+            self.tunable=None
+
         # Create the MLPipeline
         pipeline = MLPipeline(pipeline)
 
@@ -108,13 +113,12 @@ class Pyteller:
         return pipeline
 
     def __init__(self, pipeline, time_column=None, target_column=None, targets=None,
-                 static_variables=None, entities=None, entity_column=None, pred_length=None,
-                 offset=None, hyperparameters=None):
+                 entity_column=None, entities=None,  pred_length=1, offset=0,
+                 hyperparameters=None):
 
         self.time_column = time_column or 'timestamp'
         self.target_column = target_column
         self.targets=targets
-        self.static_variables = static_variables
         self.entity_column = entity_column
         self.entities = entities
         self.pred_length = pred_length
@@ -140,7 +144,6 @@ class Pyteller:
             'targets' : self.targets,
             'target_column': self.target_column,
             'time_column': self.time_column,
-            'static_variables': self.static_variables,
             'entity_column': self.entity_column,
         }
 
@@ -184,15 +187,15 @@ class Pyteller:
     def scoring_function(self, X, hyperparameters=None):
         # choose the model
         # model_instance = MLPipeline(self.pipeline)
-        dataset = Dataset('data', X, X, mean_absolute_error, 'timeseries', 'forecast',
-                          shuffle=False)
+        # dataset = Dataset('data', X, X, mean_absolute_error, 'timeseries', 'forecast',
+        #                   shuffle=False)
 
         # instantiate the model
         if hyperparameters:
             # model_instance.set_hyperparameters(hyperparameters)
             self.pipeline.set_hyperparameters(hyperparameters)
         scores = []
-        for X_train, X_test, y_train, y_test in dataset.get_splits(3):
+        for X_train, X_test in get_splits(X,3):
             self.fit(X_train)
             output=self.forecast(X_test)
             scores.append(self.evaluate(actuals=output['actuals'],
@@ -220,6 +223,8 @@ class Pyteller:
 
 
         tunables = self.pipeline.get_tunable_hyperparameters(flat=True)
+        if self.tunable != None:
+            tunables.update(self.tunable) #combine pipeline tunable parameters
         tunable = Tunable.from_dict(tunables)
         default_score = self.scoring_function(X)
         tuner = GPTuner(tunable)

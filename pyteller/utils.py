@@ -33,6 +33,7 @@ def plot_forecast(dfs, output_path=None, labels=['actuals', 'predicted'], freque
             Optional. String of what frequency of tick marks for the x axis.
 
     """
+
     if isinstance(dfs, pd.DataFrame):
         dfs = [dfs]
 
@@ -58,10 +59,17 @@ def plot_forecast(dfs, output_path=None, labels=['actuals', 'predicted'], freque
     plt.xticks(size=26)
     plt.yticks(size=26)
 
-    ax.xaxis.set_major_formatter(tik_fmt)
+    if dfs[0].index.dtype == 'int64':
+        plt.plot(dfs[0].iloc[:, 0], linewidth=3, color='blue')
+        plt.plot(dfs[1].iloc[:, 0], linewidth=3, color='orange')
+
+    else:
+        plt.plot(dfs[0].index, df.iloc[:, 0], linewidth=3,color='blue')
+        plt.plot(dfs[1].index, df.iloc[:, 0], linewidth=3,color='orange')
+        ax.xaxis.set_major_formatter(tik_fmt)
 
     if labels:
-        plt.legend(labels=labels, loc=1, prop={'size': 26})
+        plt.legend(labels=labels, loc=1, prop={'size': 26}, )
 
     if output_path:
         os.path.join('figs', output_path)
