@@ -1,2 +1,0 @@
-dataset,pipeline,signal,iteration,MAE,MSE,RMSE,MASE,sMAPE,MAPE,status,elapsed,run_id
-a10,pyteller.ARIMA.arima,x,0,0,0,0,0,0,0,ERROR,5.206988,dd34a900-9

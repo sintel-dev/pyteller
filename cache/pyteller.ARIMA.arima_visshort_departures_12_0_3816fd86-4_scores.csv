@@ -1,2 +1,0 @@
-dataset,pipeline,signal,prediction length,iteration,MAE,MSE,RMSE,MASE,sMAPE,MAPE,status,elapsed,run_id
-departures,pyteller.ARIMA.arima,visshort,12,0,103.52084335915794,17751.853719412156,133.2360826481031,1.239096057617777,14.32217816003555,12.964291730723202,OK,104.975306,3816fd86-4

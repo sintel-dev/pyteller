@@ -1,2 +1,0 @@
-dataset,pipeline,signal,prediction length,iteration,MAE,MSE,RMSE,MASE,sMAPE,MAPE,status,elapsed,run_id
-arrivals,pyteller.persistence.persistence,Japan,12,0,0,0,0,0,0,0,ERROR,2.648007,d9619f83-1

@@ -1,2 +1,0 @@
-dataset,pipeline,signal,prediction length,iteration,MAE,MSE,RMSE,MASE,sMAPE,MAPE,status,elapsed,run_id
-departures,pyteller.persistence.persistence,permanent,12,0,1.5724999999999998,4.219591666666667,2.054164469234795,1.1539359573048695,21.836818373864435,19.540291385517293,OK,0.810576,0c614f53-e

@@ -46,6 +46,19 @@ BENCHMARK_PATH = os.path.join(os.path.join(
 pipelines=find_pipelines('pyteller')
 
 
+def _summarize_results(scores, rank):
+    scores = scores.groupby(['dataset', 'signal'])
+    scores_summary = pd.DataFrame()
+    for signal, df in scores:
+        arima = df.loc[df['pipeline'] == 'pyteller.ARIMA.arima'][rank].values
+        mask = df[rank] < float(arima)
+        mask = mask.astype(int)
+        df['Beat ARIMA'] = mask
+
+        scores_summary = scores_summary.append(df)
+
+    return pd.DataFrame(scores_summary.groupby('pipeline').sum()['Beat ARIMA'])
+
 def _sort_leaderboard(df, rank, metrics):
     if rank not in df.columns:
         rank_ = list(metrics.keys())[0]
@@ -258,7 +271,7 @@ def benchmark(pipelines=None, datasets=None, pred_length=12, hyperparameters=Non
     datasets = datasets or BENCHMARK_DATA
     #For testing
     import itertools
-    datasets = dict(itertools.islice(datasets.items(), 6))
+    datasets = dict(itertools.islice(datasets.items(), 2))
 
     run_id = os.getenv('RUN_ID') or str(uuid.uuid4())[:10]
 
@@ -329,9 +342,12 @@ def benchmark(pipelines=None, datasets=None, pred_length=12, hyperparameters=Non
     scores = pd.concat(scores)
     if output_path:
         LOGGER.info('Saving benchmark report to %s', output_path)
-        scores.to_csv(output_path, index=False)
+        scores.to_csv(output_path+'.csv', index=False)
+        summary_scores = _summarize_results(scores, rank)
+        summary_scores.reset_index(inplace=False)
+        summary_scores.to_csv(output_path + '_summary.csv')
 
-    return _sort_leaderboard(scores, rank, metrics)
+    return _sort_leaderboard(scores, rank, metrics), summary_score
 
 
 
@@ -340,7 +356,7 @@ def main(workers=1):
     # output path
     pipeline_dir = 'save_pipelines'
     cache_dir = 'cache'
-    version = "results.csv"
+    version = "results"
     output_path = os.path.join(BENCHMARK_PATH, 'results', version)
 
     # metrics
@@ -351,19 +367,21 @@ def main(workers=1):
     pipelines= find_pipelines('pyteller')
 
     hyperparameters = {
-        'pyteller.ARIMA.arima':{
-            'pyteller.primitives.preprocessing.format_data#1': {
-            'make_index': True
-        }
-        },
-        'pyteller.LSTM.LSTM': {
-            'pyteller.primitives.preprocessing.format_data#1': {
+        'a10':{
+            'pyteller.ARIMA.arima':{
+                'pyteller.primitives.preprocessing.format_data#1': {
                 'make_index': True
             }
-        },
-        'pyteller.persistence.persistence': {
-            'pyteller.primitives.preprocessing.format_data#1': {
-                'make_index': True
+            },
+            'pyteller.LSTM.LSTM': {
+                'pyteller.primitives.preprocessing.format_data#1': {
+                    'make_index': True
+                }
+            },
+            'pyteller.persistence.persistence': {
+                'pyteller.primitives.preprocessing.format_data#1': {
+                    'make_index': True
+                }
             }
         }
     }

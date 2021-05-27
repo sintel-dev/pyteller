@@ -1,2 +1,0 @@
-dataset,pipeline,signal,prediction length,iteration,MAE,MSE,RMSE,MASE,sMAPE,MAPE,status,elapsed,run_id
-elecdemand,pyteller.LSTM.LSTM,a,12,0,0,0,0,0,0,0,ERROR,23.681611,3816fd86-4
