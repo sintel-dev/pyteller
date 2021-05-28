@@ -48,7 +48,7 @@
                 },
                 "type": {
                     "type": "string",
-                    "default": "horizon"
+                    "default": "average"
                 }
             }
         }

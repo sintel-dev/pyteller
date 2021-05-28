@@ -371,16 +371,25 @@ def main(workers=1):
             'pyteller.ARIMA.arima':{
                 'pyteller.primitives.preprocessing.format_data#1': {
                 'make_index': True
-            }
+            },
+            'pyteller.primitives.postprocessing.flatten#1': {
+                    'type': 'average'
+                }
             },
             'pyteller.LSTM.LSTM': {
                 'pyteller.primitives.preprocessing.format_data#1': {
                     'make_index': True
+                },
+            'pyteller.primitives.postprocessing.flatten#1': {
+                    'type': 'average'
                 }
             },
             'pyteller.persistence.persistence': {
                 'pyteller.primitives.preprocessing.format_data#1': {
                     'make_index': True
+                },
+            'pyteller.primitives.postprocessing.flatten#1': {
+                    'type': 'average'
                 }
             }
         }

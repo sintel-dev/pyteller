@@ -6,14 +6,6 @@ current_data, input_data = load_data('AL_Weather')
 
 current_data.head()
 pipeline = 'pyteller/pipelines/pyteller/LSTM/LSTM.json'
-# hyperparameters = {
-#     'pyteller.primitives.preprocessing.format_data#1': {
-#         'make_index': False
-#     },
-#     'pyteller.primitives.postprocessing.flatten#1': {
-#         'type': 'horizon'
-#     }
-# }
 
 hyperparameters = {
     'keras.Sequential.LSTMTimeSeriesRegressor#1': {
@@ -24,20 +16,20 @@ hyperparameters = {
 
 pyteller = Pyteller(
     pipeline=pipeline,
-    pred_length=40,
-    offset=0,
+    pred_length=12,
     time_column='valid',
     targets='tmpf',
-    # targets=['tmpf','dwpf'],
-    # target_column='station',
     entity_column='station',
     entities='8A0',
     hyperparameters=hyperparameters
 )
 
+tunables = pyteller.pipeline.get_tunable_hyperparameters(flat=True)
 # Fit the data to the pipeline.
-pyteller.fit(current_data, tune=False)
 
+pyteller.fit(current_data, tune=True)
+
+pyteller.pipeline.get_hyperparameters()
 
 # forecast and evaluate
 

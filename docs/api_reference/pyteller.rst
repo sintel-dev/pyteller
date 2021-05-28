@@ -3,9 +3,9 @@
 pyteller
 =====
 
-.. currentmodule:: pyteller.core
+.. currentmodule:: pyteller
 
-pyteller
+Pyteller
 ~~~~~
 
 .. autosummary::

@@ -12,7 +12,7 @@ from copy import deepcopy
 import pandas as pd
 from mlblocks import MLPipeline, load_pipeline
 from sklearn.exceptions import NotFittedError
-from btb.session import BTBSession
+# from btb.session import BTBSession
 from sklearn.model_selection import cross_val_score
 from mlprimitives.datasets import Dataset
 from sklearn.metrics import mean_absolute_error
