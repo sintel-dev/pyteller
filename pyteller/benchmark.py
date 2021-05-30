@@ -222,7 +222,7 @@ def _run_on_dask(jobs, verbose):
 
     return dask.compute(*persisted)
 
-def benchmark(pipelines=None, datasets=None, pred_length=12, hyperparameters=None,
+def benchmarking(pipelines=None, datasets=None, pred_length=12, hyperparameters=None,
               metrics=METRICS, rank='MAPE', iterations=1, workers=1, show_progress=False,
               cache_dir=None, output_path=None, pipeline_dir=None):
 
@@ -394,7 +394,7 @@ def main(workers=1):
             }
         }
     }
-    results = benchmark(pipelines=pipelines, hyperparameters=hyperparameters,metrics=metrics,
+    results = benchmarking(pipelines=pipelines, hyperparameters=hyperparameters,metrics=metrics,
         output_path=output_path, workers='dask', show_progress=True,
          pipeline_dir=pipeline_dir, cache_dir=cache_dir)
 

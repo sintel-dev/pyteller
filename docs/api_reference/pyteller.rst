@@ -23,4 +23,4 @@ Benchmark
 .. autosummary::
    :toctree: api/
 
-   benchmark
+   benchmark.benchmarking
