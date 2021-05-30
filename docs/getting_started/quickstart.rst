@@ -67,3 +67,14 @@ To make a forecast, the user calls the `pyteller.forecast` method. The output is
     output = pyteller.forecast(data=input_data)
     output['forecasts'].head()
 
+4. Evaluate
+-------------------------------
+To see metrics of the forecast accuracy, the user calls the `pyteller.evaluate` method. The output is a dataframe of the scores:
+
+.. ipython:: python
+    :okwarning:
+
+    scores = pyteller.evaluate(test_data=output['actuals'],forecast=output['forecasts'],
+                               metrics=['sMAPE','MAPE'])
+    scores.head()
+
