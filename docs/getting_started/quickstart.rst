@@ -37,7 +37,7 @@ In this example we use the `lstm` pipeline and set the training epochs as 5.
 
     hyperparameters = {
         'keras.Sequential.LSTMTimeSeriesRegressor#1': {
-            'epochs': 20
+            'epochs': 4
         }
     }
 
@@ -56,4 +56,14 @@ In this example we use the `lstm` pipeline and set the training epochs as 5.
     )
 
     pyteller.fit(current_data)
+
+3. Forecast
+-------------------------------
+To make a forecast, the user calls the `pyteller.forecast` method. The output is a `dictionary` which includes the `forecasts` and `actuals` `dataframes`:
+
+.. ipython:: python
+
+	:okwarning:
+    output = pyteller.forecast(data=input_data)
+    output['forecast'].head()
 
