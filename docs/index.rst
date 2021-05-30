@@ -16,7 +16,7 @@
 
 
 pyteller
-=====
+==========
 
 **Date**: |today| **Version**: |version|
 
@@ -27,7 +27,7 @@ pyteller
 -  Homepage: https://github.com/signals-dev/pyteller
 
 Overview
---------
+---------
 
 Pyteller is a time series forecasting library using MLPrimitives to build easy to use forecasting pipelines.
 
@@ -35,7 +35,7 @@ The library makes use of a number of **automated machine learning** tools develo
 
 
 Explore pyteller
--------------
+------------------
 
 * `Getting Started <getting_started/index.html>`_
 * `User Guides <user_guides/index.html>`_
@@ -55,3 +55,5 @@ Explore pyteller
     developer_guides/index
     Release Notes <history>
 
+
+.. _Data to AI Lab at MIT: https://dai.lids.mit.edu/

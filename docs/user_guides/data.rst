@@ -1,8 +1,8 @@
 .. highlight:: shell
 
-====
+================
 Data Format
-====
+================
 
 Pyteller takes time series signals in multiple formats, and the user simply needs to specify the column names corresponding to any of the following:
 
@@ -37,7 +37,7 @@ The `target_column` does not need to be specified becuase there is not a column 
 
 
 Demo Dataset we use in this library
-------------------------------
+---------------------------------------
 
 
 For development and evaluation of pipelines, we include the following datasets:

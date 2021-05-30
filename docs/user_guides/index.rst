@@ -9,6 +9,4 @@ The User Guides section covers different topics about python usage:
     :maxdepth: 3
 
     data
-    primitives_pipelines/index
-    evaluation_doc
     benchmarking
