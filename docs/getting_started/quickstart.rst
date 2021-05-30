@@ -62,7 +62,6 @@ In this example we use the `lstm` pipeline and set the training epochs as 5.
 To make a forecast, the user calls the `pyteller.forecast` method. The output is a `dictionary` which includes the `forecasts` and `actuals` `dataframes`:
 
 .. ipython:: python
-
 	:okwarning:
 
     output = pyteller.forecast(data=input_data)
