@@ -52,6 +52,7 @@ Explore pyteller
 
     getting_started/index
     user_guides/index
+    api_reference/index
     developer_guides/index
     Release Notes <history>
 
