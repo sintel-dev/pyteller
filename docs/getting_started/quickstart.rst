@@ -79,3 +79,10 @@ To see metrics of the forecast accuracy, the user calls the `pyteller.evaluate` 
     scores.head()
 
 
+4. Plot
+-------------------------------
+
+.. ipython:: python
+    :okwarning:
+
+    pyteller.plot(output)
