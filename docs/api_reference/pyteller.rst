@@ -17,3 +17,10 @@ Pyteller
    Pyteller.save
    Pyteller.load
 
+Benchmark
+~~~~~~~~~
+
+.. autosummary::
+   :toctree: api/
+
+   benchmark.benchmark
