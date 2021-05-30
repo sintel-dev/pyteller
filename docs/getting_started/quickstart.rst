@@ -74,7 +74,8 @@ To see metrics of the forecast accuracy, the user calls the `pyteller.evaluate` 
 .. ipython:: python
     :okwarning:
 
-    scores = pyteller.evaluate(test_data=output['actuals'],forecast=output['forecasts'],
+    scores = pyteller.evaluate(actuals=output['actuals'],forecasts=output['forecasts'],
                                metrics=['sMAPE','MAPE'])
     scores.head()
+
 
