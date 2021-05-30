@@ -33,7 +33,7 @@ In this example we use the `lstm` pipeline and set the training epochs as 5.
 
 	from pyteller.core import Pyteller
 
-    pipeline = 'pyteller/pipelines/pyteller/LSTM/LSTM.json'
+    pipeline = 'pyteller.LSTM.LSTM'
 
     hyperparameters = {
         'keras.Sequential.LSTMTimeSeriesRegressor#1': {
