@@ -1,12 +1,12 @@
 .. _pyteller:
 
-orion
-=====
+pyteller
+==========
 
 .. currentmodule:: pyteller
 
 Pyteller
-~~~~~
+~~~~~~~~~~
 
 .. autosummary::
    :toctree: api/
