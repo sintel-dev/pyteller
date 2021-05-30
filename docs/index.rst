@@ -39,7 +39,6 @@ Explore pyteller
 
 * `Getting Started <getting_started/index.html>`_
 * `User Guides <user_guides/index.html>`_
-* `API Reference <api_reference/index.html>`_
 * `Developer Guides <developer_guides/index.html>`_
 * `Release Notes <history.html>`_
 
@@ -56,7 +55,3 @@ Explore pyteller
     developer_guides/index
     Release Notes <history>
 
-.. _Data to AI Lab at MIT: https://dai.lids.mit.edu/
-.. _part 1: https://t.co/yIFVM1oRwQ?amp=1
-.. _part 2: https://link.medium.com/cGsBD0Fevbb
-.. _part 3: https://link.medium.com/FqCrFXMevbb
