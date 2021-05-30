@@ -8,7 +8,6 @@ In this section you will find a detailed specification of all the public functio
 .. toctree::
    :maxdepth: 2
 
-   pyteller
    metrics
    prim
 
