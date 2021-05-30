@@ -11,5 +11,5 @@ Normalized Metrics
 .. autosummary::
    :toctree: api/
 
-over_pred
+    over_pred
 
