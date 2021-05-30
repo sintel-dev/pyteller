@@ -12,7 +12,7 @@ Releases
 --------
 
 
-In every release, we run the pyteller benchmark and maintain an up to-date [leaderboard](../README.md###leaderboard).
+In every release, we run the pyteller benchmark and maintain an up to-date `leaderboard`_.
 Results obtained during the benchmarking process and in previous benchmarks can be found
 within `benchmark/results`_ folder as CSV files and, you can find it in the `details Google Sheets document`_.
 We summarize the results in the `summary Google Sheets document`_.
@@ -38,7 +38,7 @@ Benchmark function
 
 
 
-
+.. _leaderboard: https://github.com/signals-dev/pyteller/tree/master/benchmark/results
 .. _benchmark/results: https://github.com/signals-dev/pyteller/tree/master/benchmark/results
 .. _details Google Sheets document: https://docs.google.com/spreadsheets/d/1EQd2x4BPSYEs6KLLUKrxzY3e8TuysnYnaSYAsBiPwCA/edit?usp=sharing
 .. _summary Google Sheets document: https://docs.google.com/spreadsheets/d/1OPwAslqfpWvzpUgiGoeEq-Wk_yK-GYPGpmS7TwEaSbw/edit?usp=sharing
