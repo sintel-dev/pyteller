@@ -14,8 +14,11 @@ Here is an example of loading the **Alabama Weather** demo data which has multip
 
 .. ipython:: python
     :okwarning:
+
     from pyteller.data import load_data
+
     current_data, input_data = load_data('AL_Weather')
+
     current_data.head()
 
 2. Fit the pipeline
@@ -26,7 +29,7 @@ In this example we use the `lstm` pipeline and set the training epochs as 5.
 
 .. ipython:: python
     :okwarning:
-    from pyteller.core import Pyteller
+	from pyteller.core import Pyteller
 
     pipeline = 'pyteller/pipelines/pyteller/LSTM/LSTM.json'
 
@@ -54,7 +57,7 @@ In this example we use the `lstm` pipeline and set the training epochs as 5.
 To make a forecast, the user calls the `pyteller.forecast` method. The output is a `dictionary` which includes the `forecasts` and `actuals` `dataframes`:
 
 .. ipython:: python
-    :okwarning:
+	:okwarning:
     output = pyteller.forecast(data=input_data)
     output['forecast'].head()
 
