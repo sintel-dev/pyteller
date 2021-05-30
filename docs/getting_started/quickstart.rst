@@ -40,14 +40,17 @@ In this example we use the `lstm` pipeline and set the training epochs as 5.
         }
     }
 
+.. ipython:: python
+    :okwarning:
+
     pyteller = Pyteller(
         pipeline=pipeline,
         time_column='valid',
         targets='tmpf',
         entity_column='station',
         entities='8A0'
-        pred_length=12,
-        offset=0,
+        pred_length= 12,
+        offset= 0,
         hyperparameters=hyperparameters
     )
 
