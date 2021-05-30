@@ -65,5 +65,5 @@ To make a forecast, the user calls the `pyteller.forecast` method. The output is
 
 	:okwarning:
     output = pyteller.forecast(data=input_data)
-    output['forecast'].head()
+    output['forecasts'].head()
 
