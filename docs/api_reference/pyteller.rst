@@ -5,7 +5,7 @@ orion
 
 .. currentmodule:: pyteller
 
-Orion
+Pyteller
 ~~~~~
 
 .. autosummary::
@@ -17,10 +17,3 @@ Orion
    Pyteller.save
    Pyteller.load
 
-Benchmark
-~~~~~~~~~
-
-.. autosummary::
-   :toctree: api/
-
-   benchmark.benchmark
