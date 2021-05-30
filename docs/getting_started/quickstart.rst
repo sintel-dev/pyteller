@@ -3,121 +3,76 @@
 Quickstart
 ==========
 
-In the following steps we will show a short guide about how to run one of the **Orion Pipelines**
-on one of the signals from the **Demo Dataset**.
+In the following steps we will show a short guide about how to run one of the **pyteller pipelines**
+on one of the signals from the demo datasets.
 
 1. Load the data
 ----------------
 
-In the first step we will load the **S-1** signal from the **Demo Dataset**.
-
-We will do so in two parts, we will use the first part to fit the
-pipeline and the second one to detect anomalies.
-
-To do so, we need to import the `orion.data.load_signal` function and call it passing the `'S-1-train'` as signal name.
+Here is an example of loading the **Alabama Weather** demo data which has multiple entities in long form:
+`current_data` will be used to fit the pipeline and `input_data` to forecast. Both are dataframes:
 
 .. ipython:: python
     :okwarning:
 
-	from orion.data import load_signal
+    from pyteller.data import load_data
 
-	train_data = load_signal('S-1-train')
+    current_data, input_data = load_data('AL_Weather')
 
-	train_data.head()
+    current_data.head()
 
-The output will be a table that contains two columns `timestamp` and `value`.
-
-2. Detect anomalies using Orion
+2. Fit the pipeline
 -------------------------------
 
-Once we have the data, let us try to use an Orion pipeline to analyze it and search for anomalies.
-
-In order to do so, we will have to create an instance of the `orion.Orion` class.
-
-.. ipython:: python
-    :okwarning:
-
-	from orion import Orion
-
-	orion = Orion()
-
-Optionally, we might want to select a pipeline other than the default one or alter the hyperparameters by the underlying MLBlocks pipeline.
-
-For example, let's select the ``lstm_dynamic_threshold`` pipeline and set some hyperparameters (in this case training epochs as 5).
+Once we have the data, create an instance of the `Pyteller` class, where the input arguments are the forecast settings and the column specifications of the data.
+In this example we use the `lstm` pipeline and set the training epochs as 5.
 
 .. ipython:: python
     :okwarning:
+
+	from pyteller.core import Pyteller
+
+    pipeline = 'pyteller/pipelines/pyteller/LSTM/LSTM.json'
 
     hyperparameters = {
         'keras.Sequential.LSTMTimeSeriesRegressor#1': {
-            'epochs': 5
+            'epochs': 20
         }
     }
 
-Then, we simply pass the ``hyperparameters`` alongside the pipeline.
-
 .. ipython:: python
     :okwarning:
 
-    orion = Orion(
-        pipeline='lstm_dynamic_threshold',
+    pyteller = Pyteller(
+        pipeline=pipeline,
+        time_column='valid',
+        targets='tmpf',
+        entity_column='station',
+        entities='8A0'
+        pred_length= 12,
+        offset= 0,
         hyperparameters=hyperparameters
     )
 
-Once we the pipeline is ready, we can proceed to fit it to our data:
+    pyteller.fit(current_data)
+
+3. Forecast
+-------------------------------
+To make a forecast, the user calls the `pyteller.forecast` method. The output is a `dictionary` which includes the `forecasts` and `actuals` `dataframes`:
+
+.. ipython:: python
+
+	:okwarning:
+    output = pyteller.forecast(data=input_data)
+    output['forecast'].head()
+
+4. Evaluate
+-------------------------------
+To see metrics of the forecast accuracy, the user calls the `pyteller.evaluate` method. The output is a dataframe of the scores:
 
 .. ipython:: python
     :okwarning:
 
-	orion.fit(train_data)
-
-
-Once it is fitted, we are ready to use it to detect anomalies in incoming data:
-
-.. ipython:: python
-    :okwarning:
-
-	new_data = load_signal('S-1-new')
-	anomalies = orion.detect(new_data)
-
-.. warning::
-
-	Depending on your system and the exact versions that you might have installed some *WARNINGS* may be printed. These can be safely ignored as they do not interfere with the proper behavior of the pipeline.
-
-The output of the previous command will be a ``pandas.DataFrame`` containing a table in the detected anomalies
-Output format described above:
-
-.. ipython:: python
-    :okwarning:
-
-    anomalies
-
-
-3. Evaluate the performance of your pipeline
---------------------------------------------
-
-In this next step we will load some already known anomalous intervals and evaluate how
-good our anomaly detection was by comparing those with our detected intervals.
-
-For this, we will first load the known anomalies for the signal that we are using:
-
-.. ipython:: python
-    :okwarning:
-
-	from orion.data import load_anomalies
-
-	ground_truth = load_anomalies('S-1')
-
-	ground_truth
-
-The output will be a table in the same format as the `anomalies` one.
-
-Afterwards, we can call the ``orion.evaluate`` method, passing both the data to detect anomalies and the ground truth:
-
-.. ipython:: python
-    :okwarning:
-
-	scores = orion.evaluate(new_data, ground_truth)
-	scores
-
-The output will be a ``pandas.Series`` containing a collection of scores indicating how the predictions were.
+    scores = pyteller.evaluate(test_data=output['actuals'],forecast=output['forecast'],
+                               metrics=['sMAPE','MAPE'])
+    scores.head()

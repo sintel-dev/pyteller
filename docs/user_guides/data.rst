@@ -1,73 +1,58 @@
-.. _data:
+.. highlight:: shell
 
 ====
-Data
-====
-
-Orion takes a time series signal and produces an interval of expected anomalies. The input to the framework is a univariate time series and the output is a table denoting the start and end timestamp of the anomalies.
-
 Data Format
------------
+====
 
-Input
-~~~~~
+Pyteller takes time series signals in multiple formats, and the user simply needs to specify the column names corresponding to any of the following:
 
-Orion Pipelines work on time Series that are provided as a single table of telemetry
-observations with two columns:
+* `time_column`: Column denoting the timestamp column.
+* `target_column`: Column denoting the target column.
+* `targets`: List of the subset of targets to extract.
+* `entity_column`: Column denoting the entities column.
+* `entities`: Subset of entities to extract.
 
-* ``timestamp``: an INTEGER or FLOAT column with the time of the observation in Unix Time Format
-* ``value``: an INTEGER or FLOAT column with the observed value at the indicated timestamp
 
-This is an example of such table:
+This is an example of a table, where there are multiple entities and only one target signal is to be forecasted for.
 
-+------------+-----------+
-|  timestamp |     value |
-+------------+-----------+
-| 1222819200 | -0.366358 |
-+------------+-----------+
-| 1222840800 | -0.394107 |
-+------------+-----------+
-| 1222862400 |  0.403624 |
-+------------+-----------+
-| 1222884000 | -0.362759 |
-+------------+-----------+
-| 1222905600 | -0.370746 |
-+------------+-----------+
 
-Output
-~~~~~~
++---------+-------------+------+------+-------+------+
+| station | valid       | tmpf | dwpf | relh  | drct |
++---------+-------------+------+------+-------+------+
+| 8A0     | 1/1/16 0:15 | 41   | 39.2 | 93.24 | 350  |
++---------+-------------+------+------+-------+------+
+| 4A6     | 1/1/16 0:15 | 41   | 32   | 70.08 | 360  |
++---------+-------------+------+------+-------+------+
+| 8A0     | 1/1/16 0:35 | 39.2 | 37.4 | 93.19 | 360  |
++---------+-------------+------+------+-------+------+
+| 4A6     | 1/1/16 0:35 | 41   | 32   | 70.08 | 360  |
++---------+-------------+------+------+-------+------+
+| 8A0     | 1/1/16 0:55 | 37.4 | 37.4 | 100   | 360  |
++---------+-------------+------+------+-------+------+
+| 4A6     | 1/1/16 0:55 | 39.2 | 32   | 75.16 | 350  |
++---------+-------------+------+------+-------+------+
 
-The output of the Orion Pipelines is another table that contains the detected anomalous
-intervals and that has at least two columns:
+The `time_column`, `entity_column`, `entities`, and `targets` would be specified.
+The `target_column` does not need to be specified becuase there is not a column that denotes the variable name of the target.
 
-* ``start``: timestamp where the anomalous interval starts
-* ``end``: timestamp where the anomalous interval ends
 
-Optionally, a third column called ``severity`` can be included with a value that represents the
-severity of the detected anomaly.
-
-An example of such a table is:
-
-+------------+------------+----------+
-|      start |        end | severity |
-+------------+------------+----------+
-| 1222970400 | 1222992000 | 0.572643 |
-+------------+------------+----------+
-| 1223013600 | 1223035200 | 0.572643 |
-+------------+------------+----------+
-
-Dataset we use in this library
+Demo Dataset we use in this library
 ------------------------------
 
-For development, evaluation of pipelines, we include a dataset which includes several signals already formatted as expected by the Orion Pipelines.
 
-This formatted dataset can be browsed and downloaded directly from the `d3-ai-orion AWS S3 Bucket`_.
+For development and evaluation of pipelines, we include the following datasets:
 
-This dataset is adapted from the one used for the experiments in the `Detecting Spacecraft Anomalies Using LSTMs and Nonparametric Dynamic Thresholding paper`_. Original source data is available for download `here`_.
+**NYC taxi data**
+    Found on the `nyc website`_, or the processed version maintained by `Numenta`_. No modifications were made from the Numenta version
 
-We thank NASA for making this data available for public use.
+**Weather data**
+    Maintained by Iowa State University's `IEM`_. The downloaded data was from the selected network of 8A0 Albertville and the selected date range was 1/1/16 0:15 - 2/16/16 0:55
 
-.. _d3-ai-orion AWS S3 Bucket: https://d3-ai-orion.s3.amazonaws.com/index.html
-.. _Detecting Spacecraft Anomalies Using LSTMs and Nonparametric Dynamic Thresholding paper: https://arxiv.org/abs/1802.04431
-.. _here: https://s3-us-west-2.amazonaws.com/telemanom/data.zip
 
+**Energy data**
+    Found on `kaggle`_. No modifications were made after downloading pjm_hourly_est.csv
+
+.. _nyc website: https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page
+.. _Numenta: https://github.com/numenta/NAB/tree/master/data
+.. _IEM: https://mesonet.agron.iastate.edu/request/download.phtml?network=ILASOS
+.. _kaggle: https://www.kaggle.com/robikscube/hourly-energy-consumption/metadata

@@ -3,7 +3,7 @@
 User Guides
 ===========
 
-The User Guides section covers different topics about Orion usage:
+The User Guides section covers different topics about python usage:
 
 .. toctree::
     :maxdepth: 3
@@ -12,4 +12,3 @@ The User Guides section covers different topics about Orion usage:
     primitives_pipelines/index
     evaluation_doc
     benchmarking
-    system/index

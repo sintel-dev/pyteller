@@ -1,63 +1,44 @@
 .. _benchmarking:
 
+
 ============
 Benchmarking
 ============
 
-We provide a benchmarking framework to enable users to compare multiple pipelines against each other. The evaluation metrics are documented within pipeline evaluation, please visit :ref:`evaluation_doc` to read more about it.
+We develop a benchmarking procedure in pyteller in order to compare multiple pipelines against each other across many datasets and signals within the datasets.
+
 
 Releases
 --------
 
-In every release, we run Orion benchmark. We maintain an up-to-date leaderboard with the current scoring of the verified pipelines according to the benchmarking procedure.
 
-Results obtained during benchmarking as well as previous releases can be found within `benchmark/results`_ folder as CSV files. Summarized results can also be browsed in the following `summary Google Sheets document`_ as well as the `details Google Sheets document`_.
+In every release, we run the pyteller benchmark and maintain an up to-date [leaderboard](../README.md###leaderboard).
+Results obtained during the benchmarking process and in previous benchmarks can be found
+within `benchmark/results`_ folder as CSV files and, you can find it in the `details Google Sheets document`_.
+We summarize the results in the `summary Google Sheets document`_.
 
-
-Leaderboard
-~~~~~~~~~~~
-
-We run the benchmark on **11** datasets with their known grounth truth. We record the score of the pipelines on each datasets. To compute the leaderboard table, we showcase the number of wins each pipeline has over the ARIMA pipeline. 
-
-.. mdinclude:: ../../benchmark/leaderboard.md
-
-To view a list of all available pipelines, visit :ref:`pipelines` page.
 
 Process
 -------
 
-We evaluate the performance of pipelines by following a series of executions. From a high level, we can view the process as:
+In our terminology, one dataset may have many *signals* that are forecasted for.
 
-1. Use each pipeline to detect anomalies on all datasets and their signals.
-2. Retrieve the list of known anomalies for each of these signals.
-3. Compute the scores for each signal using multiple metrics (e.g. accuracy and f1).
-4. Average the score obtained for each metric and pipeline across all the signals.
-5. Finally, we rank our pipelines sorting them by one of the computed scores.
+A leaderboard entry for one *pipeline* across the many datasets is created using the following steps:
+
+1. Split each dataset into train and test data
+2. Use the pipeline to forecast on the default settings on the testing data
+3. Evaluate the normalized metrics for each signal in the test dataset
+4. For each metric, average the scores of all the entities in the signal and all the signals in a dataset
+5. For each metric, average the scores of all the datasets
+
+Finally, repeat this process for all pipelines, and rank the pipelines by sorting them by the specified metrics to rank by.
 
 Benchmark function
 ~~~~~~~~~~~~~~~~~~
 
-The complete evaluation process is directly available using the
-``orion.benchmark.benchmark`` function.
 
-.. code-block:: python
 
-    from orion.benchmark import benchmark
 
-    pipelines = [
-        'arima',
-        'lstm_dynamic_threshold'
-    ]
-
-    metrics = ['f1', 'accuracy', 'recall', 'precision']
-
-    signals = ['S-1', 'P-1']
-
-    scores = benchmark(pipelines=pipelines, datasets=datasets, metrics=metrics, rank='f1')
-
-For further details about all the arguments and possibilities that the ``benchmark`` function offers please refer to the `Orion benchmark
-documentation <https://github.com/signals-dev/Orion/blob/master/BENCHMARK.md>`__
-
-.. _benchmark/results: https://github.com/signals-dev/Orion/tree/master/benchmark/results
-.. _summary Google Sheets document: https://docs.google.com/spreadsheets/d/1ZPUwYH8LhDovVeuJhKYGXYny7472HXVCzhX6D6PObmg/edit?usp=sharing
-.. _details Google Sheets document: https://docs.google.com/spreadsheets/d/1HaYDjY-BEXEObbi65fwG0om5d8kbRarhpK4mvOZVmqU/edit?usp=sharing
+.. _benchmark/results: https://github.com/signals-dev/pyteller/tree/master/benchmark/results
+.. _details Google Sheets document: https://docs.google.com/spreadsheets/d/1EQd2x4BPSYEs6KLLUKrxzY3e8TuysnYnaSYAsBiPwCA/edit?usp=sharing
+.. _summary Google Sheets document: https://docs.google.com/spreadsheets/d/1OPwAslqfpWvzpUgiGoeEq-Wk_yK-GYPGpmS7TwEaSbw/edit?usp=sharing
