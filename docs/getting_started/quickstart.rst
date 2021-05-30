@@ -29,6 +29,7 @@ In this example we use the `lstm` pipeline and set the training epochs as 5.
 
 .. ipython:: python
     :okwarning:
+
 	from pyteller.core import Pyteller
 
     pipeline = 'pyteller/pipelines/pyteller/LSTM/LSTM.json'
@@ -57,6 +58,7 @@ In this example we use the `lstm` pipeline and set the training epochs as 5.
 To make a forecast, the user calls the `pyteller.forecast` method. The output is a `dictionary` which includes the `forecasts` and `actuals` `dataframes`:
 
 .. ipython:: python
+
 	:okwarning:
     output = pyteller.forecast(data=input_data)
     output['forecast'].head()
@@ -67,6 +69,7 @@ To see metrics of the forecast accuracy, the user calls the `pyteller.evaluate` 
 
 .. ipython:: python
     :okwarning:
+
     scores = pyteller.evaluate(test_data=output['actuals'],forecast=output['forecast'],
                                metrics=['sMAPE','MAPE'])
     scores.head()
