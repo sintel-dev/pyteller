@@ -98,5 +98,7 @@ METRICS = {
     'MASE': MASE,
     'sMAPE': sMAPE,
     'MAPE': MAPE,
+    'under': under_pred,
+    'over': over_pred
 
 }
