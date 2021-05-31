@@ -240,14 +240,19 @@ class Pyteller:
         for iteration in range(max_evals):
             print("scoring pipeline {}".format(iteration + 1))
             proposal = tuner.propose()
-            score = self.scoring_function(X,proposal)
-            tuner.record(proposal, score)
-
+            try:
+                score = self.scoring_function(X,proposal)
+                tuner.record(proposal, score)
+            except Exception as ex:
+                LOGGER.exception("Exception tuning pipeline %s",
+                                 iteration, ex)
+                score=best_score+1
             if score < best_score:
                 print("New best found: {}".format(score))
                 best_score = score
                 best_proposal = proposal
         self.pipeline.set_hyperparameters(best_proposal)
+        self.tuned_params=best_proposal
 
 
 

@@ -1,4 +1,4 @@
 pipeline,Beat ARIMA
 pyteller.ARIMA.arima,0
 pyteller.LSTM.LSTM,1
-pyteller.persistence.persistence,4
+pyteller.persistence.persistence,1

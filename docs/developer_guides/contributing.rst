@@ -38,8 +38,8 @@ and "help wanted" is open to whoever wants to implement it.
 Write Documentation
 ~~~~~~~~~~~~~~~~~~~
 
-Orion could always use more documentation, whether as part of the
-official Orion docs, in docstrings, or even on the web in blog posts,
+pyteller could always use more documentation, whether as part of the
+official pyteller docs, in docstrings, or even on the web in blog posts,
 articles, and such.
 
 Submit Feedback
@@ -57,18 +57,18 @@ If you are proposing a feature:
 Get Started!
 ------------
 
-Ready to contribute? Here's how to set up `Orion` for local development.
+Ready to contribute? Here's how to set up `pyteller` for local development.
 
-1. Fork the `Orion` repo on GitHub.
+1. Fork the `pyteller` repo on GitHub.
 2. Clone your fork locally::
 
-    $ git clone git@github.com:your_name_here/Orion.git
+    $ git clone git@github.com:your_name_here/pyteller.git
 
 3. Install your local copy into a virtualenv. Assuming you have virtualenvwrapper installed,
    this is how you set up your fork for local development::
 
-    $ mkvirtualenv Orion
-    $ cd Orion/
+    $ mkvirtualenv pyteller
+    $ cd pyteller/
     $ make install-develop
 
 4. Create a branch for local development::
@@ -123,8 +123,7 @@ Before you submit a pull request, check that it meets these guidelines:
 4. If the pull request adds functionality, the docs should be updated. Put
    your new functionality into a function with a docstring, and add the
    feature to the documentation in an appropriate place.
-5. The pull request should work for all the supported Python versions. Check the `Travis Build
-   Status page`_ and make sure that all the checks pass.
+5. The pull request should work for all the supported Python versions.
 
 Unit Testing Guidelines
 -----------------------
@@ -175,11 +174,11 @@ The process of releasing a new version involves several steps combining both ``g
 ``bumpversion`` which, briefly:
 
 1. Merge what is in ``master`` branch into ``stable`` branch.
-2. Update the version in ``setup.cfg``, ``orion/__init__.py`` and
+2. Update the version in ``setup.cfg``, ``pyteller/__init__.py`` and
    ``HISTORY.md`` files.
 3. Create a new git tag pointing at the corresponding commit in ``stable`` branch.
 4. Merge the new commit from ``stable`` into ``master``.
-5. Update the version in ``setup.cfg`` and ``orion/__init__.py``
+5. Update the version in ``setup.cfg`` and ``pyteller/__init__.py``
    to open the next development iteration.
 
 .. note:: Before starting the process, make sure that ``HISTORY.md`` has been updated with a new
@@ -201,6 +200,5 @@ Once this is done, run of the following commands:
 
     make release-major
 
-.. _GitHub issues page: https://github.com/D3-AI/Orion/issues
-.. _Travis Build Status page: https://travis-ci.org/D3-AI/Orion/pull_requests
+.. _GitHub issues page: https://github.com/signals-dev/pyteller/issues
 .. _Google docstrings style: https://google.github.io/styleguide/pyguide.html?showone=Comments#Comments

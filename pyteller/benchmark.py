@@ -132,7 +132,7 @@ def _evaluate_signal(pipeline_name, dataset, signal, pred_length, hyperparameter
             hyperparameters=hyperparameters
         )
 
-        pyteller.fit(train, tune=False)
+        pyteller.fit(train, tune=True, max_evals=3)
         output = pyteller.forecast(data=test, postprocessing=False, predictions_only=False)
 
         # scores = pyteller.evaluate(actuals=output['actuals'], forecasts=output['forecasts'],
@@ -153,6 +153,11 @@ def _evaluate_signal(pipeline_name, dataset, signal, pred_length, hyperparameter
         }
 
         status = 'ERROR'
+
+    tuned_params = pyteller.tuned_params
+    if tuned_params:
+        for key, value in tuned_params.items():
+            scores[key[1]] = value
 
     scores['status'] = status
     scores['elapsed'] = elapsed.total_seconds()
@@ -347,7 +352,7 @@ def benchmark(pipelines=None, datasets=None, pred_length=12, hyperparameters=Non
         summary_scores.reset_index(inplace=False)
         summary_scores.to_csv(output_path + '_summary.csv')
 
-    return _sort_leaderboard(scores, rank, metrics), summary_score
+    return _sort_leaderboard(scores, rank, metrics), summary_scores
 
 
 
@@ -370,9 +375,9 @@ def main(workers=1):
         'a10':{
             'pyteller.ARIMA.arima':{
                 'pyteller.primitives.preprocessing.format_data#1': {
-                'make_index': True
+                    'make_index': True
             },
-            'pyteller.primitives.postprocessing.flatten#1': {
+                'pyteller.primitives.postprocessing.flatten#1': {
                     'type': 'average'
                 }
             },
@@ -380,7 +385,7 @@ def main(workers=1):
                 'pyteller.primitives.preprocessing.format_data#1': {
                     'make_index': True
                 },
-            'pyteller.primitives.postprocessing.flatten#1': {
+                'pyteller.primitives.postprocessing.flatten#1': {
                     'type': 'average'
                 }
             },
@@ -388,19 +393,45 @@ def main(workers=1):
                 'pyteller.primitives.preprocessing.format_data#1': {
                     'make_index': True
                 },
-            'pyteller.primitives.postprocessing.flatten#1': {
+                'pyteller.primitives.postprocessing.flatten#1': {
+                    'type': 'average'
+                }
+            }
+        },
+        'ausbeer': {
+            'pyteller.ARIMA.arima': {
+                'pyteller.primitives.preprocessing.format_data#1': {
+                    'make_index': True
+                },
+                'pyteller.primitives.postprocessing.flatten#1': {
+                    'type': 'average'
+                }
+            },
+            'pyteller.LSTM.LSTM': {
+                'pyteller.primitives.preprocessing.format_data#1': {
+                    'make_index': True
+                },
+                'pyteller.primitives.postprocessing.flatten#1': {
+                    'type': 'average'
+                }
+            },
+            'pyteller.persistence.persistence': {
+                'pyteller.primitives.preprocessing.format_data#1': {
+                    'make_index': True
+                },
+                'pyteller.primitives.postprocessing.flatten#1': {
                     'type': 'average'
                 }
             }
         }
     }
-    results = benchmark(pipelines=pipelines, hyperparameters=hyperparameters,metrics=metrics,
-        output_path=output_path, workers='dask', show_progress=True,
-         pipeline_dir=pipeline_dir, cache_dir=cache_dir)
-
     # results = benchmark(pipelines=pipelines, hyperparameters=hyperparameters,metrics=metrics,
-    #     output_path=output_path, workers=1, show_progress=True,
+    #     output_path=output_path, workers='dask', show_progress=True,
     #      pipeline_dir=pipeline_dir, cache_dir=cache_dir)
+
+    results = benchmark(pipelines=pipelines, hyperparameters=hyperparameters,metrics=metrics,
+        output_path=output_path, workers=1, show_progress=True,
+         pipeline_dir=pipeline_dir, cache_dir=cache_dir)
 
 
 if __name__ == "__main__":
