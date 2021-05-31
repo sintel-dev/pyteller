@@ -22,8 +22,6 @@ Scale-Dependent Metrics
 .. autosummary::
    :toctree: api/
 
-    mean_squared_error
-    mean_absolute_error
     root_mean_square_error
     over_pred
     under_pred
