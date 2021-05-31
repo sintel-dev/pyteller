@@ -132,7 +132,7 @@ def _evaluate_signal(pipeline_name, dataset, signal, pred_length, hyperparameter
             hyperparameters=hyperparameters
         )
 
-        pyteller.fit(train, tune=True, max_evals=3)
+        pyteller.fit(train, tune=True, max_evals=10)
         output = pyteller.forecast(data=test, postprocessing=False, predictions_only=False)
 
         # scores = pyteller.evaluate(actuals=output['actuals'], forecasts=output['forecasts'],
