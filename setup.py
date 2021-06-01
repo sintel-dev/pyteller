@@ -36,7 +36,6 @@ development_requires = [
     # general
     'pip>=9.0.1',
     'bumpversion>=0.5.3,<0.6',
-    'watchdog>=0.8.3,<0.11',
 
     # docs
     'm2r2>=0.2.5,<0.3',
