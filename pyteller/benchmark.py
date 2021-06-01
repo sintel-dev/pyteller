@@ -126,7 +126,7 @@ def _evaluate_signal(pipeline_name, dataset, signal, pred_length, hyperparameter
             hyperparameters=hyperparameters
         )
 
-        pyteller.fit(train, tune=True, max_evals=10)
+        pyteller.fit(train, tune=False, max_evals=10)
         output = pyteller.forecast(data=test, postprocessing=False, predictions_only=False)
 
         # scores = pyteller.evaluate(actuals=output['actuals'], forecasts=output['forecasts'],
@@ -140,17 +140,19 @@ def _evaluate_signal(pipeline_name, dataset, signal, pred_length, hyperparameter
 
     except Exception as ex:
         LOGGER.exception("Exception scoring pipeline %s on signal %s error %s.",
-                         pipeline, signal, ex)
+                         pipeline_name, signal, ex)
         elapsed = datetime.utcnow() - start
         scores = {
             name: 0 for name in metrics.keys()
         }
 
         status = 'ERROR'
-
-    if pyteller.tuned_params:
+    try:
         for key, value in pyteller.tuned_params.items():
             scores[key[1]] = value
+    except Exception:
+        LOGGER.exception("No tuneable parameters on pipeline %s", pipeline_name)
+
 
     scores['status'] = status
     scores['elapsed'] = elapsed.total_seconds()
