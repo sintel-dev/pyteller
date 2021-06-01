@@ -32,7 +32,6 @@ if run_super==False:
 else:
     BENCHMARK_DATA = pd.read_csv('pyteller_benchmark/datasets.csv', index_col=0, header=None).iloc[:,0:1].applymap(ast.literal_eval).to_dict()[1]
 
-BENCHMARK_PARAMS = []
 BENCHMARK_PATH = os.path.join(os.path.join(
     os.path.dirname(os.path.abspath(__file__)), '..'),
     'benchmark'
@@ -149,9 +148,8 @@ def _evaluate_signal(pipeline_name, dataset, signal, pred_length, hyperparameter
 
         status = 'ERROR'
 
-    tuned_params = pyteller.tuned_params
-    if tuned_params:
-        for key, value in tuned_params.items():
+    if pyteller.tuned_params:
+        for key, value in pyteller.tuned_params.items():
             scores[key[1]] = value
 
     scores['status'] = status
@@ -420,13 +418,13 @@ def main(workers=1):
             }
         }
     }
-    results = benchmark(pipelines=pipelines, hyperparameters=hyperparameters,metrics=metrics,
-        output_path=output_path, workers='dask', show_progress=True,
-         pipeline_dir=pipeline_dir, cache_dir=cache_dir)
-
     # results = benchmark(pipelines=pipelines, hyperparameters=hyperparameters,metrics=metrics,
-    #     output_path=output_path, workers=1, show_progress=True,
+    #     output_path=output_path, workers='dask', show_progress=True,
     #      pipeline_dir=pipeline_dir, cache_dir=cache_dir)
+
+    results = benchmark(pipelines=pipelines, hyperparameters=hyperparameters,metrics=metrics,
+        output_path=output_path, workers=1, show_progress=True,
+         pipeline_dir=pipeline_dir, cache_dir=cache_dir)
 
 
 if __name__ == "__main__":

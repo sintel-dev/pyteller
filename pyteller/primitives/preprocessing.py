@@ -53,7 +53,7 @@ def format_data(X, time_column=None, target_column=None, targets=None,
             * A ``pandas.DataFrame`` with timestamp column and one or many value columns.
     """
     if make_index == True:
-        X.loc[:,'timestamp'] = range(len(X))
+        X.insert(0,'timestamp', range(len(X)))
 
     targets = targets or X.columns.drop(time_column)
 
