@@ -126,7 +126,7 @@ def _evaluate_signal(pipeline_name, dataset, signal, pred_length, hyperparameter
             hyperparameters=hyperparameters
         )
 
-        pyteller.fit(train, tune=False, max_evals=10)
+        pyteller.fit(train, tune=True, max_evals=10)
         output = pyteller.forecast(data=test, postprocessing=False, predictions_only=False)
 
         # scores = pyteller.evaluate(actuals=output['actuals'], forecasts=output['forecasts'],
@@ -269,9 +269,9 @@ def benchmark(pipelines=None, datasets=None, pred_length=12, hyperparameters=Non
 
     pipelines = pipelines or VERIFIED_PIPELINES
     datasets = datasets or BENCHMARK_DATA
-    #For testing
-    import itertools
-    datasets = dict(itertools.islice(datasets.items(), 2))
+    # #For testing
+    # import itertools
+    # datasets = dict(itertools.islice(datasets.items(), 2))
 
     run_id = os.getenv('RUN_ID') or str(uuid.uuid4())[:10]
 
@@ -367,66 +367,38 @@ def main(workers=1):
     pipelines= find_pipelines('pyteller')
 
     hyperparameters = {
-        'a10':{
-            'pyteller.ARIMA.arima':{
-                'pyteller.primitives.preprocessing.format_data#1': {
-                    'make_index': True
-            },
-                'pyteller.primitives.postprocessing.flatten#1': {
-                    'type': 'average'
-                }
-            },
-            'pyteller.LSTM.LSTM': {
-                'pyteller.primitives.preprocessing.format_data#1': {
-                    'make_index': True
-                },
-                'pyteller.primitives.postprocessing.flatten#1': {
-                    'type': 'average'
-                }
-            },
-            'pyteller.persistence.persistence': {
-                'pyteller.primitives.preprocessing.format_data#1': {
-                    'make_index': True
-                },
-                'pyteller.primitives.postprocessing.flatten#1': {
-                    'type': 'average'
-                }
+        'pyteller.ARIMA.arima':{
+            'pyteller.primitives.preprocessing.format_data#1': {
+                'make_index': True
+        },
+            'pyteller.primitives.postprocessing.flatten#1': {
+                'type': 'average'
             }
         },
-        'ausbeer': {
-            'pyteller.ARIMA.arima': {
-                'pyteller.primitives.preprocessing.format_data#1': {
-                    'make_index': True
-                },
-                'pyteller.primitives.postprocessing.flatten#1': {
-                    'type': 'average'
-                }
+        'pyteller.LSTM.LSTM': {
+            'pyteller.primitives.preprocessing.format_data#1': {
+                'make_index': True
             },
-            'pyteller.LSTM.LSTM': {
-                'pyteller.primitives.preprocessing.format_data#1': {
-                    'make_index': True
-                },
-                'pyteller.primitives.postprocessing.flatten#1': {
-                    'type': 'average'
-                }
+            'pyteller.primitives.postprocessing.flatten#1': {
+                'type': 'average'
+            }
+        },
+        'pyteller.persistence.persistence': {
+            'pyteller.primitives.preprocessing.format_data#1': {
+                'make_index': True
             },
-            'pyteller.persistence.persistence': {
-                'pyteller.primitives.preprocessing.format_data#1': {
-                    'make_index': True
-                },
-                'pyteller.primitives.postprocessing.flatten#1': {
-                    'type': 'average'
-                }
+            'pyteller.primitives.postprocessing.flatten#1': {
+                'type': 'average'
             }
         }
     }
-    # results = benchmark(pipelines=pipelines, hyperparameters=hyperparameters,metrics=metrics,
-    #     output_path=output_path, workers='dask', show_progress=True,
-    #      pipeline_dir=pipeline_dir, cache_dir=cache_dir)
-
     results = benchmark(pipelines=pipelines, hyperparameters=hyperparameters,metrics=metrics,
-        output_path=output_path, workers=1, show_progress=True,
+        output_path=output_path, workers='dask', show_progress=True,
          pipeline_dir=pipeline_dir, cache_dir=cache_dir)
+
+    # results = benchmark(pipelines=pipelines, hyperparameters=hyperparameters,metrics=metrics,
+    #     output_path=output_path, workers=1, show_progress=True,
+    #      pipeline_dir=pipeline_dir, cache_dir=cache_dir)
 
 
 if __name__ == "__main__":

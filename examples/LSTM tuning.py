@@ -9,7 +9,8 @@ pipeline = 'pyteller/pipelines/pyteller/LSTM/LSTM.json'
 
 hyperparameters = {
     'keras.Sequential.LSTMTimeSeriesRegressor#1': {
-        'epochs': 20
+        'epochs': 1,
+        'verbose': False
     }
 }
 
@@ -25,9 +26,9 @@ pyteller = Pyteller(
 )
 
 tunables = pyteller.pipeline.get_tunable_hyperparameters(flat=True)
-# Fit the data to the pipeline.
+print(tunables)
 
-pyteller.fit(current_data, tune=True)
+pyteller.fit(current_data, tune=True, max_evals=4)
 
 pyteller.pipeline.get_hyperparameters()
 
