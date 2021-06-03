@@ -2,7 +2,7 @@ import logging
 import os
 
 import pandas as pd
-from sklearn.model_selection import KFold, StratifiedKFold, train_test_split
+from sklearn.model_selection import KFold, train_test_split
 
 LOGGER = logging.getLogger(__name__)
 

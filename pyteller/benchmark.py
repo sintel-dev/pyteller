@@ -167,10 +167,9 @@ def _run_job(args):
     (pipeline, pipeline_name, dataset, signal, pred_length, hyperparameter, metrics,
         iteration, cache_dir, pipeline_dir, run_id) = args
 
-    pipeline_path = pipeline_dir
     if pipeline_dir:
         base_path = str(pipeline_dir / f'{pipeline_name}_{signal}_{dataset}_{iteration}')
-        pipeline_path = base_path + '_pipeline.pkl'
+        base_path + '_pipeline.pkl'
 
     LOGGER.info('Evaluating pipeline %s on signal %s dataset %s (test split: %s); iteration %s',
                 pipeline_name, signal, dataset, iteration)

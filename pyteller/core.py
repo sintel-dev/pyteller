@@ -13,9 +13,6 @@ import pandas as pd
 from mlblocks import MLPipeline, load_pipeline
 from sklearn.exceptions import NotFittedError
 # from btb.session import BTBSession
-from sklearn.model_selection import cross_val_score
-from mlprimitives.datasets import Dataset
-from sklearn.metrics import mean_absolute_error
 import numpy as np
 from btb.tuning import GPTuner, Tunable
 
@@ -221,8 +218,6 @@ class Pyteller:
                 Whether to log information during processing.
         """
 
-        from sklearn.metrics import make_scorer, f1_score
-        from sklearn.model_selection import cross_val_score
 
 
 
