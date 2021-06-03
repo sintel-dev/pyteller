@@ -47,8 +47,8 @@ test: ## run tests quickly with the default Python
 
 .PHONY: lint
 lint: ## check style with flake8 and isort
-	flake8 pyteller tests examples
-	isort -c --recursive pyteller tests examples
+	flake8 pyteller tests tutorials
+	isort -c --recursive pyteller tests tutorials
 
 .PHONY: install-develop
 install-develop: clean-build clean-pyc ## install the package in editable mode and dependencies for development
