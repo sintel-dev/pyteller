@@ -27,7 +27,7 @@ pyteller = Pyteller(
 tunables = pyteller.pipeline.get_tunable_hyperparameters(flat=True)
 # Fit the data to the pipeline.
 
-pyteller.fit(current_data, tune=False)
+pyteller.fit(current_data, tune=True)
 
 pyteller.pipeline.get_hyperparameters()
 

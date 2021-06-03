@@ -98,7 +98,7 @@ def _get_pipeline_hyperparameter(hyperparameters, dataset_name, pipeline_name):
 
 def _load_dataset(dataset):
 
-    if run_super == True:
+    if run_super is True:
         dataset = 'pyteller_benchmark/' + dataset + '.csv'
 
     train, test = load_data(dataset)
@@ -328,9 +328,7 @@ def benchmark(pipelines=None, datasets=None, pred_length=12, hyperparameters=Non
     else:
         if workers in (0, 1):
             scores = map(_run_job, jobs)
-        else:
-            pool = concurrent.futures.ProcessPoolExecutor(workers)
-            scores = pool.map(_run_job, jobs)
+
 
         scores = tqdm.tqdm(scores, total=len(jobs), file=TqdmLogger())
         if show_progress:
@@ -398,6 +396,7 @@ def main(workers=1):
                         output_path=output_path, workers=1, show_progress=True,
                         pipeline_dir=pipeline_dir, cache_dir=cache_dir)
 
+    return results
 
 if __name__ == "__main__":
     results = main()

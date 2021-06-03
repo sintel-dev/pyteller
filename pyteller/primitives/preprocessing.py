@@ -50,7 +50,7 @@ def format_data(X, time_column=None, target_column=None, targets=None,
         Output:
             * A ``pandas.DataFrame`` with timestamp column and one or many value columns.
     """
-    if make_index == True:
+    if make_index is True:
         X.insert(0, 'timestamp', range(len(X)))
 
     targets = targets or X.columns.drop(time_column)
@@ -74,7 +74,7 @@ def format_data(X, time_column=None, target_column=None, targets=None,
         X.columns = X.columns.droplevel()
         X.columns.name = None
 
-    if make_index == False:
+    if make_index is False:
         if X.index.dtype == 'float' or X.index.dtype == 'int':
             X.index = pd.to_datetime(X.index.values * 1e9)
 

@@ -50,8 +50,8 @@ class Pyteller:
             Subset of targets to extract, If None, extract all targets.
 
         entity_column (string):
-            Optional. A ``str`` specifying the name of the column of the input data containing the entity
-            names
+            Optional. A ``str`` specifying the name of the column of the input data containing
+             the entity names
 
         entities (string or list):
             Optional. A ``str`` or ``list`` specifying the name(s) of the entities from the
@@ -148,41 +148,6 @@ class Pyteller:
             'entity_column': self.entity_column,
         }
 
-    def k_fold_validation(self, hyperparameters, X, y, scoring=None):
-        """Score the pipeline through k-fold validation with the given scoring function.
-        Args:
-            hyperparameters (dict or None):
-                A dictionary of hyper-parameters for each primitive in the target pipeline.
-            X (pandas.DataFrame or ndarray):
-                Inputs to the pipeline.
-            y (pandas.Series or ndarray):
-                Target values.
-            scoring (str):
-                The name of the scoring function.
-        Returns:
-            np.float64:
-                The average score in the k-fold validation.
-        """
-        model_instance = MLPipeline(self._pipeline)
-        X = pd.DataFrame(X)
-        y = pd.Series(y)
-
-        if hyperparameters:
-            model_instance.set_hyperparameters(hyperparameters)
-
-        if self._problem_type == 'regression':
-            scorer = self.regression_metrics[scoring or 'R2 Score']
-        else:
-            scorer = self.classification_metrics[scoring or 'F1 Macro']
-
-        scores = []
-        kf = KFold(n_splits=10, random_state=None, shuffle=True)
-        for train_index, test_index in kf.split(X):
-            model_instance.fit(X.iloc[train_index], y.iloc[train_index])
-            y_pred = model_instance.predict(X.iloc[test_index])
-            scores.append(scorer(y.iloc[test_index], y_pred))
-
-        return np.mean(scores)
 
     def scoring_function(self, X, hyperparameters=None):
         # choose the model
