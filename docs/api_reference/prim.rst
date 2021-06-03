@@ -5,7 +5,7 @@ pyteller.primitives
 
 .. currentmodule:: pyteller.primitives
 
-Primitives
+Preprocessing
 ~~~~~~~~~~~~~~~
 
 .. autosummary::
@@ -13,3 +13,10 @@ Primitives
 
    pyteller.primitives.preprocessing.format_data
 
+Postprocessing
+~~~~~~~~~~~~~~~
+
+.. autosummary::
+   :toctree: api/
+
+   pyteller.primitives.postprocessing.reformat_data
