@@ -5,10 +5,6 @@
    <i>An open source project from Data to AI Lab at MIT.</i>
    </p>
 
-    <p align="left">
-    <img width=15% src="https://github.com/signals-dev/pyteller/blob/master/docs/images/Pyteller-icon-only.png" alt=“DAI-Lab” />
-    <i>An open source project from Data to AI Lab at MIT.</i>
-    </p>
 
 
    <p align="left">
