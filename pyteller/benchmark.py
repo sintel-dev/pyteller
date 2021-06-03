@@ -37,7 +37,6 @@ BENCHMARK_PATH = os.path.join(os.path.join(
     'benchmark'
 )
 
-pipelines=find_pipelines('pyteller')
 
 
 def _summarize_results(scores, rank):
@@ -267,7 +266,8 @@ def benchmark(pipelines=None, datasets=None, pred_length=12, hyperparameters=Non
             by the indicated metric.
     """
 
-    pipelines = pipelines or VERIFIED_PIPELINES
+#0Arima 1LSTM 2Persistence
+    pipelines = [pipelines[0]]
     datasets = datasets or BENCHMARK_DATA
     # #For testing
     # import itertools
@@ -381,7 +381,10 @@ def main(workers=1):
             },
             'pyteller.primitives.postprocessing.flatten#1': {
                 'type': 'average'
-            }
+            },
+            'keras.Sequential.LSTMTimeSeriesRegressor#1': {
+                'epochs': 10,
+    }
         },
         'pyteller.persistence.persistence': {
             'pyteller.primitives.preprocessing.format_data#1': {
@@ -392,13 +395,13 @@ def main(workers=1):
             }
         }
     }
-    results = benchmark(pipelines=pipelines, hyperparameters=hyperparameters,metrics=metrics,
-        output_path=output_path, workers='dask', show_progress=True,
-         pipeline_dir=pipeline_dir, cache_dir=cache_dir)
-
     # results = benchmark(pipelines=pipelines, hyperparameters=hyperparameters,metrics=metrics,
-    #     output_path=output_path, workers=1, show_progress=True,
+    #     output_path=output_path, workers='dask', show_progress=True,
     #      pipeline_dir=pipeline_dir, cache_dir=cache_dir)
+
+    results = benchmark(pipelines=pipelines, hyperparameters=hyperparameters,metrics=metrics,
+        output_path=output_path, workers=1, show_progress=True,
+         pipeline_dir=pipeline_dir, cache_dir=cache_dir)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,2 @@
+dataset,pipeline,signal,prediction length,iteration,MAE,MSE,RMSE,MASE,sMAPE,MAPE,under,over,status,elapsed,run_id
+gasoline,pyteller.persistence.persistence,x,12,0,0.29322817460317446,0.13567639561287467,0.3683427691877155,1.1609425024117352,3.2857560216226704,3.289005697125686,40.3553333333333,33.53816666666667,OK,4.299781,8e78a1cc-9
