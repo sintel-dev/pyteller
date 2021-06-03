@@ -47,7 +47,8 @@ def MASE(actual: np.ndarray, predicted: np.ndarray, seasonality: int = 1):
     Baseline (benchmark) is computed with naive forecasting (shifted by @seasonality)
     """
     return mean_absolute_error(actual, predicted) / mean_absolute_error(actual[seasonality:],
-                                                                        _naive_forecasting(actual, seasonality))
+                                                                        _naive_forecasting(
+                                                                            actual, seasonality))
 
 
 def sMAPE(testing_series, prediction_series):
