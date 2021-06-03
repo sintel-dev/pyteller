@@ -26,7 +26,7 @@ run_super = True
 BUCKET = 'pyteller'
 S3_URL = 'https://{}.s3.amazonaws.com/{}'
 
-if run_super == False:
+if run_super is False:
     BENCHMARK_DATA = pd.read_csv(S3_URL.format(
         BUCKET, 'datasets.csv'), index_col=0, header=None).applymap(ast.literal_eval).to_dict()[1]
 else:
@@ -88,12 +88,6 @@ def _get_pipeline_hyperparameter(hyperparameters, dataset_name, pipeline_name):
     if hyperparameters:
         hyperparameters_ = hyperparameters_.get(dataset_name) or hyperparameters_
         hyperparameters_ = hyperparameters_.get(pipeline_name) or hyperparameters_
-
-    if hyperparameters_ is None and dataset_name and pipeline_name:
-        file_path = os.path.join(
-            PIPELINE_DIR, pipeline_name, pipeline_name + '_' + dataset_name.lower() + '.json')
-        if os.path.exists(file_path):
-            hyperparameters_ = file_path
 
     if isinstance(hyperparameters_, str) and os.path.exists(hyperparameters_):
         with open(hyperparameters_) as f:
