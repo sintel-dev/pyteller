@@ -3,7 +3,6 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error
 
 
 def root_mean_square_error(testing_series, prediction_series):
-
     """
 
     Computes the Root Mean  Square Error for univariate time series
@@ -22,13 +21,12 @@ def root_mean_square_error(testing_series, prediction_series):
     return mean_squared_error(testing_series, prediction_series, squared=False)
 
 
-def _naive_forecasting(actual, seasonality = 1):
+def _naive_forecasting(actual, seasonality=1):
     """ Naive forecasting method which just repeats previous samples """
     return actual[:-seasonality]
 
 
 def MASE(actual: np.ndarray, predicted: np.ndarray, seasonality: int = 1):
-
     """
 
     Computes the Mean Absolute Scaled Error for univariate time series
@@ -44,14 +42,13 @@ def MASE(actual: np.ndarray, predicted: np.ndarray, seasonality: int = 1):
         float of MASE
     """
 
-
     """
     Mean Absolute Scaled Error
     Baseline (benchmark) is computed with naive forecasting (shifted by @seasonality)
     """
     return mean_absolute_error(actual, predicted) / mean_absolute_error(actual[seasonality:],
-                                                                 _naive_forecasting(actual,
-                                                                                    seasonality))
+                                                                        _naive_forecasting(actual,
+                                                                                           seasonality))
 
 
 def sMAPE(testing_series, prediction_series):
@@ -79,7 +76,6 @@ def sMAPE(testing_series, prediction_series):
 
 
 def MAPE(testing_series, prediction_series):
-
     """
 
     Computes the  mean absolute percentage error for univariate time series
@@ -103,7 +99,6 @@ def MAPE(testing_series, prediction_series):
 
 
 def under_pred(y, y_hat):
-
     """
 
     Computes the summation of where the forecast was less than the actual values
@@ -122,7 +117,6 @@ def under_pred(y, y_hat):
 
 
 def over_pred(y, y_hat):
-
     """
 
     Computes the summation of where the forecast was greater than the actual values

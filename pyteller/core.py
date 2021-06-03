@@ -9,15 +9,15 @@ import os
 import pickle
 from copy import deepcopy
 
-import pandas as pd
-from mlblocks import MLPipeline, load_pipeline
-from sklearn.exceptions import NotFittedError
 # from btb.session import BTBSession
 import numpy as np
+import pandas as pd
 from btb.tuning import GPTuner, Tunable
+from mlblocks import MLPipeline, load_pipeline
+from sklearn.exceptions import NotFittedError
 
-from pyteller.metrics import METRICS
 from pyteller.data import get_splits
+from pyteller.metrics import METRICS
 from pyteller.utils import plot_forecast
 
 LOGGER = logging.getLogger(__name__)
@@ -103,7 +103,7 @@ class Pyteller:
         if 'tunable' in pipeline.keys():
             self.tunable = MLPipeline._flatten_dict((pipeline['tunable']))
         else:
-            self.tunable=None
+            self.tunable = None
 
         # Create the MLPipeline
         pipeline = MLPipeline(pipeline)
@@ -114,12 +114,12 @@ class Pyteller:
         return pipeline
 
     def __init__(self, pipeline, time_column=None, target_column=None, targets=None,
-                 entity_column=None, entities=None,  pred_length=1, offset=0,
+                 entity_column=None, entities=None, pred_length=1, offset=0,
                  hyperparameters=None):
 
         self.time_column = time_column or 'timestamp'
         self.target_column = target_column
-        self.targets=targets
+        self.targets = targets
         self.entity_column = entity_column
         self.entities = entities
         self.pred_length = pred_length
@@ -142,12 +142,11 @@ class Pyteller:
             'pred_length': self.pred_length,
             'offset': self.offset,
             'entities': self.entities,
-            'targets' : self.targets,
+            'targets': self.targets,
             'target_column': self.target_column,
             'time_column': self.time_column,
             'entity_column': self.entity_column,
         }
-
 
     def k_fold_validation(self, hyperparameters, X, y, scoring=None):
         """Score the pipeline through k-fold validation with the given scoring function.
@@ -196,13 +195,14 @@ class Pyteller:
             # model_instance.set_hyperparameters(hyperparameters)
             self.pipeline.set_hyperparameters(hyperparameters)
         scores = []
-        for X_train, X_test in get_splits(X,3):
+        for X_train, X_test in get_splits(X, 3):
             self.fit(X_train)
-            output=self.forecast(X_test)
+            output = self.forecast(X_test)
             scores.append(self.evaluate(actuals=output['actuals'],
-                                            forecasts=output['forecasts'],
-                                            metrics=['MAE']).values[0][0])
+                                        forecasts=output['forecasts'],
+                                        metrics=['MAE']).values[0][0])
         return np.mean(scores)
+
     def tune(self, X, y, max_evals=10, scoring=None, verbose=False):
         """ Tune the pipeline hyper-parameters and select the optimized model.
         Args:
@@ -218,12 +218,9 @@ class Pyteller:
                 Whether to log information during processing.
         """
 
-
-
-
         tunables = self.pipeline.get_tunable_hyperparameters(flat=True)
-        if self.tunable != None:
-            tunables.update(self.tunable) #combine pipeline tunable parameters
+        if self.tunable is not None:
+            tunables.update(self.tunable)  # combine pipeline tunable parameters
         tunable = Tunable.from_dict(tunables)
         default_score = self.scoring_function(X)
         tuner = GPTuner(tunable)
@@ -236,22 +233,21 @@ class Pyteller:
             print("scoring pipeline {}".format(iteration + 1))
             proposal = tuner.propose()
             try:
-                score = self.scoring_function(X,proposal)
+                score = self.scoring_function(X, proposal)
                 tuner.record(proposal, score)
             except Exception as ex:
                 LOGGER.exception("Exception tuning pipeline %s",
                                  iteration, ex)
-                score=best_score+1
+                score = best_score + 1
             if score < best_score:
                 print("New best found: {}".format(score))
                 best_score = score
                 best_proposal = proposal
         self.pipeline.set_hyperparameters(best_proposal)
-        self.tuned_params=best_proposal
+        self.tuned_params = best_proposal
 
-
-
-    def fit(self, data=None, tune=False, max_evals=10, scoring=None,  start_=None, verbose=False, output_=None, **kwargs):
+    def fit(self, data=None, tune=False, max_evals=10, scoring=None,
+            start_=None, verbose=False, output_=None, **kwargs):
         """Fit the pipeline to the given data.
 
         Args:

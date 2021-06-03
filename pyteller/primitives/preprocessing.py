@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 
+
 def format_data(X, time_column=None, target_column=None, targets=None,
                 entity_column=None, entities=None, make_index=False):
     """Format data into machine readable format.
@@ -50,7 +51,7 @@ def format_data(X, time_column=None, target_column=None, targets=None,
             * A ``pandas.DataFrame`` with timestamp column and one or many value columns.
     """
     if make_index == True:
-        X.insert(0,'timestamp', range(len(X)))
+        X.insert(0, 'timestamp', range(len(X)))
 
     targets = targets or X.columns.drop(time_column)
 
@@ -73,7 +74,7 @@ def format_data(X, time_column=None, target_column=None, targets=None,
         X.columns = X.columns.droplevel()
         X.columns.name = None
 
-    if make_index==False:
+    if make_index == False:
         if X.index.dtype == 'float' or X.index.dtype == 'int':
             X.index = pd.to_datetime(X.index.values * 1e9)
 
@@ -82,7 +83,6 @@ def format_data(X, time_column=None, target_column=None, targets=None,
     else:
         X.index = range(len(X))
         X.index.name = time_column
-
 
     return X[targets].reset_index(), X[targets].reset_index()
 
@@ -104,8 +104,7 @@ def get_index(X, time_column):
     if isinstance(X, np.ndarray):
         X = pd.DataFrame(X)
 
-    X=X.sort_values(time_column.lower()).set_index(time_column.lower())
-    freq=(X.index[1:2].astype(np.int64)-X.index[0:1].astype(np.int64))// 1e9
+    X = X.sort_values(time_column.lower()).set_index(time_column.lower())
+    freq = (X.index[1:2].astype(np.int64) - X.index[0:1].astype(np.int64)) // 1e9
 
     return np.asarray(X.values), np.asarray(X.index), freq
-

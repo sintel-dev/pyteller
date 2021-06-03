@@ -59,7 +59,7 @@ def download(name, data_path=DATA_PATH):
     return data
 
 
-def load_data(data, lookback=None,pred_length=None, test_size=0.2):
+def load_data(data, lookback=None, pred_length=None, test_size=0.2):
     if os.path.isfile(data):
         data = pd.read_csv(data)
 
@@ -69,8 +69,8 @@ def load_data(data, lookback=None,pred_length=None, test_size=0.2):
     if test_size is None:
         return data
 
-    if lookback and pred_length != None:
-        test_length = lookback+pred_length
+    if lookback and pred_length is not None:
+        test_length = lookback + pred_length
     else:
         test_length = round(len(data) * test_size)
 
@@ -79,11 +79,13 @@ def load_data(data, lookback=None,pred_length=None, test_size=0.2):
 
     return train, test
 
+
 def _get_split(data, index):
     if hasattr(data, 'iloc'):
         return data.iloc[index]
     else:
         return data[index]
+
 
 def get_splits(data, n_splits=1, random_state=None):
     """Return splits of this dataset ready for Cross Validation.
@@ -115,7 +117,7 @@ def get_splits(data, n_splits=1, random_state=None):
         )
 
     else:
-        cv_class =  KFold
+        cv_class = KFold
         cv = cv_class(n_splits=n_splits, shuffle=False, random_state=None)
 
         splits = list()

@@ -64,8 +64,8 @@ def plot_forecast(dfs, output_path=None, labels=['actuals', 'predicted'], freque
         plt.plot(dfs[1].iloc[:, 0], linewidth=3, color='orange')
 
     else:
-        plt.plot(dfs[0].index, df.iloc[:, 0], linewidth=3,color='blue')
-        plt.plot(dfs[1].index, df.iloc[:, 0], linewidth=3,color='orange')
+        plt.plot(dfs[0].index, df.iloc[:, 0], linewidth=3, color='blue')
+        plt.plot(dfs[1].index, df.iloc[:, 0], linewidth=3, color='orange')
         ax.xaxis.set_major_formatter(tik_fmt)
 
     if labels:

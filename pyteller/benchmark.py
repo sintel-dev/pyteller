@@ -2,41 +2,41 @@ import ast
 import json
 import logging
 import os
-from functools import partial
+import uuid
 from copy import deepcopy
 from datetime import datetime
+from functools import partial
 from pathlib import Path
-import uuid
 
 import numpy as np
 import pandas as pd
 import tqdm
 from mlblocks import MLPipeline
-from pyteller.progress import TqdmLogger, progress
-from mlblocks.discovery import find_pipelines,load_pipeline
+from mlblocks.discovery import find_pipelines, load_pipeline
 
 from pyteller.core import Pyteller
-from pyteller.metrics import METRICS
 from pyteller.data import load_data
+from pyteller.metrics import METRICS
+from pyteller.progress import TqdmLogger, progress
 
 LOGGER = logging.getLogger(__name__)
 
-run_super=True
+run_super = True
 
 BUCKET = 'pyteller'
 S3_URL = 'https://{}.s3.amazonaws.com/{}'
 
-if run_super==False:
+if run_super == False:
     BENCHMARK_DATA = pd.read_csv(S3_URL.format(
         BUCKET, 'datasets.csv'), index_col=0, header=None).applymap(ast.literal_eval).to_dict()[1]
 else:
-    BENCHMARK_DATA = pd.read_csv('pyteller_benchmark/datasets.csv', index_col=0, header=None).iloc[:,0:1].applymap(ast.literal_eval).to_dict()[1]
+    BENCHMARK_DATA = pd.read_csv('pyteller_benchmark/datasets.csv', index_col=0,
+                                 header=None).iloc[:, 0:1].applymap(ast.literal_eval).to_dict()[1]
 
 BENCHMARK_PATH = os.path.join(os.path.join(
     os.path.dirname(os.path.abspath(__file__)), '..'),
     'benchmark'
 )
-
 
 
 def _summarize_results(scores, rank):
@@ -50,7 +50,9 @@ def _summarize_results(scores, rank):
 
         scores_summary = scores_summary.append(df)
         print(len(scores))
-    return pd.DataFrame(scores_summary.groupby('pipeline').sum()['Percentage of Times Beat ARIMA'])/len(scores)*100
+    return pd.DataFrame(scores_summary.groupby('pipeline').sum()[
+                        'Percentage of Times Beat ARIMA']) / len(scores) * 100
+
 
 def _sort_leaderboard(df, rank, metrics):
     if rank not in df.columns:
@@ -99,11 +101,11 @@ def _get_pipeline_hyperparameter(hyperparameters, dataset_name, pipeline_name):
 
     return hyperparameters_
 
+
 def _load_dataset(dataset):
 
-    if run_super== True:
-        dataset='pyteller_benchmark/' + dataset + '.csv'
-
+    if run_super == True:
+        dataset = 'pyteller_benchmark/' + dataset + '.csv'
 
     train, test = load_data(dataset)
 
@@ -152,13 +154,13 @@ def _evaluate_signal(pipeline_name, dataset, signal, pred_length, hyperparameter
     except Exception:
         LOGGER.exception("No tuneable parameters on pipeline %s", pipeline_name)
 
-
     scores['status'] = status
     scores['elapsed'] = elapsed.total_seconds()
 
 
 #
     return scores
+
 
 def _run_job(args):
     # Reset random seed
@@ -192,7 +194,9 @@ def _run_job(args):
     scores['run_id'] = run_id
 
     if cache_dir:
-        base_path = str(cache_dir / f'{pipeline_name}_{signal}_{dataset}_{pred_length}_{iteration}_{run_id}')
+        base_path = str(
+            cache_dir
+            / f'{pipeline_name}_{signal}_{dataset}_{pred_length}_{iteration}_{run_id}')
         scores.to_csv(base_path + '_scores.csv', index=False)
 
     return scores
@@ -220,10 +224,10 @@ def _run_on_dask(jobs, verbose):
 
     return dask.compute(*persisted)
 
+
 def benchmark(pipelines=None, datasets=None, pred_length=12, hyperparameters=None,
               metrics=METRICS, rank='MAPE', iterations=1, workers=1, show_progress=False,
               cache_dir=None, output_path=None, pipeline_dir=None):
-
     """Run pipelines on the multiple datasets and evaluate the performance.
 
     The pipelines are used to analyze the given signals and later on the
@@ -265,7 +269,7 @@ def benchmark(pipelines=None, datasets=None, pred_length=12, hyperparameters=Non
             by the indicated metric.
     """
 
-#0Arima 1LSTM 2Persistence
+# 0Arima 1LSTM 2Persistence
     pipelines = [pipelines[0]]
     datasets = datasets or BENCHMARK_DATA
     # #For testing
@@ -303,7 +307,7 @@ def benchmark(pipelines=None, datasets=None, pred_length=12, hyperparameters=Non
 
     jobs = list()
     for dataset, signals in datasets.items():
-        if isinstance(signals,str):
+        if isinstance(signals, str):
             signals = [signals]
         for pipeline_name, pipeline in pipelines.items():
             hyperparameter = _get_pipeline_hyperparameter(hyperparameters, dataset, pipeline_name)
@@ -341,14 +345,12 @@ def benchmark(pipelines=None, datasets=None, pred_length=12, hyperparameters=Non
     scores = pd.concat(scores)
     if output_path:
         LOGGER.info('Saving benchmark report to %s', output_path)
-        scores.to_csv(output_path+'.csv', index=False)
+        scores.to_csv(output_path + '.csv', index=False)
         summary_scores = _summarize_results(scores, rank)
         summary_scores.reset_index(inplace=False)
         summary_scores.to_csv(output_path + '_summary.csv')
 
     return _sort_leaderboard(scores, rank, metrics), summary_scores
-
-
 
 
 def main(workers=1):
@@ -363,13 +365,13 @@ def main(workers=1):
 
     # pipelines
 
-    pipelines= find_pipelines('pyteller')
+    pipelines = find_pipelines('pyteller')
 
     hyperparameters = {
-        'pyteller.ARIMA.arima':{
+        'pyteller.ARIMA.arima': {
             'pyteller.primitives.preprocessing.format_data#1': {
                 'make_index': True
-        },
+            },
             'pyteller.primitives.postprocessing.flatten#1': {
                 'type': 'average'
             }
@@ -383,7 +385,7 @@ def main(workers=1):
             },
             'keras.Sequential.LSTMTimeSeriesRegressor#1': {
                 'epochs': 10,
-    }
+            }
         },
         'pyteller.persistence.persistence': {
             'pyteller.primitives.preprocessing.format_data#1': {
@@ -398,10 +400,10 @@ def main(workers=1):
     #     output_path=output_path, workers='dask', show_progress=True,
     #      pipeline_dir=pipeline_dir, cache_dir=cache_dir)
 
-    results = benchmark(pipelines=pipelines, hyperparameters=hyperparameters,metrics=metrics,
-        output_path=output_path, workers=1, show_progress=True,
-         pipeline_dir=pipeline_dir, cache_dir=cache_dir)
+    results = benchmark(pipelines=pipelines, hyperparameters=hyperparameters, metrics=metrics,
+                        output_path=output_path, workers=1, show_progress=True,
+                        pipeline_dir=pipeline_dir, cache_dir=cache_dir)
 
 
 if __name__ == "__main__":
-    results= main()
+    results = main()
