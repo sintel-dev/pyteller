@@ -148,7 +148,6 @@ class Pyteller:
             'entity_column': self.entity_column,
         }
 
-
     def scoring_function(self, X, hyperparameters=None):
         # choose the model
         # model_instance = MLPipeline(self.pipeline)

@@ -329,7 +329,6 @@ def benchmark(pipelines=None, datasets=None, pred_length=12, hyperparameters=Non
         if workers in (0, 1):
             scores = map(_run_job, jobs)
 
-
         scores = tqdm.tqdm(scores, total=len(jobs), file=TqdmLogger())
         if show_progress:
             scores = tqdm.tqdm(scores, total=len(jobs))
@@ -397,6 +396,7 @@ def main(workers=1):
                         pipeline_dir=pipeline_dir, cache_dir=cache_dir)
 
     return results
+
 
 if __name__ == "__main__":
     results = main()
