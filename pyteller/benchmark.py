@@ -46,11 +46,11 @@ def _summarize_results(scores, rank):
         arima = df.loc[df['pipeline'] == 'pyteller.ARIMA.arima'][rank].values
         mask = df[rank] < float(arima)
         mask = mask.astype(int)
-        df['Beat ARIMA'] = mask
+        df['Percentage of Times Beat ARIMA'] = mask
 
         scores_summary = scores_summary.append(df)
-
-    return pd.DataFrame(scores_summary.groupby('pipeline').sum()['Beat ARIMA'])
+        print(len(scores))
+    return pd.DataFrame(scores_summary.groupby('pipeline').sum()['Percentage of Times Beat ARIMA'])/len(scores)*100
 
 def _sort_leaderboard(df, rank, metrics):
     if rank not in df.columns:

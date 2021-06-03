@@ -1,0 +1,4 @@
+pipeline,Percentage of Times Beat ARIMA
+pyteller.ARIMA.arima,0
+pyteller.LSTM.LSTM,36.36363636
+pyteller.persistence.persistence,18.18181818
