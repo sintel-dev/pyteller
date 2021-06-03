@@ -61,8 +61,8 @@ test-all: ## run tests on every Python version with tox
 .PHONY: fix-lint
 fix-lint: ## fix lint issues using autoflake, autopep8, and isort
 	find pyteller tests examples -name '*.py' | xargs autoflake --in-place --remove-all-unused-imports --remove-unused-variables
-	autopep8 --in-place --recursive --aggressive pyteller tests examples
-	isort --apply --atomic --recursive pyteller tests examples
+	autopep8 --in-place --recursive --aggressive pyteller tests tutorials
+	isort --apply --atomic --recursive pyteller tests tutorials
 
 .PHONY: coverage
 coverage: ## check code coverage quickly with the default Python
