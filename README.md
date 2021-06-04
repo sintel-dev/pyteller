@@ -34,7 +34,7 @@ Pyteller is a time series forecasting library using MLPrimitives to build easy t
 The easiest and recommended way to install **pyteller** is using [pip](https://pip.pypa.io/en/stable/):
 
 ```bash
-pip install orion-ml
+pip install pyteller
 ```
 
 This will pull and install the latest stable release from [PyPi](https://pypi.org/).
@@ -69,8 +69,8 @@ current_data, input_data = load_data('AL_Weather')
 
 
 ## 2. Fit the pipeline
-Once we have the data, create an instance of the `Pyteller` class, where the input arguments are the forecast settings and the column specifications of the data.
-In this example we use the `lstm` pipeline and set the training epochs as 5.
+Once we have the data, create an instance of the `Pyteller` class, where the input arguments are the forecast settings and the column headers of the data.
+In this example we use the `lstm` pipeline and set the training epochs to 20.
 
 ```python3
 from pyteller.core import Pyteller
@@ -105,7 +105,7 @@ To make a forecast, the user calls the `pyteller.forecast` method
 ```python3
 output = pyteller.forecast(data=input_data)
 ```
-The output is a ``dictionary`` which includes the ``forecasts`` and ``actuals`` ``dataframes``:
+The output is a ``dictionary`` which includes the ``forecasts`` and ``actuals`` ``dataframes``. Here is ``output['forecasts']``:
 
 ```python3
  timestamp        8A0

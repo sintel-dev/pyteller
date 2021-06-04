@@ -1,2 +1,0 @@
-dataset,pipeline,signal,prediction length,iteration,MAE,MSE,RMSE,MASE,sMAPE,MAPE,under,over,strategy,lstm_1_units,dropout_1_rate,lstm_2_units,dropout_2_rate,window_size,status,elapsed,run_id
-calls,pyteller.LSTM.LSTM,x,12,0,12.927582429882978,301.345097840777,17.359294278304546,0.8369070403667307,7.9926832950904965,8.403624182916639,32873.98407084544,36831.54039108356,most_frequent,206,0.3614698412234067,447,0.08375243051827913,150,OK,9144.159196,9ead9442-9

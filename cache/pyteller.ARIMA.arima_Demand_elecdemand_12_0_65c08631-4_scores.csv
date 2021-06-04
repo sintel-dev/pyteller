@@ -1,2 +1,0 @@
-dataset,pipeline,signal,prediction length,iteration,MAE,MSE,RMSE,MASE,sMAPE,MAPE,under,over,status,elapsed,run_id
-elecdemand,pyteller.ARIMA.arima,Demand,12,0,0,0,0,0,0,0,0,0,ERROR,453.489967,65c08631-4

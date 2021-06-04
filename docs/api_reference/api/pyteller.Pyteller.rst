@@ -17,7 +17,6 @@
       ~Pyteller.evaluate
       ~Pyteller.fit
       ~Pyteller.forecast
-      ~Pyteller.k_fold_validation
       ~Pyteller.load
       ~Pyteller.plot
       ~Pyteller.save

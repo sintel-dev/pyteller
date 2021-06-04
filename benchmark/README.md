@@ -6,22 +6,21 @@ a pipeline forecasts.
 
 ## Releases
 
-In every release, we run the pyteller benchmark and maintain an up to-date [leaderboard](../README.md###leaderboard) which can also be found in this [summary Google Sheets document](https://docs.google.com/spreadsheets/d/1OPwAslqfpWvzpUgiGoeEq-Wk_yK-GYPGpmS7TwEaSbw/edit?usp=sharing).
+In every release, we run the pyteller benchmark and maintain an up to-date [leaderboard](/leaderboard.md) which can also be found in this [summary Google Sheets document](https://docs.google.com/spreadsheets/d/1OPwAslqfpWvzpUgiGoeEq-Wk_yK-GYPGpmS7TwEaSbw/edit?usp=sharing).
 Results obtained during the benchmarking process and in previous benchmarks can be found
 within [benchmark/results](results) folder as CSV files and, you can find it in the [details Google Sheets document](https://docs.google.com/spreadsheets/d/1EQd2x4BPSYEs6KLLUKrxzY3e8TuysnYnaSYAsBiPwCA/edit?usp=sharing).
 
 
 ## Evaluating the Pipelines
 
-Using the [Evaluation sub-package](../pyteller/evaluation). In our terminology, one dataset may have many *signals* that are forecasted for.
+ In our terminology, one dataset may have many *signals* that are forecasted for.
 
 A leaderboard entry for one *pipeline* across the many datasets is created using the following steps:
 
-1. Split each dataset into train and test data
-2. Use the pipeline to forecast on the default settings on the testing data
-3. Evaluate the normalized metrics for each signal in the test dataset
-4. For each metric, average the scores of all the entities in the signal and all the signals in a dataset
-5. For each metric, average the scores of all the datasets
+1. Split each signal into train and test data
+2. Hyperparameter tune the signal on the pipeline and fit the pipeline with the best found parameters
+3. Evaluate the normalized metrics
+5. For each metric, average the scores of all the signals in all the datasets
 
 Finally, repeat this process for all pipelines, and rank the pipelines by sorting them by the specified metrics to rank by.
 
@@ -37,16 +36,15 @@ This function expects the following inputs:
 This returns a `pandas.DataFrame` which contains the metrics obtained across all the signals for each dataset for a given pipeline.
 
 This is an example call of the benchmarking function:
+
+```python3
+from pyteller.benchmark import benchmark
+
+pipelines = find_pipelines('pyteller')
+
+metrics = ['MAPE', 'MASE', 'sMAPE']
+
+datasets = ['a10', 'gasoline', 'calls']
+
+results = benchmark(pipelines=pipelines, metrics=metrics, output_path=output_path, datasets=datasets, metrics=metrics, rank='MASE')
 ```
-In [1]: from pyteller.benchmark import benchmark
-
-In [2]: pipelines = [
-                'Persistence'
-   ...: ]
-
-In [3]: metrics = ['MAPE', 'MASE', 'sMAPE']
-
-In [4]: datasets = ['taxi', 'AL_wind', 'FasTrak']
-
-In [5]: scores = benchmark(pipelines=pipelines, datasets=datasets, metrics=metrics, rank='MAPE')
-
