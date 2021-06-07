@@ -47,8 +47,8 @@ test: ## run tests quickly with the default Python
 
 .PHONY: lint
 lint: ## check style with flake8 and isort
-	flake8 pyteller tests examples
-	isort -c --recursive pyteller tests examples
+	flake8 pyteller tests
+	isort -c --recursive pyteller tests
 
 .PHONY: install-develop
 install-develop: clean-build clean-pyc ## install the package in editable mode and dependencies for development
@@ -60,9 +60,9 @@ test-all: ## run tests on every Python version with tox
 
 .PHONY: fix-lint
 fix-lint: ## fix lint issues using autoflake, autopep8, and isort
-	find pyteller tests examples -name '*.py' | xargs autoflake --in-place --remove-all-unused-imports --remove-unused-variables
-	autopep8 --in-place --recursive --aggressive pyteller tests examples
-	isort --apply --atomic --recursive pyteller tests examples
+	find pyteller tests -name '*.py' | xargs autoflake --in-place --remove-all-unused-imports --remove-unused-variables
+	autopep8 --in-place --recursive --aggressive pyteller tests
+	isort --apply --atomic --recursive pyteller tests
 
 .PHONY: coverage
 coverage: ## check code coverage quickly with the default Python
