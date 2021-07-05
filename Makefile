@@ -58,7 +58,7 @@ install-develop: clean-build clean-pyc ## install the package in editable mode a
 test-all: ## run tests on every Python version with tox
 	tox -r -p auto
 
-.PHONY: fix-lsint
+.PHONY: fix-lint
 fix-lint: ## fix lint issues using autoflake, autopep8, and isort
 	find pyteller tests -name '*.py' | xargs autoflake --in-place --remove-all-unused-imports --remove-unused-variables
 	autopep8 --in-place --recursive --aggressive pyteller tests
@@ -140,10 +140,10 @@ CURRENT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD 2>/dev/null)
 CHANGELOG_LINES := $(shell git diff HEAD..origin/stable HISTORY.md 2>&1 | wc -l)
 
 .PHONY: check-clean
- check-clean: ## Check if the directory has uncommitted changes
- ifneq ($(CLEAN_DIR),)
- 	$(error There are uncommitted changes)
- endif
+check-clean: ## Check if the directory has uncommitted changes
+ifneq ($(CLEAN_DIR),)
+	$(error There are uncommitted changes)
+endif
 
 .PHONY: check-master
 check-master: ## Check if we are in master branch
