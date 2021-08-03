@@ -50,7 +50,7 @@ Depending on the format of the data, the user should specify the **string** deno
 * `entity_column`: Column denoting the entities column.
 * `entities`: Subset of entities to extract.
 
-Here is an example of loading the [Alabama Weather](pyteller/data/ALWeather.csv) demo data which has multiple entities in long form:
+Here is an example of loading the [Alabama Weather](pyteller/data/AL_Weather.csv) demo data which has multiple entities in long form:
 
 ```python3
 from pyteller.data import load_data
@@ -139,7 +139,7 @@ Results obtained during the benchmarking process as well as previous benchmarks 
 within [benchmark/results](benchmark/results) folder as CSV files. In addition, you can find it in the [details Google Sheets document](https://docs.google.com/spreadsheets/d/1EQd2x4BPSYEs6KLLUKrxzY3e8TuysnYnaSYAsBiPwCA/edit?usp=sharing).
 
 ### Leaderboard
-We summarize the results in the [leaderboard](benchmark/leaderboard.md) table. We showcase the number of wins each pipeline has over the ARIMA pipeline.
+We summarize the results in the [leaderboard](benchmark/leaderboard.md) table. We showcase the percentage of times each pipeline wins over the ARIMA pipeline.
 
 The summarized results can also be browsed in the following [summary Google Sheets document](https://docs.google.com/spreadsheets/d/1OPwAslqfpWvzpUgiGoeEq-Wk_yK-GYPGpmS7TwEaSbw/edit?usp=sharing).
 
