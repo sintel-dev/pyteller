@@ -18,6 +18,7 @@ install_requires = [
     'numpy<1.19,>=1.17.1',
     'scikit-learn>=0.21',
     'baytune>=0.4.0,<0.5',
+    'Keras>=2.4,<2.5'
 
 ]
 
