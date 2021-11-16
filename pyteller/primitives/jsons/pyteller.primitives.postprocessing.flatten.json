@@ -1,5 +1,5 @@
 {
-    "name": "pyteller.primitives.post_process.Flatten",
+    "name": "pyteller.primitives.postprocessing.flatten",
     "contributors": [
         "Skylar Eiskowitz <eiskowit@mit.edu>"
     ],
@@ -21,19 +21,22 @@
                 "type": "Index or array-like"
             },
             {
-                "name": "columns",
-                "type": "Index or array-like"
+                "name": "pred_length",
+                "type": "int"
             },
             {
                 "name": "freq",
                 "type": "int"
             }
-
         ],
         "output": [
             {
                 "name": "X",
                 "type": "pandas.DataFrame"
+            },
+            {
+                "name": "index",
+                "type": "Index or array-like"
             }
         ]
     },
@@ -41,10 +44,13 @@
             "fixed": {
                 "pred_length": {
                     "type": "int",
-                    "default": 5
+                    "default": 1
+                },
+                "type": {
+                    "type": "string",
+                    "default": "average"
                 }
             }
-
         }
     }
 

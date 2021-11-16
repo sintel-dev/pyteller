@@ -1,0 +1,59 @@
+{
+    "primitives": [
+        "pyteller.primitives.preprocessing.format_data",
+        "pyteller.primitives.preprocessing.get_index",
+        "sklearn.impute.SimpleImputer",
+        "mlprimitives.custom.timeseries_preprocessing.rolling_window_sequences",
+        "pyteller.primitives.estimators.persistence",
+         "pyteller.primitives.postprocessing.flatten",
+        "pyteller.primitives.postprocessing.reformat_data"
+    ],
+    "init_params": {
+        "mlprimitives.custom.timeseries_preprocessing.rolling_window_sequences#1": {
+            "target_column": 0,
+            "window_size": 18,
+            "step_size": 5
+        }
+    },
+    "input_names": {
+        "pyteller.primitives.postprocessing.flatten#1": {
+            "X": "y",
+            "index": "target_index",
+            "columns": "entities"
+        },
+        "pyteller.primitives.postprocessing.reformat_data#1": {
+            "X": "y"
+        }
+    },
+
+    "output_names": {
+
+        "pyteller.primitives.postprocessing.flatten#1": {
+            "X": "y"
+        }
+    },
+
+    "outputs": {
+	    "default": [
+            {
+                "name": "forecasts",
+                "variable": "pyteller.primitives.postprocessing.reformat_data#1.forecasts"
+            },
+            {
+                "name": "actuals",
+                "variable": "pyteller.primitives.postprocessing.reformat_data#1.actuals"
+            }
+        ]
+    },
+
+    "pipeline_arguments": {
+        "pred_length": {
+            "mlprimitives.custom.timeseries_preprocessing.rolling_window_sequences#1": "target_size",
+            "pyteller.primitives.postprocessing.flatten#1": "pred_length",
+            "pyteller.primitives.estimators.persistence#1": "pred_length"
+        },
+        "offset": {
+            "mlprimitives.custom.timeseries_preprocessing.rolling_window_sequences#1": "offset"
+        }
+    }
+}

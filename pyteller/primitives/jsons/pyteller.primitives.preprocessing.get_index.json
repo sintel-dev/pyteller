@@ -15,6 +15,10 @@
             {
                 "name": "X",
                 "type": "ndarray"
+            },
+            {
+                "name": "time_column",
+                "type": "str or int"
             }
         ],
         "output": [
@@ -25,10 +29,13 @@
             {
                 "name": "index",
                 "type": "ndarray"
+            },
+            {
+                "name": "freq",
+                "type": "float"
             }
         ]
     },
     "hyperparameters": {
-
     }
 }

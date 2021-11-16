@@ -8,4 +8,3 @@ Getting Started
 
     install
     quickstart
-    docker

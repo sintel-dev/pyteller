@@ -25,6 +25,11 @@
                 "type": "ndarray"
             },
             {
+                "name": "target_column",
+                "type": "str or int"
+            },
+
+            {
                 "name": "drop",
                 "type": "ndarray or None or str or int or float or bool",
                 "required": false
@@ -61,10 +66,6 @@
             },
             "step_size": {
                 "type": "int",
-                "default": 1
-            },
-            "target_column": {
-                "type": "str or int",
                 "default": 1
             },
             "offset": {

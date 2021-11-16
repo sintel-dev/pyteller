@@ -12,34 +12,31 @@ with open('HISTORY.md', encoding='utf-8') as history_file:
     history = history_file.read()
 
 install_requires = [
-    's3fs>=0.2.2,<0.5',
-    'baytune>=0.2.3,<=0.3',
-    'mlblocks>=0.3.0,<0.4',
-    'mlprimitives>=0.2.2,<0.3',
-    'mongoengine>=0.16.3,<0.17',
-    'numpy>=1.15.4,<1.17',
-    'pandas>=0.23.4,<0.25',
-    'pymongo>=3.7.2,<4',
-    'scikit-learn>=0.20.1,<0.21',
-    'tabulate>=0.8.3,<0.9',
-    'Keras>=2.1.6,<2.4',
+    'mlblocks>=0.4.0,<0.5',
+    'mlprimitives>=0.3.0,<0.4',
+    'pandas>=1,<2',
+    'numpy<1.19,>=1.17.1',
+    'scikit-learn>=0.21',
+    'baytune>=0.4.0,<0.5',
+    'Keras>=2.4,<2.5'
+
 ]
 
 setup_requires = [
-    'pytest-runner>=2.11.1'
+    'pytest-runner>=2.11.1',
 ]
 
 tests_require = [
     'pytest>=3.4.2',
     'pytest-cov>=2.6.0',
     'rundoc>=0.4.3,<0.5',
+    'jupyter>=1.0.0,<2',
 ]
 
 development_requires = [
     # general
     'pip>=9.0.1',
     'bumpversion>=0.5.3,<0.6',
-    'watchdog>=0.8.3,<0.11',
 
     # docs
     'm2r2>=0.2.5,<0.3',
@@ -47,10 +44,10 @@ development_requires = [
     'Sphinx>=3,<3.3',
     'pydata-sphinx-theme',
     'autodocsumm>=0.1.10,<1',
-    'ipython>=6.5,<7.5',
+    'ipython>=6.5',
 
     # style check
-    'flake8>=3.7.7,<3.8',
+    'flake8>=3.8,<4',
     'isort>=4.3.4,<5',
 
     # fix style issues
@@ -64,6 +61,9 @@ development_requires = [
     # Advanced testing
     'coverage>=4.5.1,<6',
     'tox>=2.9.1,<4',
+
+    # Documentation style
+    'pydocstyle==3.0.0',
 ]
 
 setup(
@@ -101,7 +101,7 @@ setup(
     keywords='pyteller pyteller pyteller',
     name='pyteller',
     packages=find_packages(include=['pyteller', 'pyteller.*']),
-    python_requires='>=3.6,<3.8',
+    python_requires='>=3.6,<3.9',
     setup_requires=setup_requires,
     test_suite='tests',
     tests_require=tests_require,
@@ -109,3 +109,4 @@ setup(
     version='0.1.1.dev0',
     zip_safe=False,
 )
+

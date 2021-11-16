@@ -21,7 +21,7 @@ class TestPyteller(unittest.TestCase):
         """Test something."""
         self.assertTrue(True)
 # import pandas as pd
-# from pyteller.core import Pyteller
+# from pyteller import Pyteller
 # class TestPyteller:
 #     @classmethod
 #     def setup_class(cls):
@@ -32,7 +32,7 @@ class TestPyteller(unittest.TestCase):
 #
 #     def setup(self):
 #         self.pyteller = Pyteller(
-#                     pipeline='pyteller/pipelines/sandbox/persistence/persistence.json',
+#                     pipeline='pyteller/pipelines/pyteller/persistence/persistence.json',
 #                     pred_length=6,
 #                     offset=1
 #                 )

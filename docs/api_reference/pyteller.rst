@@ -1,27 +1,20 @@
 .. _pyteller:
 
 pyteller
-=====
+==========
 
 .. currentmodule:: pyteller
 
-pyteller
-~~~~~
+Pyteller
+~~~~~~~~~~
 
 .. autosummary::
    :toctree: api/
 
-   pyteller
-   pyteller.fit
-   pyteller.detect
-   pyteller.evaluate
-   pyteller.save
-   pyteller.load
+   Pyteller
+   Pyteller.fit
+   Pyteller.evaluate
+   Pyteller.save
+   Pyteller.load
 
-Functional API
-~~~~~~~~~~~~~~
 
-.. autosummary::
-   :toctree: api/
-
-soon

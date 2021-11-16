@@ -1,0 +1,59 @@
+{
+    "name": "pyteller.primitives.preprocessing.format_data",
+    "contributors": [
+        "Skylar Eiskowitz <eiskowit@mit.edu>"
+    ],
+    "description": "Takes in flatform or longform data and outputs correctly formatted data for training",
+    "classifiers": {
+        "type": "preprocessor",
+        "subtype": "organize"
+    },
+    "modalities": [],
+    "primitive": "pyteller.primitives.preprocessing.format_data",
+   "produce": {
+        "args": [
+            {
+                "name": "X",
+                "type": "ndarray"
+            },
+            {
+                "name": "target_column",
+                "type": "string"
+            },
+            {
+                "name": "targets",
+                "type": "string"
+            },
+            {
+                "name": "time_column",
+                "type": "string"
+            },
+           {
+                "name": "entity_column",
+                "type": "string"
+            },
+           {
+                "name": "entities",
+                "type": "string"
+            }
+        ],
+        "output": [
+            {
+                "name": "X",
+                "type": "ndarray"
+            },
+            {
+                "name": "actuals",
+                "type": "ndarray"
+            }
+        ]
+    },
+    "hyperparameters": {
+        "fixed": {
+            "make_index": {
+                "type": "Boolean",
+                "default": false
+            }
+        }
+    }
+}

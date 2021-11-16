@@ -1,7 +1,27 @@
-.. pyteller.evaluation:
+.. pyteller.metrics:
 
-pyteller.evaluation
+pyteller.metrics
 ================
 
-.. currentmodule:: pyteller.evaluation
+.. currentmodule:: pyteller.metrics
 
+Normalized Metrics
+~~~~~~~~~~~~~~~~~~~~
+
+.. autosummary::
+   :toctree: api/
+
+    MAPE
+    sMAPE
+    MASE
+
+
+Scale-Dependent Metrics
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autosummary::
+   :toctree: api/
+
+    root_mean_square_error
+    over_pred
+    under_pred

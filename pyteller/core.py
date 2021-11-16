@@ -1,123 +1,274 @@
-# -*- coding: utf-8 -*-
+"""Pyteller Core module.
 
-"""Main module."""
-import json
+This module defines the Pyteller Class, which is responsible for the
+main forecasting detection functionality, as well as the interaction
+with the underlying MLBlocks pipelines.
+"""
+import logging
 import os
 import pickle
+from copy import deepcopy
 
+# from btb.session import BTBSession
+import numpy as np
 import pandas as pd
-from mlblocks import MLPipeline
+from btb.tuning import GPTuner, Tunable
+from mlblocks import MLPipeline, load_pipeline
+from sklearn.exceptions import NotFittedError
 
-from pyteller.data import egest_data, ingest_data
-from pyteller.evaluation import METRICS_NORM as METRICS
+from pyteller.data import get_splits
+from pyteller.metrics import METRICS
+from pyteller.utils import plot_forecast
+
+LOGGER = logging.getLogger(__name__)
 
 
 class Pyteller:
-    def _load_pipeline(self, pipeline, hyperparams=None):
-        if isinstance(pipeline, str) and os.path.isfile(pipeline):
-            pipeline = MLPipeline.load(pipeline)
-        else:
-            pipeline = MLPipeline(pipeline)
+    """Pyteller Class.
 
-        if hyperparams is not None:
-            pipeline.set_hyperparameters(hyperparams)
+    The Pyteller Class provides the time series forecasting functionalities
+    of pyteller and is responsible for the interaction with the underlying
+    MLBlocks pipelines.
+
+    Args:
+        pipeline (str, dict or MLPipeline):
+
+            Pipeline to use. It can be passed as:
+
+                * A ``str`` with a path to a JSON file.
+                * A ``str`` with the name of a registered pipeline.
+                * An ``MLPipeline`` instance.
+                * A ``dict`` with an ``MLPipeline`` specification.
+
+        time_column (string):
+            Optional. A ``str`` specifying the name of the timestamp column of the input data
+
+        target_column (string):
+            Optional. A ``str`` specifying the name of the column containing the target signal
+
+        targets (list):
+            Subset of targets to extract, If None, extract all targets.
+
+        entity_column (string):
+            Optional. A ``str`` specifying the name of the column of the input data containing
+             the entity names
+
+        entities (string or list):
+            Optional. A ``str`` or ``list`` specifying the name(s) of the entities from the
+            entity_column the user wants to make forecasts for
+
+        pred_length (int):
+            Optional. An ``int`` specifying the number of timesteps to forecast ahead for
+
+        offset (int):
+            Optional. An ``int`` specifying the number of timesteps between the input and the
+            target sequence
+
+        hyperparameters (dict):
+            Additional hyperparameters to set to the Pipeline.
+    """
+
+    @staticmethod
+    def _update_init_params(pipeline, primitives, value):
+        for primitive in primitives:
+            primitive_params = {}
+            if primitive in pipeline['init_params'].keys():
+                primitive_params = pipeline['init_params'][primitive]
+
+            primitive_params[primitives[primitive]] = value
+            pipeline['init_params'][primitive] = primitive_params
 
         return pipeline
 
-    def _get_mlpipeline(self):
-        pipeline = self._pipeline
-        if isinstance(pipeline, str) and os.path.isfile(pipeline):
-            with open(pipeline) as json_file:
-                pipeline = json.load(json_file)
-
-        # Pipeline args are specified in all pyteller pipelines jsons and allow for
-        # shared hyperparamters
-        if 'pipeline_arguments' in pipeline.keys():
-            pipeline_args = pipeline['pipeline_arguments']
-
-            pred_length_primitives = pipeline_args['pred_length']
-            for i in pred_length_primitives:
-                if i in pipeline['init_params'].keys():
-                    dict = pipeline['init_params'][i]
-                else:
-                    dict = {}
-                dict[pred_length_primitives[i]] = self.pred_length
-                pipeline['init_params'][i] = dict
-            offset_primitives = pipeline_args['offset']
-            for i in offset_primitives:
-                if i in pipeline['init_params'].keys():
-                    dict = pipeline['init_params'][i]
-                else:
-                    dict = {}
-                dict[offset_primitives[i]] = self.offset
-                pipeline['init_params'][i] = dict
-            target_col_primitives = pipeline_args['target_column']
-            for i in target_col_primitives:
-                if i in pipeline['init_params'].keys():
-                    dict = pipeline['init_params'][i]
-                else:
-                    dict = {}
-                dict[target_col_primitives[i]] = self.target_column
-                pipeline['init_params'][i] = dict
-        mlpipeline = MLPipeline(pipeline)
-        if self._hyperparameters:
-            mlpipeline.set_hyperparameters(self._hyperparameters)
-        return mlpipeline
-
-    def __init__(self,
-                 pipeline=None,
-                 hyperparameters=None,
-                 pred_length=None,
-                 offset=None):
-        self._pipeline = pipeline
-        self._hyperparameters = hyperparameters
-        self.pred_length = pred_length
-        self.offset = offset
+    def _build_pipeline(self, pipeline):
         self._fitted = False
 
-    def fit(self,
-            data=None,
-            timestamp_col=None,
-            target_signal=None,
-            static_variables=None,
-            entity_col=None,
-            entities=None,
-            train_size=None
-            ):
+        if isinstance(pipeline, MLPipeline):
+            pipeline = pipeline.to_dict()
+
+        elif not isinstance(pipeline, dict):
+            pipeline = load_pipeline(pipeline)
+
+        # Pipeline arguments are specified in all pyteller pipeline jsons and allow
+        # for shared hyperparamters
+        if 'pipeline_arguments' in pipeline.keys():
+            pipeline_args = deepcopy(pipeline['pipeline_arguments'])
+
+            pred_length_primitives = pipeline_args.get('pred_length', {})
+            pipeline = self._update_init_params(pipeline, pred_length_primitives, self.pred_length)
+
+            offset_primitives = pipeline_args.get('offset', {})
+            pipeline = self._update_init_params(pipeline, offset_primitives, self.offset)
+
+            target_column_primitives = pipeline_args.get('target_column', {})
+            pipeline = self._update_init_params(pipeline, target_column_primitives, self.target_column)
+
+        if 'tunable' in pipeline.keys():
+            self.tunable = MLPipeline._flatten_dict((pipeline['tunable']))
+        else:
+            self.tunable = None
+
+        # Create the MLPipeline
+        pipeline = MLPipeline(pipeline)
+
+        if self._hyperparameters:
+            pipeline.set_hyperparameters(deepcopy(self._hyperparameters))
+
+        return pipeline
+
+    def __init__(self, pipeline, time_column=None, target_column=None, targets=None,
+                 entity_column=None, entities=None, pred_length=1, offset=0,
+                 hyperparameters=None):
+
+        self.time_column = time_column or 'timestamp'
+        self.target_column = target_column
+        self.targets = targets
+        self.entity_column = entity_column
+        self.entities = entities
+        self.pred_length = pred_length
+        self.offset = offset
+
+        self._hyperparameters = deepcopy(hyperparameters) or {}
+
+        self.pipeline = self._build_pipeline(pipeline)
+
+    def _get_outputs_spec(self, spec):
+        try:
+            output_spec = self.pipeline.get_output_names(spec)
+        except ValueError:
+            output_spec = []
+
+        return output_spec
+
+    def _to_dict(self):
+        return {
+            'pred_length': self.pred_length,
+            'offset': self.offset,
+            'entities': self.entities,
+            'targets': self.targets,
+            'target_column': self.target_column,
+            'time_column': self.time_column,
+            'entity_column': self.entity_column,
+        }
+
+    def scoring_function(self, X, hyperparameters=None):
+        # choose the model
+        # model_instance = MLPipeline(self.pipeline)
+        # dataset = Dataset('data', X, X, mean_absolute_error, 'timeseries', 'forecast',
+        #                   shuffle=False)
+
+        # instantiate the model
+        if hyperparameters:
+            # model_instance.set_hyperparameters(hyperparameters)
+            self.pipeline.set_hyperparameters(hyperparameters)
+        scores = []
+        for X_train, X_test in get_splits(X, 3):
+            self.fit(X_train)
+            output = self.forecast(X_test)
+            scores.append(self.evaluate(actuals=output['actuals'],
+                                        forecasts=output['forecasts'],
+                                        metrics=['MAE']).values[0][0])
+        return np.mean(scores)
+
+    def tune(self, X, y, max_evals=10, scoring=None, verbose=False):
+        """ Tune the pipeline hyper-parameters and select the optimized model.
+        Args:
+            X (pandas.DataFrame or ndarray):
+                Inputs to the pipeline.
+            y (pandas.Series or ndarray):
+                Target values.
+            max_evals (int):
+                Maximum number of hyper-parameter optimization iterations.
+            scoring (str):
+                The name of the scoring function.
+            verbose (bool):
+                Whether to log information during processing.
+        """
+
+        tunables = self.pipeline.get_tunable_hyperparameters(flat=True)
+        if self.tunable is not None:
+            tunables.update(self.tunable)  # combine pipeline tunable parameters
+        tunable = Tunable.from_dict(tunables)
+        default_score = self.scoring_function(X)
+        tuner = GPTuner(tunable)
+        defaults = tunable.get_defaults()
+        tuner.record(defaults, default_score)
+        best_score = default_score
+        best_proposal = defaults
+
+        for iteration in range(max_evals):
+            print("scoring pipeline {}".format(iteration + 1))
+            proposal = tuner.propose()
+            try:
+                score = self.scoring_function(X, proposal)
+                tuner.record(proposal, score)
+            except Exception as ex:
+                LOGGER.exception("Exception tuning pipeline %s",
+                                 iteration, ex)
+                score = best_score + 1
+            if score < best_score:
+                print("New best found: {}".format(score))
+                best_score = score
+                best_proposal = proposal
+        self.pipeline.set_hyperparameters(best_proposal)
+        self.tuned_params = best_proposal
+
+    def fit(self, data=None, tune=False, max_evals=10, scoring=None,
+            start_=None, verbose=False, output_=None, **kwargs):
         """Fit the pipeline to the given data.
 
         Args:
+            tune (bool):
+                Whether to optimize hyper-parameters of the pipelines.
+            max_evals (int):
+                Maximum number of hyper-parameter optimization iterations.
+            scoring (str):
+                The name of the scoring function used in the hyper-parameter optimization.
             data (DataFrame):
-                Input data, passed as a ``pandas.DataFrame`` containing
-                exactly two columns: timestamp and value.
+                Input data, passed as a ``pandas.DataFrame``
+            start_ (str or int or None):
+                Block index or block name to start processing from. The
+                value can either be an integer, which will be interpreted as a block index,
+                or the name of a block, including the conter number at the end.
+                If given, the execution of the pipeline will start on the specified block,
+                and all the blocks before that one will be skipped.
+            output_ (str or int or list or None):
+                Output specification, as required by ``get_outputs``. If ``None`` is given,
+                nothing will be returned.
+
+        Returns:
+            Dictionary:
+                Optional. A dictionary containing the specified outputs from the
+                ``MLPipeline``
+
         """
-        self.target_signal = target_signal
-        self.timestamp_col = timestamp_col
-        self.static_variables = static_variables
-        self.entity_cols = entity_col
-        self.entities = entities
-        self.train_size = train_size
 
-        train = ingest_data(self,
-                            data=data,
-                            timestamp_col=self.timestamp_col,
-                            signal=self.target_signal,
-                            static_variables=self.static_variables,
-                            entity_col=self.entity_cols,
-                            entities=self.entities
-                            )
-        self._mlpipeline = self._get_mlpipeline()
-        self._mlpipeline.fit(X=train,
-                             pred_length=self.pred_length,
-                             offset=self.offset,
-                             freq=self.freq,
-                             entities=self.entities
-                             )
+        if data is None:
+            data = kwargs.pop('X')
 
-        self._fitted = True
-        print('The pipeline is fitted')
+        else:
+            # if self.time_column == None:
+            #     self.time_column = data.columns[0]
+            kwargs.update(self._to_dict())
 
-    def forecast(self, data=None):
+        if tune:
+            # tune and select pipeline
+            self.tune(data, data, max_evals=max_evals, scoring=scoring, verbose=verbose)
+
+        out = self.pipeline.fit(
+            X=data,
+            start_=start_,
+            output_=output_,
+            **kwargs
+        )
+
+        if output_ is None:
+            LOGGER.info('The pipeline is fitted')
+            self._fitted = True
+
+        return out
+
+    def forecast(self, data, postprocessing=False, predictions_only=False, **kwargs):
         """Forecast input data on a trained model.
 
         Args:
@@ -125,85 +276,103 @@ class Pyteller:
                 Input data, passed as a ``pandas.DataFrame`` containing
                 exactly two columns: timestamp and value.
 
+            postprocessing (bool):
+                If ``True``, also return the ``input`` data as output from the
+                ``MLPipeline``.
+
+            predictions_only (bool):
+                If ``True``, only return forecasts as an output from the ``MLPipeline``.
+
         Returns:
-            DataFrame or tuple:
-                A tuple containing the input data followed by the predictions which both contain
-                values only at the same timestamps
+            Dictionary:
+                A dictionary containing the specified ``default`` and ``postprocessing`` output
+                 from the ``MLPipeline``
         """
-        test = ingest_data(self,
-                           data=data,
-                           timestamp_col=self.timestamp_col,
-                           signal=self.target_signal,
-                           static_variables=self.static_variables,
-                           entity_col=self.entity_cols,
-                           entities=self.entities,
-                           )
+        if not self._fitted:
+            raise NotFittedError()
 
-        prediction = self._mlpipeline.predict(
-            X=test,
-            pred_length=self.pred_length,
-            offset=self.offset,
-            freq=self.freq,
-            entities=self.entities
-        )
-        actual, prediction = egest_data(test, prediction)
+        output_spec = ['default', 'postprocessing'] if postprocessing else 'default'
 
-        return actual, prediction
+        default_names = self._get_outputs_spec('default')
+        kwargs.update(self._to_dict())
 
-    def evaluate(self, forecast,
-                 train_data=None,
-                 test_data=None,
-                 detailed=False,
-                 metrics=METRICS):
+        outputs = self.pipeline.predict(X=data, output_=output_spec, debug=True, **kwargs)
+
+        if postprocessing:
+            postprocessing = self._get_outputs_spec('postprocessing')
+            postprocessing_outputs = outputs[0][-len(postprocessing):]
+            default_outputs = outputs[0][:len(postprocessing) + 1]
+            names = postprocessing + default_names
+            outputs = postprocessing_outputs + default_outputs
+            output_dict = dict(zip(names, outputs))
+
+        else:
+            output_dict = dict(zip(default_names, outputs[0]))
+
+        if predictions_only:
+            return output_dict['forecasts']
+
+        return output_dict
+
+    @staticmethod
+    def plot(forecast_output, frequency='day'):
+        actuals = forecast_output['actuals'].iloc[:, 0:1]
+        forecasts = forecast_output['forecasts'].iloc[:, 0:1]
+        return plot_forecast([actuals, forecasts], frequency=frequency)
+
+    def evaluate(self, actuals, forecasts, detailed=False, metrics=METRICS):
         """Evaluate the performance against test set
 
         Args:
-            forecast (DataFrame):
+            forecasts (DataFrame):
                Forecasts, passed as a ``pandas.DataFrame`` containing
                 exactly two columns: timestamp and value.
-            train_data (DataFrame):
-               Training data used for some metrics, passed as a ``pandas.DataFrame`` containing
-                exactly two columns: timestamp and value.
-            test_data (DataFrame):
+            actuals (DataFrame):
                Testing data or the target data, passed as a ``pandas.DataFrame`` containing
                 exactly two columns: timestamp and value.
             detailed (bool):
                 Whether to output the detailed score report
             metrics (list):
                 List of metrics to used passed as a list of strings.
-                If not given, it defaults to all the Orion metrics.
+                If not given, it defaults to all the pyteller metrics.
 
         Returns:
-            Series:
-                ``pandas.Series`` containing one element for each
-                metric applied, with the metric name as index.
+            DataFrame:
+                ``pandas.DataFrame`` with columns as entities and the metric name as index.
         """
+        forecasts = forecasts[forecasts.index.isin(actuals.index)]
 
-        metrics_ = {}
         if isinstance(metrics, str):
             metrics = [metrics]
-        for metric in metrics:
-            metrics_[metric] = METRICS[metric]
-        scores = list()
 
-        if isinstance(self.entities, str):
-            self.entities = [self.entities]
-        for entity in self.entities:
+        if isinstance(metrics, list):
+            metrics = {
+                name: metric
+                for name, metric in METRICS.items()
+                if name in metrics
+            }
+
+        scores = list()
+        entities = forecasts.columns
+
+        if isinstance(entities, str):
+            entities = [entities]
+
+        for entity in entities:
             score = {}
             score.update({
-                metric: METRICS[metric](test_data[entity].values, forecast[entity].values)
-                # metric: METRICS[metric](test_data[entity].values, forecast[entity].values[:, 0])
-                for metric in metrics_ if metric != 'MASE'
+                name: metric(actuals[entity].values, forecasts[entity].values)
+                for name, metric in metrics.items() if name != 'MASE'
             })
 
             if detailed:
-                score['granularity'] = self.freq
-                score['prediction length'] = forecast.shape[0]
-                score['length of training data'] = len(train_data.get_group(entity))
-                score['length of testing data'] = len(test_data.get_group(entity))
+                score['granularity'] = forecasts.index[1] - forecasts.index[0]
+                score['prediction length'] = forecasts.shape[0]
+                score['length of testing data'] = len(actuals.get_group(entity))
+
             scores.append(score)
 
-        return pd.DataFrame(scores, index=self.entities).transpose()
+        return pd.DataFrame(scores, index=entities).transpose()
 
     def save(self, path):
         """Save this object using pickle.
@@ -227,15 +396,8 @@ class Pyteller:
                 previously serialized.
 
         Returns:
-            Orion
-
-        Raises:
-            ValueError:
-                If the serialized object is not a pyteller instance.
+            Pyteller:
+                Loaded Pyteller instance.
         """
         with open(path, 'rb') as pickle_file:
-            pyteller = pickle.load(pickle_file)
-            # if not isinstance(orion, cls):
-            #     raise ValueError('Serialized object is not a pyteller instance')
-
-            return pyteller
+            return pickle.load(pickle_file)

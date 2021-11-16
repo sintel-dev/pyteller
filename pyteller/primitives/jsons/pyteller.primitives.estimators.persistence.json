@@ -1,5 +1,5 @@
 {
-    "name": "pyteller.primitives.estimators.persistence",
+    "name": "pyteller.primitives.estimators.Persistence",
     "contributors": ["Skylar Eiskowitz <eiskowit@mit.edu>"],
     "documentation": "",
     "description": "Simple Estimator that always returns the last value as the forecasted value.",
@@ -8,7 +8,7 @@
         "subtype": "regressor"
     },
     "modalities": [],
-    "primitive": "pyteller.primitives.estimators.persistence",
+    "primitive": "pyteller.primitives.estimators.Persistence",
     "fit": {
         "method": "fit",
         "args": [
@@ -16,29 +16,26 @@
                 "name": "X",
                 "type": "ndarray"
             },
-{
+            {
                 "name": "y",
                 "type": "ndarray"
 
             }
         ],
-                "output": [
+        "output": [
             {
                 "name": "val",
                 "type": "float"
             }
         ]
-
     },
     "produce": {
         "method": "predict",
         "args": [
-{
+            {
                 "name": "X",
                 "type": "ndarray"
-
             }
-
         ],
         "output": [
             {
@@ -49,7 +46,6 @@
     },
     "hyperparameters": {
         "fixed": {
-
                 "pred_length": {
                     "type": "int",
                     "default": "1"
