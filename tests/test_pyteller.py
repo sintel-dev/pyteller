@@ -21,7 +21,7 @@ class TestPyteller(unittest.TestCase):
         """Test something."""
         self.assertTrue(True)
 # import pandas as pd
-# from pyteller.core import Pyteller
+# from pyteller import Pyteller
 # class TestPyteller:
 #     @classmethod
 #     def setup_class(cls):

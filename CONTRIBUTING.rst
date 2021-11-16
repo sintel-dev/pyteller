@@ -206,7 +206,7 @@ Release Candidates
 
 Sometimes it is necessary or convenient to upload a release candidate to PyPi as a pre-release,
 in order to make some of the new features available for testing on other projects before they
-are included in an actuals full-blown release.
+are included in an actual full-blown release.
 
 In order to perform such an action, you can execute::
 

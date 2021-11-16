@@ -89,6 +89,9 @@
         },
         "offset": {
             "mlprimitives.custom.timeseries_preprocessing.rolling_window_sequences#1": "offset"
+        },
+        "target_column": {
+            "mlprimitives.custom.timeseries_preprocessing.rolling_window_sequences#1": "target_column"
         }
     }
 }

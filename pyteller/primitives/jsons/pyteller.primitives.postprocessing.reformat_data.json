@@ -27,6 +27,10 @@
             {
                 "name": "time_column",
                 "type": "string"
+            },
+            {
+                "name": "targets",
+                "type": "string"
             }
         ],
         "output": [

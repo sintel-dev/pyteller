@@ -100,6 +100,9 @@ class Pyteller:
             offset_primitives = pipeline_args.get('offset', {})
             pipeline = self._update_init_params(pipeline, offset_primitives, self.offset)
 
+            target_column_primitives = pipeline_args.get('target_column', {})
+            pipeline = self._update_init_params(pipeline, target_column_primitives, self.target_column)
+
         if 'tunable' in pipeline.keys():
             self.tunable = MLPipeline._flatten_dict((pipeline['tunable']))
         else:

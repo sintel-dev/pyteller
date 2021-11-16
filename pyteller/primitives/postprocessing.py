@@ -46,7 +46,7 @@ def flatten(X, index, pred_length, freq, type='average'):
     return X, index
 
 
-def reformat_data(X, index, actuals, time_column):
+def reformat_data(X, index, actuals, time_column,targets):
     # convert index to datetime
     # if index.dtype == 'float' or index.dtype == 'int':
     #     index = pd.to_datetime(index.values * 1e9)
@@ -61,6 +61,6 @@ def reformat_data(X, index, actuals, time_column):
     actuals = actuals.set_index(time_column.lower())
     forecasts = pd.DataFrame(data=X, index=index)
     actuals = actuals[actuals.index.isin(forecasts.index)]
-    forecasts.columns = actuals.columns
+    forecasts.columns =[targets]
 
-    return actuals, forecasts
+    return actuals[[targets]], forecasts

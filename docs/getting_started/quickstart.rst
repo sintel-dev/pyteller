@@ -31,7 +31,7 @@ In this example we use the `lstm` pipeline and set the training epochs as 5.
 .. ipython:: python
     :okwarning:
 
-	from pyteller.core import Pyteller
+	from pyteller import Pyteller
 
     pipeline = 'pyteller.LSTM.LSTM'
 

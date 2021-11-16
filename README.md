@@ -73,7 +73,7 @@ Once we have the data, create an instance of the `Pyteller` class, where the inp
 In this example we use the `lstm` pipeline and set the training epochs to 20.
 
 ```python3
-from pyteller.core import Pyteller
+from pyteller import Pyteller
 
 pipeline = 'pyteller/pipelines/pyteller/LSTM/LSTM.json'
 

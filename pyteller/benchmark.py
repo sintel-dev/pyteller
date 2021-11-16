@@ -14,7 +14,7 @@ import tqdm
 from mlblocks import MLPipeline
 from mlblocks.discovery import find_pipelines, load_pipeline
 
-from pyteller.core import Pyteller
+from pyteller import Pyteller
 from pyteller.data import load_data
 from pyteller.metrics import METRICS
 from pyteller.progress import TqdmLogger, progress

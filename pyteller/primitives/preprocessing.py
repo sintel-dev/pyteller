@@ -108,3 +108,4 @@ def get_index(X, time_column):
     freq = (X.index[1:2].astype(np.int64) - X.index[0:1].astype(np.int64)) // 1e9
 
     return np.asarray(X.values), np.asarray(X.index), freq
+
